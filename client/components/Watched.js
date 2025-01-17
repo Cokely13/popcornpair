@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
+import {fetchUsers} from "../store/allUsersStore"
 
 const Watched = () => {
   const dispatch = useDispatch();
@@ -14,9 +15,11 @@ const Watched = () => {
     (userMovie) => userMovie.userId === currentUserId && userMovie.watched
   );
   const movies = useSelector((state) => state.allMovies);
+  const users = useSelector((state) => state.allUsers);
 
   useEffect(() => {
     dispatch(fetchUserMovies());
+    dispatch(fetchUsers());
     dispatch(fetchMovies());
   }, [dispatch]);
 
@@ -34,9 +37,9 @@ const Watched = () => {
 
     try {
       await dispatch(updateSingleUserMovie({ userId: currentUserId, movieId, rating }));
-      alert("Rating submitted!");
       setSelectedMovieId(null); // Close the rating input
       setRating(""); // Reset the input field
+      dispatch(fetchUserMovies()); // Refresh the list
     } catch (err) {
       console.error("Error submitting rating:", err);
     }
@@ -49,39 +52,42 @@ const Watched = () => {
   return (
     <div className="watched-movies-container">
       <h2>Your Watched Movies</h2>
-      <div className="watched-movies-list">
+      <ul className="watched-movies-list">
         {watchedMovies.map((movie) => (
-          <div key={movie.id} className="watched-movie-item">
-            <img
-              src={movie.posterUrl || "https://via.placeholder.com/150"}
-              alt={movie.title || "Untitled Movie"}
-              className="movie-poster"
-            />
-            <div className="movie-info">
-              <h3>{movie.title || "Untitled Movie"}</h3>
-              <p><strong>Description:</strong> {movie.description || "No description available."}</p>
-              <p><strong>Watched With:</strong> {movie.watchedWith || "N/A"}</p>
-              <p><strong>Your Rating:</strong> {movie.rating || "Not Rated"}</p>
-              {selectedMovieId === movie.id ? (
-                <div className="rating-form">
-                  <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={rating}
-                    onChange={(e) => setRating(e.target.value)}
-                    placeholder="Rate 1-10"
-                  />
-                  <button onClick={() => handleRatingSubmit(movie.id)}>Submit</button>
-                  <button onClick={() => setSelectedMovieId(null)}>Cancel</button>
-                </div>
-              ) : (
-                <button onClick={() => setSelectedMovieId(movie.id)}>Rate</button>
-              )}
-            </div>
-          </div>
+          <li key={`${movie.id}-${movie.userId}`} className="watched-movie-item">
+            <span className="movie-title">{movie.title || "Untitled Movie"}</span>
+            <span className="watched-with">
+              {" "}
+              (Watched With: {users.find((user) => user.id == movie.watchedWith)?.username || "N/A"})
+            </span>
+            <span className="rating">
+              {" "}
+              | Rating: {movie.rating || "Not Rated"}
+            </span>
+            {selectedMovieId === movie.id ? (
+              <div className="rating-form">
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                  placeholder="Rate 1-10"
+                />
+                <button onClick={() => handleRatingSubmit(movie.id)}>Submit</button>
+                <button onClick={() => setSelectedMovieId(null)}>Cancel</button>
+              </div>
+            ) : (
+              <button
+                className="rate-button"
+                onClick={() => setSelectedMovieId(movie.id)}
+              >
+                Rate
+              </button>
+            )}
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 };
