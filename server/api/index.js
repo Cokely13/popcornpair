@@ -3,6 +3,7 @@ module.exports = router
 
 router.use('/users', require('./users'))
 router.use('/movies', require('./movies'))
+router.use('/usermovies', require('./usermovies'))
 router.use('/ratings', require('./ratings'))
 
 router.use((req, res, next) => {
