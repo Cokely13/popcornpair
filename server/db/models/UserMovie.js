@@ -1,19 +1,3 @@
-// const Sequelize = require('sequelize');
-// const db = require('../db');
-
-// const UserMovie = db.define('user_movie', {
-//   userId: {
-//     type: Sequelize.INTEGER,
-//     allowNull: false,
-//   },
-//   watched: {
-//     type: Sequelize.BOOLEAN,
-//     defaultValue: false,
-//   },
-// });
-
-// module.exports = UserMovie;
-
 const Sequelize = require('sequelize');
 const db = require('../db');
 
@@ -30,6 +14,18 @@ const UserMovie = db.define('user_movie', {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
+  rating: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+    validate: {
+      min: 1,
+      max: 10, // Ensures the rating is between 1 and 10
+    },
+  },
+  watchedWith: {
+    type: Sequelize.INTEGER, // Stores the userId of the person they watched the movie with
+    allowNull: true,
+  },
 }, {
   indexes: [
     {
@@ -40,4 +36,3 @@ const UserMovie = db.define('user_movie', {
 });
 
 module.exports = UserMovie;
-
