@@ -36,14 +36,24 @@ async function seed() {
 
     // Saving movies to the database
     for (const movie of movies) {
+      // Fetch detailed data for each movie
+      const detailsResponse = await axios.get(`https://api.watchmode.com/v1/title/${movie.id}/details/`, {
+        params: { apiKey: WATCHMODE_API_KEY },
+      });
+
+      const details = detailsResponse.data;
+
       await Movie.create({
-        title: movie.title,
-        description: movie.plot_overview || 'No description available',
-        releaseDate: movie.release_date || null,
-        posterUrl: movie.poster || null,
-        genres: movie.genre_names || [],
-        watchProviders: movie.sources || {}, // Assuming "sources" has streaming data
-        tmdbId: movie.tmdb_id || null, // Assuming Watchmode provides TMDB IDs
+        title: details.title || 'Untitled',
+        description: details.plot_overview || 'No description available',
+        releaseDate: details.release_date || null,
+        posterUrl: details.poster || null,
+        genres: details.genre_names || [],
+        watchProviders: details.sources || [],
+        tmdbId: details.tmdb_id || null,
+        userRating: details.user_rating || null,
+        criticScore: details.critic_score || null,
+        runtimeMinutes: details.runtime_minutes || null,
       });
     }
 
