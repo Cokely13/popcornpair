@@ -1,58 +1,105 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRatings } from "../store/allRatingsStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { createUserMovie } from "../store/allUserMoviesStore";
+import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchSingleUser } from "../store/singleUserStore";
 
 const Match = () => {
   const { userId } = useParams(); // Friend's ID
-  const history = useHistory();
   const dispatch = useDispatch();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState("All");
 
   const currentUserId = useSelector((state) => state.auth.id);
   const ratings = useSelector((state) => state.allRatings) || [];
   const movies = useSelector((state) => state.allMovies) || [];
+  const userMovies = useSelector((state) => state.allUserMovies) || [];
   const friend = useSelector((state) => state.singleUser) || [];
 
   useEffect(() => {
     dispatch(fetchRatings());
     dispatch(fetchMovies());
-    dispatch(fetchSingleUser(userId));
-  }, [dispatch, userId]);
-
-  // Filter out already-watched movies
-  const watchedMovies = useSelector((state) => state.allUserMovies)
-    .filter((userMovie) => userMovie.watched)
-    .map((userMovie) => userMovie.movieId);
+    dispatch(fetchUserMovies());
+    dispatch(fetchSingleUser(userId)); // Ensure user data is fetched
+  }, [dispatch]);
 
   // Find common movies rated "YES" by both users
-  const commonMovies = ratings
-    .filter((rating) => rating.rating === "YES")
-    .reduce(
-      (acc, rating) => {
-        if (rating.userId === currentUserId) {
-          acc.currentUserMovies.push(rating.movieId);
-        } else if (rating.userId === parseInt(userId)) {
-          acc.friendMovies.push(rating.movieId);
-        }
-        return acc;
-      },
-      { currentUserMovies: [], friendMovies: [] }
-    );
+  // const commonMovies = ratings
+  //   .filter((rating) => rating.rating === "YES")
+  //   .reduce(
+  //     (acc, rating) => {
+  //       if (rating.userId === currentUserId) {
+  //         acc.currentUserMovies.push(rating.movieId);
+  //       } else if (rating.userId === parseInt(userId)) {
+  //         acc.friendMovies.push(rating.movieId);
+  //       }
+  //       return acc;
+  //     },
+  //     { currentUserMovies: [], friendMovies: [] }
+  //   );
 
-  const sharedMovies = commonMovies.currentUserMovies.filter(
-    (movieId) =>
-      commonMovies.friendMovies.includes(movieId) && !watchedMovies.includes(movieId)
+  // const sharedMovies = commonMovies.currentUserMovies.filter((movieId) =>
+  //   commonMovies.friendMovies.includes(movieId)
+  // );
+
+  const sharedMovies = ratings
+  .filter((rating) => rating.userId === currentUserId && rating.rating === "YES") // Movies rated "YES" by current user
+  .map((rating) => rating.movieId)
+  .filter((movieId) =>
+    ratings.some(
+      (friendRating) =>
+        friendRating.userId === parseInt(userId) &&
+        friendRating.movieId === movieId &&
+        friendRating.rating === "YES"
+    )
+  )
+  .filter((movieId) =>
+    !userMovies.some(
+      (userMovie) =>
+        userMovie.movieId === movieId &&
+        userMovie.watched === true
+    )
   );
 
-  const matchedMovies = movies.filter((movie) => sharedMovies.includes(movie.id));
+  // Filter matched movies by selected genre
+  const matchedMovies = movies
+    .filter((movie) => sharedMovies.includes(movie.id))
+    .filter((movie) =>
+      selectedGenre === "All" || movie.genres?.includes(selectedGenre)
+    );
+
+  const genres = [
+    "All",
+    ...new Set(movies.flatMap((movie) => movie.genres || [])),
+  ];
 
   if (!matchedMovies.length) {
-    return <div>No matching movies found!</div>;
+    return (
+      <div>
+        {/* Genre Filter */}
+        <div className="genre-filter">
+          <label htmlFor="genre">Filter by Genre: </label>
+          <select
+            id="genre"
+            value={selectedGenre}
+            onChange={(e) => {
+              setSelectedGenre(e.target.value);
+              setCurrentIndex(0); // Reset index when filter changes
+            }}
+          >
+            {genres.map((genre) => (
+              <option key={genre} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>Sorry, there are no {selectedGenre} movies.</div>
+      </div>
+    );
   }
 
   const movie = matchedMovies[currentIndex];
@@ -70,36 +117,56 @@ const Match = () => {
     try {
       // Create UserMovie for the current user
       await dispatch(
-        createUserMovie({ userId: currentUserId, movieId: movie.id, watched: true, watchedWith: userId })
+        createUserMovie({
+          userId: currentUserId,
+          movieId: movie.id,
+          watched: true,
+          watchedWith: userId,
+        })
       );
 
       // Create UserMovie for the friend
       await dispatch(
-        createUserMovie({ userId: parseInt(userId), movieId: movie.id, watched: true, watchedWith: currentUserId})
+        createUserMovie({
+          userId: parseInt(userId),
+          movieId: movie.id,
+          watched: true,
+          watchedWith: currentUserId,
+        })
       );
 
-      // Show modal
-      setShowModal(true);
+      alert("Movie marked as watched!");
     } catch (err) {
       console.error("Error creating UserMovie:", err);
     }
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    history.push("/home");
-  };
-
   return (
     <div className="rate-movie-container">
       <h2>Matches with {friend?.username || "User"}</h2>
+
+      {/* Genre Filter */}
+      <div className="genre-filter">
+        <label htmlFor="genre">Filter by Genre: </label>
+        <select
+          id="genre"
+          value={selectedGenre}
+          onChange={(e) => {
+            setSelectedGenre(e.target.value);
+            setCurrentIndex(0); // Reset index when filter changes
+          }}
+        >
+          {genres.map((genre) => (
+            <option key={genre} value={genre}>
+              {genre}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Movie Poster */}
       {movie.posterUrl ? (
-        <img
-          src={movie.posterUrl}
-          alt={movie.title}
-          className="movie-poster"
-        />
+        <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
       ) : (
         <div className="no-image">No Image Available</div>
       )}
@@ -110,26 +177,190 @@ const Match = () => {
         <p><strong>Description:</strong> {movie.description || "No description available."}</p>
         <p><strong>Release Date:</strong> {movie.releaseDate || "Unknown"}</p>
         <p><strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}</p>
-        <p><strong>Rating:</strong> {movie.userRating || "Not Rated"}</p>
       </div>
 
       {/* Buttons */}
       <div className="button-container">
-        <button className="watch-button" onClick={handleWatch}>Watch</button>
-        <button className="next-button" onClick={handleNext}>Next</button>
+        <button className="watch-button" onClick={handleWatch}>
+          Watch
+        </button>
+        <button className="next-button" onClick={handleNext}>
+          Next
+        </button>
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>ENJOY YOUR MOVIE!!!</h3>
-            <button onClick={handleCloseModal}>Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default Match;
+
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchRatings } from "../store/allRatingsStore";
+// import { fetchMovies } from "../store/allMoviesStore";
+// import { createUserMovie } from "../store/allUserMoviesStore";
+// import { fetchSingleUser } from "../store/singleUserStore";
+
+// const Match = () => {
+//   const { userId } = useParams(); // Friend's ID
+//   const dispatch = useDispatch();
+//   const [currentIndex, setCurrentIndex] = useState(0);
+//   const [selectedGenre, setSelectedGenre] = useState("All");
+
+//   const currentUserId = useSelector((state) => state.auth.id);
+//   const ratings = useSelector((state) => state.allRatings) || [];
+//   const movies = useSelector((state) => state.allMovies) || [];
+//   const friend = useSelector((state) => state.singleUser) || [];
+
+//   useEffect(() => {
+//     dispatch(fetchRatings());
+//     dispatch(fetchMovies());
+//     dispatch(fetchSingleUser(userId)); // Ensure user data is fetched
+//   }, [dispatch]);
+
+//   // Find common movies rated "YES" by both users
+//   const commonMovies = ratings
+//     .filter((rating) => rating.rating === "YES")
+//     .reduce(
+//       (acc, rating) => {
+//         if (rating.userId === currentUserId) {
+//           acc.currentUserMovies.push(rating.movieId);
+//         } else if (rating.userId === parseInt(userId)) {
+//           acc.friendMovies.push(rating.movieId);
+//         }
+//         return acc;
+//       },
+//       { currentUserMovies: [], friendMovies: [] }
+//     );
+
+//   const sharedMovies = commonMovies.currentUserMovies.filter((movieId) =>
+//     commonMovies.friendMovies.includes(movieId)
+//   );
+
+//   // Get all genres from the matched movies
+//   const genres = [
+//     "All",
+//     ...new Set(
+//       movies
+//         .filter((movie) => sharedMovies.includes(movie.id))
+//         .flatMap((movie) => movie.genres || [])
+//     ),
+//   ];
+
+//   // Filter matched movies by selected genre
+//   const matchedMovies = movies
+//     .filter((movie) => sharedMovies.includes(movie.id))
+//     .filter((movie) =>
+//       selectedGenre === "All" || movie.genres?.includes(selectedGenre)
+//     );
+
+//   const movie = matchedMovies[currentIndex];
+
+//   const handleNext = () => {
+//     if (currentIndex < matchedMovies.length - 1) {
+//       setCurrentIndex(currentIndex + 1);
+//     } else {
+//       alert("No more movies to show!");
+//       setCurrentIndex(0); // Reset to the first movie
+//     }
+//   };
+
+//   const handleWatch = async () => {
+//     try {
+//       // Create UserMovie for the current user
+//       await dispatch(
+//         createUserMovie({
+//           userId: currentUserId,
+//           movieId: movie.id,
+//           watched: true,
+//           watchedWith: userId,
+//         })
+//       );
+
+//       // Create UserMovie for the friend
+//       await dispatch(
+//         createUserMovie({
+//           userId: parseInt(userId),
+//           movieId: movie.id,
+//           watched: true,
+//           watchedWith: currentUserId,
+//         })
+//       );
+
+//       alert("Movie marked as watched!");
+//     } catch (err) {
+//       console.error("Error creating UserMovie:", err);
+//     }
+//   };
+
+//   return (
+//     <div className="rate-movie-container">
+//       <h2>Matches with {friend?.username || "User"}</h2>
+
+//       {/* Genre Filter */}
+//       <div className="genre-filter">
+//         <label htmlFor="genre">Filter by Genre: </label>
+//         <select
+//           id="genre"
+//           value={selectedGenre}
+//           onChange={(e) => {
+//             setSelectedGenre(e.target.value);
+//             setCurrentIndex(0); // Reset index when filter changes
+//           }}
+//         >
+//           {genres.map((genre) => (
+//             <option key={genre} value={genre}>
+//               {genre}
+//             </option>
+//           ))}
+//         </select>
+//       </div>
+
+//       {/* Movie Content */}
+//       {matchedMovies.length > 0 ? (
+//         <>
+//           {/* Movie Poster */}
+//           {movie.posterUrl ? (
+//             <img
+//               src={movie.posterUrl}
+//               alt={movie.title}
+//               className="movie-poster"
+//             />
+//           ) : (
+//             <div className="no-image">No Image Available</div>
+//           )}
+
+//           {/* Movie Information */}
+//           <div className="movie-info">
+//             <h2>{movie.title || "Untitled Movie"}</h2>
+//             <p>
+//               <strong>Description:</strong>{" "}
+//               {movie.description || "No description available."}
+//             </p>
+//             <p>
+//               <strong>Release Date:</strong> {movie.releaseDate || "Unknown"}
+//             </p>
+//             <p>
+//               <strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}
+//             </p>
+//           </div>
+
+//           {/* Buttons */}
+//           <div className="button-container">
+//             <button className="watch-button" onClick={handleWatch}>
+//               Watch
+//             </button>
+//             <button className="next-button" onClick={handleNext}>
+//               Next
+//             </button>
+//           </div>
+//         </>
+//       ) : (
+//         <div>Sorry, there are no {selectedGenre} movies.</div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Match;
