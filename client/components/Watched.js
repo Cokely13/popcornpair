@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
@@ -57,7 +58,8 @@ const Watched = () => {
       <div className="watched-movies-list">
   {watchedMovies.map((movie, index) => (
      <div key={`${movie.movieId}-${movie.userId}`} className="watched-movie-item">
-      <h3>{movie.title || "Untitled Movie"}</h3>
+      <h3>
+      <Link to={`/movies/${movie.id}`}>{movie.title || "Untitled Movie"}</Link></h3>
       <p>Watched With: {users.find((user) => user.id === movie.watchedWith)?.username || "N/A"}</p>
       <p>Your Rating: {movie.rating || "Not Rated"}</p>
       {selectedMovieId === movie.id ? (

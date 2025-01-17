@@ -8,6 +8,7 @@ import RateMovie from './components/RateMovie';
 import FriendsList from './components/FriendsList';
 import Match from './components/Match';
 import Watched from './components/Watched';
+import MovieDetail from './components/MovieDetail';
 
 /**
  * COMPONENT
@@ -29,6 +30,7 @@ class Routes extends Component {
             <Route exact path="/match/:userId" component={Match} />
             <Route exact path="/list" component={FriendsList} />
             <Route exact path="/watched" component={Watched} />
+            <Route path="/movies/:movieId" component={MovieDetail} />
             <Redirect to="/home" />
           </Switch>
         ) : (
