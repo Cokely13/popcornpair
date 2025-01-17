@@ -18,22 +18,20 @@ const RateMovie = () => {
   const movie = movies[0];
 
   return (
-    <div style={{ textAlign: "center", margin: "20px" }}>
+    <div className="rate-movie-container">
       {/* Movie Poster */}
       {movie.posterUrl ? (
         <img
           src={movie.posterUrl}
           alt={movie.title}
-          style={{ maxWidth: "300px", borderRadius: "10px", marginBottom: "20px" }}
+          className="movie-poster"
         />
       ) : (
-        <div style={{ height: "300px", width: "200px", background: "#ddd", borderRadius: "10px", margin: "0 auto 20px" }}>
-          No Image Available
-        </div>
+        <div className="no-image">No Image Available</div>
       )}
 
       {/* Movie Information */}
-      <div style={{ marginBottom: "20px" }}>
+      <div className="movie-info">
         <h2>{movie.title || "Untitled Movie"}</h2>
         <p><strong>Description:</strong> {movie.description || "No description available."}</p>
         <p><strong>Release Date:</strong> {movie.releaseDate || "Unknown"}</p>
@@ -42,33 +40,9 @@ const RateMovie = () => {
       </div>
 
       {/* YES and NO Buttons */}
-      <div>
-        <button
-          style={{
-            padding: "10px 20px",
-            marginRight: "10px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          YES
-        </button>
-        <button
-          style={{
-            padding: "10px 20px",
-            marginLeft: "10px",
-            backgroundColor: "#F44336",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          NO
-        </button>
+      <div className="button-container">
+        <button className="yes-button">YES</button>
+        <button className="no-button">NO</button>
       </div>
     </div>
   );

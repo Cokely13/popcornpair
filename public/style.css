@@ -1,21 +1,87 @@
 body {
   font-family: sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-a {
-  text-decoration: none;
+.rate-movie-container {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  margin-bottom: 30px; /* Added bottom margin */
+  border: 5px solid #4CAF50; /* Added colorful border */
 }
 
-label {
-  display: block;
+.movie-poster {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
-nav a {
-  display: inline-block;
-  margin: 1em;
+.no-image {
+  height: 300px;
+  width: 200px;
+  background: #ddd;
+  border-radius: 10px;
+  margin: 0 auto 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  font-size: 16px;
 }
 
-form div {
-  margin: 1em;
-  display: inline-block;
+.movie-info {
+  margin-bottom: 20px;
+  text-align: center; /* Center all the text */
+  font-size: 16px;
+  color: #333;
+}
+
+.movie-info h2 {
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #222;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.yes-button,
+.no-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.yes-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.yes-button:hover {
+  background-color: #45a049;
+}
+
+.no-button {
+  background-color: #F44336;
+  color: white;
+}
+
+.no-button:hover {
+  background-color: #e53935;
 }
