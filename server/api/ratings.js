@@ -23,15 +23,6 @@ router.get('/:userId', async (req, res, next) => {
   }
 });
 
-// Get a single rating by ID
-// router.get('/:id', async (req, res, next) => {
-//   try {
-//     const rating = await Rating.findByPk(req.params.id);
-//     res.json(rating);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
 
 // Create a new rating
 router.post('/', async (req, res, next) => {

@@ -30,7 +30,7 @@ const _deleteRating = (rating) => {
 // Thunks
 export const fetchRatings = (userId) => {
   return async (dispatch) => {
-    const { data } = await Axios.get(`/api/ratings/${userId}`);
+    const { data } = await Axios.get('/api/ratings');
     dispatch(setRatings(data));
   };
 };
