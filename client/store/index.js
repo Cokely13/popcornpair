@@ -3,8 +3,13 @@ import {createLogger} from 'redux-logger'
 import thunkMiddleware from 'redux-thunk'
 import {composeWithDevTools} from 'redux-devtools-extension'
 import auth from './auth'
+import moviesReducer from './allMoviesStore'
+import singleMovieReducer from './singleMovieStore'
 
-const reducer = combineReducers({ auth })
+const reducer = combineReducers({ auth,
+  allMovies: moviesReducer,
+  singleMovie: singleMovieReducer
+ })
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
 )
