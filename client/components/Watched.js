@@ -49,10 +49,36 @@ const Watched = () => {
     return <div>No watched movies to display!</div>;
   }
 
+  console.log("watched", watchedMovies)
+
   return (
     <div className="watched-movies-container">
       <h2>Your Watched Movies</h2>
-      <ul className="watched-movies-list">
+      <div className="watched-movies-list">
+  {watchedMovies.map((movie, index) => (
+     <div key={`${movie.movieId}-${movie.userId}`} className="watched-movie-item">
+      <h3>{movie.title || "Untitled Movie"}</h3>
+      <p>Watched With: {users.find((user) => user.id === movie.watchedWith)?.username || "N/A"}</p>
+      <p>Your Rating: {movie.rating || "Not Rated"}</p>
+      {selectedMovieId === movie.id ? (
+        <div>
+          <input
+            type="number"
+            min="1"
+            max="10"
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+          />
+          <button onClick={() => handleRatingSubmit(movie.id)}>Submit</button>
+          <button onClick={() => setSelectedMovieId(null)}>Cancel</button>
+        </div>
+      ) : (
+        <button onClick={() => setSelectedMovieId(movie.id)}>Rate</button>
+      )}
+    </div>
+  ))}
+</div>
+      {/* <ul className="watched-movies-list">
         {watchedMovies.map((movie) => (
           <li key={`${movie.id}-${movie.userId}`} className="watched-movie-item">
             <span className="movie-title">{movie.title || "Untitled Movie"}</span>
@@ -87,7 +113,7 @@ const Watched = () => {
             )}
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };
