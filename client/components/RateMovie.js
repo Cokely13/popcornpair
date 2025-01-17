@@ -95,9 +95,10 @@ const RateMovie = () => {
 
   // Filter out movies that the user has already rated
   const unratedMovies = movies.filter(
-    (movie) => !ratings.some((rating) => rating.movieId === movie.id)
+    (movie) => !ratings.some(
+      (rating) => rating.movieId === movie.id && rating.userId === id // Ensure the filter is specific to the logged-in user
+    )
   );
-
   if (!unratedMovies.length) {
     return <div>No more movies to rate!</div>;
   }

@@ -6,6 +6,13 @@ const Rating = db.define('rating', {
     type: Sequelize.ENUM('YES', 'NO'),
     allowNull: false,
   },
+}, {
+  indexes: [
+    {
+      unique: true,
+      fields: ['userId', 'movieId'], // Ensures uniqueness for each user-movie pair
+    },
+  ],
 });
 
 module.exports = Rating;
