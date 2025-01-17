@@ -4,7 +4,7 @@ const db = require('./db')
 
 const User = require('./models/User')
 const Movie = require('./models/Movie')
-const Rating = require('./Rating');
+const Rating = require('./models/Rating');
 
 // Associations
 User.hasMany(Rating);

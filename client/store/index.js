@@ -5,10 +5,14 @@ import {composeWithDevTools} from 'redux-devtools-extension'
 import auth from './auth'
 import moviesReducer from './allMoviesStore'
 import singleMovieReducer from './singleMovieStore'
+import ratingsReducer from './allRatingsStore'
+import singleRatingReducer from './singleRatingStore'
 
 const reducer = combineReducers({ auth,
   allMovies: moviesReducer,
-  singleMovie: singleMovieReducer
+  singleMovie: singleMovieReducer,
+  allRatings: ratingsReducer,
+  singleRating: singleRatingReducer
  })
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
