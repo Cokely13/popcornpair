@@ -87,6 +87,7 @@ body {
 }
 
 .navbar-container {
+  margin-top: 50px;
   padding: 10px 20px;
   background-color: #f8f9fa;
   display: flex;
