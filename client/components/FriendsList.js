@@ -1,3 +1,38 @@
+// import React, { useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchUsers } from "../store/allUsersStore";
+// import { Link } from "react-router-dom";
+
+// const FriendsList = () => {
+//   const dispatch = useDispatch();
+//   const users = useSelector((state) => state.allUsers);
+//   const currentUserId = useSelector((state) => state.auth.id);
+
+//   useEffect(() => {
+//     dispatch(fetchUsers());
+//   }, [dispatch]);
+
+//   return (
+//     <div className="friends-list-container">
+//       <h2>Friends List</h2>
+//       <ul className="friends-list">
+//         {users
+//           .filter((user) => user.id !== currentUserId) // Exclude the current user
+//           .map((user) => (
+//             <li key={user.id} className="friend-item">
+//               <Link to={`/match/${user.id}`} className="friend-link">
+//                 {user.username}
+//               </Link>
+//             </li>
+//           ))}
+//       </ul>
+//     </div>
+//   );
+// };
+
+// export default FriendsList;
+
+
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../store/allUsersStore";
@@ -20,8 +55,12 @@ const FriendsList = () => {
           .filter((user) => user.id !== currentUserId) // Exclude the current user
           .map((user) => (
             <li key={user.id} className="friend-item">
+              {user.username}
               <Link to={`/match/${user.id}`} className="friend-link">
-                {user.username}
+                <button className="friend-button">Matches</button>
+              </Link>
+              <Link to={`/random/${user.id}`} className="friend-link">
+                <button className="random-button">Random Match</button>
               </Link>
             </li>
           ))}

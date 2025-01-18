@@ -101,9 +101,18 @@ body {
   color: #333;
 }
 
-.navbar {
+/* .navbar {
   display: flex;
   justify-content: center;
+  align-items: center;
+} */
+
+.navbar {
+  display: flex;
+  justify-content: center; /* Centers the content horizontally */
+  align-items: center;    /* Ensures vertical alignment */
+  background-color: #f8f9fa; /* Optional: Navbar background color */
+  padding: 10px 0;        /* Optional: Add padding for spacing */
 }
 
 .navbar-links {
