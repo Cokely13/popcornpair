@@ -29,7 +29,7 @@ async function seed() {
         apiKey: WATCHMODE_API_KEY,
         types: 'movie', // Filter for movies
         sort_by: 'popularity_desc', // Sort by popularity descending
-        limit: 50, // Limit to 50 movies
+        limit: 10, // Limit to 50 movies
       },
     });
 

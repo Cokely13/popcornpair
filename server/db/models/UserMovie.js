@@ -1,3 +1,4 @@
+
 const Sequelize = require('sequelize');
 const db = require('../db');
 
@@ -25,6 +26,11 @@ const UserMovie = db.define('user_movie', {
   watchedWith: {
     type: Sequelize.INTEGER, // Stores the userId of the person they watched the movie with
     allowNull: true,
+  },
+  dateWatched: {
+    type: Sequelize.DATEONLY, // Stores only the date (YYYY-MM-DD)
+    allowNull: true,
+    defaultValue: Sequelize.NOW, // Defaults to the current date
   },
 }, {
   indexes: [
