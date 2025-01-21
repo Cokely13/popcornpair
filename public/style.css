@@ -101,11 +101,7 @@ body {
   color: #333;
 }
 
-/* .navbar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
+
 
 .navbar {
   display: flex;
@@ -168,7 +164,7 @@ body {
   background-color: #0056b3;
 }
 
-.watched-movies-container {
+/* .watched-movies-container {
   padding: 20px;
   text-align: center;
 }
@@ -208,3 +204,283 @@ body {
   cursor: pointer;
 }
 
+/* Watched Movies Container */
+.watched-movies-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.watched-movies-container h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Watched Movies List */
+.watched-movies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Individual Movie Item */
+.watched-movie-item {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.watched-movie-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.watched-movie-item h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0073e6;
+  cursor: pointer;
+}
+
+.watched-movie-item h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.watched-movie-item h3 a:hover {
+  text-decoration: underline;
+}
+
+.watched-movie-item p {
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Rating Input */
+.rating-form input[type="number"] {
+  width: 50px;
+  padding: 5px;
+  font-size: 1rem;
+  margin-right: 10px;
+}
+
+.rating-form button {
+  padding: 5px 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #0073e6;
+  color: white;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+}
+
+.rating-form button:hover {
+  background-color: #005bb5;
+}
+
+.rating-form button:last-child {
+  background-color: #ccc;
+  color: #333;
+}
+
+.rating-form button:last-child:hover {
+  background-color: #aaa;
+} */
+
+/* Watched Movies Container */
+.watched-movies-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.watched-movies-container h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Watched Movies List */
+.watched-movies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Individual Movie Item */
+.watched-movie-item {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.watched-movie-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.watched-movie-item h3 {
+  margin: 0;
+  margin-bottom: 10px; /* Add spacing below the movie title */
+  font-size: 1.5rem;
+  color: #0073e6;
+  cursor: pointer;
+}
+
+.watched-movie-item h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.watched-movie-item h3 a:hover {
+  text-decoration: underline;
+}
+
+.watched-movie-item p {
+  margin: 5px 0 15px 0; /* Add space between the paragraphs */
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Add spacing specifically between "Watched With" and "Your Rating" */
+.watched-movie-item p + p {
+  margin-top: 10px; /* Additional space between subsequent <p> tags */
+}
+
+/* Rating Input */
+.rating-form input[type="number"] {
+  width: 50px;
+  padding: 5px;
+  font-size: 1rem;
+  margin-right: 15px; /* Space between input and buttons */
+}
+
+.rating-form button {
+  padding: 5px 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #0073e6;
+  color: white;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+}
+
+.rating-form button:hover {
+  background-color: #005bb5;
+}
+
+.rating-form button:last-child {
+  background-color: #ccc;
+  color: #333;
+}
+
+.rating-form button:last-child:hover {
+  background-color: #aaa;
+}
+
+/* Friends List Container */
+.friends-list-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.friends-list-container h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Friends List */
+.friends-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.friend-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Friend Name */
+.friend-item > span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Buttons */
+.friend-button,
+.random-button {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px; /* Space between buttons */
+  background-color: #0073e6;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.friend-button:hover,
+.random-button:hover {
+  background-color: #005bb5;
+}
+
+.random-button {
+  background-color: #f76c6c;
+}
+
+.random-button:hover {
+  background-color: #d85c5c;
+}
+
+/* Ensure Spacing Between Items */
+.friend-link {
+  text-decoration: none;
+}
+
+.friend-link button {
+  margin-left: 10px;
+}
