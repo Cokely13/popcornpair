@@ -8,7 +8,6 @@
 //   const movies = useSelector((state) => state.allMovies);
 //   const ratings = useSelector((state) => state.allRatings);
 //   const [currentIndex, setCurrentIndex] = useState(0);
-//   const [shuffledMovies, setShuffledMovies] = useState([]); // To store the shuffled movies
 //   const { id } = useSelector((state) => state.auth);
 
 //   useEffect(() => {
@@ -16,43 +15,51 @@
 //     dispatch(fetchRatings(id)); // Fetch ratings for the logged-in user
 //   }, [dispatch, id]);
 
+//   // Filter out movies that the user has already rated
+//   const unratedMovies = movies.filter(
+//     (movie) =>
+//       !ratings.some(
+//         (rating) =>
+//           rating.movieId === movie.id && rating.userId === id // Ensure the filter is specific to the logged-in user
+//       )
+//   );
+
+//   // Ensure currentIndex is within bounds
 //   useEffect(() => {
-//     // Filter and shuffle movies once ratings and movies are available
-//     if (movies.length && ratings.length >= 0) {
-//       const unrated = movies.filter(
-//         (movie) => !ratings.some(
-//           (rating) => rating.movieId === movie.id && rating.userId === id // Ensure the filter is specific to the logged-in user
-//         )
-//       );
-
-//       // Shuffle the unrated movies
-//       const shuffled = unrated.sort(() => Math.random() - 0.5);
-//       setShuffledMovies(shuffled);
+//     if (currentIndex >= unratedMovies.length) {
+//       setCurrentIndex(0); // Reset to 0 if currentIndex goes out of bounds
 //     }
-//   }, [movies, ratings, id]);
+//   }, [unratedMovies, currentIndex]);
 
-//   if (!shuffledMovies.length) {
+//   // If there are no movies to rate, display a message
+//   if (!unratedMovies.length) {
 //     return <div>No more movies to rate!</div>;
 //   }
 
-//   // Get the current movie to display
-//   const movie = shuffledMovies[currentIndex];
+//   const movie = unratedMovies[currentIndex];
 
 //   const handleRating = async (rating) => {
+//     if (!movie) {
+//       console.error("No movie available for rating.");
+//       return;
+//     }
+
 //     try {
 //       // Dispatch the createRating action
-//       await dispatch(createRating({
-//         userId: id, // Replace with dynamic user ID if applicable
-//         movieId: movie.id,
-//         rating, // 'YES' or 'NO'
-//       }));
+//       await dispatch(
+//         createRating({
+//           userId: id, // Replace with dynamic user ID if applicable
+//           movieId: movie.id,
+//           rating, // 'YES' or 'NO'
+//         })
+//       );
 
 //       // Move to the next movie
-//       if (currentIndex < shuffledMovies.length - 1) {
+//       if (currentIndex < unratedMovies.length - 1) {
 //         setCurrentIndex(currentIndex + 1);
 //       } else {
 //         alert("No more movies to rate!");
-//         setCurrentIndex(0); // Reset to the first movie if desired
+//         setCurrentIndex(0); // Reset to the first movie
 //       }
 //     } catch (err) {
 //       console.error("Error submitting rating:", err);
@@ -61,31 +68,46 @@
 
 //   return (
 //     <div className="rate-movie-container">
-//       {/* Movie Poster */}
-//       {movie.posterUrl ? (
-//         <img
-//           src={movie.posterUrl}
-//           alt={movie.title}
-//           className="movie-poster"
-//         />
+//       {/* Ensure movie is defined before rendering */}
+//       {movie ? (
+//         <>
+//           {/* Movie Poster */}
+//           {movie.posterUrl ? (
+//             <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
+//           ) : (
+//             <div className="no-image">No Image Available</div>
+//           )}
+
+//           {/* Movie Information */}
+//           <div className="movie-info">
+//             <h2>{movie.title || "Untitled Movie"}</h2>
+//             <p>
+//               <strong>Description:</strong> {movie.description || "No description available."}
+//             </p>
+//             <p>
+//               <strong>Release Date:</strong> {movie.releaseDate || "Unknown"}
+//             </p>
+//             <p>
+//               <strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}
+//             </p>
+//             <p>
+//               <strong>Rating:</strong> {movie.userRating || "Not Rated"}
+//             </p>
+//           </div>
+
+//           {/* YES and NO Buttons */}
+//           <div className="button-container">
+//             <button className="yes-button" onClick={() => handleRating("YES")}>
+//               YES
+//             </button>
+//             <button className="no-button" onClick={() => handleRating("NO")}>
+//               NO
+//             </button>
+//           </div>
+//         </>
 //       ) : (
-//         <div className="no-image">No Image Available</div>
+//         <div>Loading movie details...</div>
 //       )}
-
-//       {/* Movie Information */}
-//       <div className="movie-info">
-//         <h2>{movie.title || "Untitled Movie"}</h2>
-//         <p><strong>Description:</strong> {movie.description || "No description available."}</p>
-//         <p><strong>Release Date:</strong> {movie.releaseDate || "Unknown"}</p>
-//         <p><strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}</p>
-//         <p><strong>Rating:</strong> {movie.userRating || "Not Rated"}</p>
-//       </div>
-
-//       {/* YES and NO Buttons */}
-//       <div className="button-container">
-//         <button className="yes-button" onClick={() => handleRating("YES")}>YES</button>
-//         <button className="no-button" onClick={() => handleRating("NO")}>NO</button>
-//       </div>
 //     </div>
 //   );
 // };
@@ -142,21 +164,25 @@ const RateMovie = () => {
       // Dispatch the createRating action
       await dispatch(
         createRating({
-          userId: id, // Replace with dynamic user ID if applicable
+          userId: id,
           movieId: movie.id,
           rating, // 'YES' or 'NO'
         })
       );
 
       // Move to the next movie
-      if (currentIndex < unratedMovies.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        alert("No more movies to rate!");
-        setCurrentIndex(0); // Reset to the first movie
-      }
+      handleNextMovie();
     } catch (err) {
       console.error("Error submitting rating:", err);
+    }
+  };
+
+  const handleNextMovie = () => {
+    if (currentIndex < unratedMovies.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      alert("No more movies to rate!");
+      setCurrentIndex(0); // Reset to the first movie
     }
   };
 
@@ -189,10 +215,13 @@ const RateMovie = () => {
             </p>
           </div>
 
-          {/* YES and NO Buttons */}
+          {/* Buttons */}
           <div className="button-container">
             <button className="yes-button" onClick={() => handleRating("YES")}>
               YES
+            </button>
+            <button className="maybe-button" onClick={handleNextMovie}>
+              Maybe Later
             </button>
             <button className="no-button" onClick={() => handleRating("NO")}>
               NO
