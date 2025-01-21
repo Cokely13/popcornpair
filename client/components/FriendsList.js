@@ -20,7 +20,9 @@ const FriendsList = () => {
           .filter((user) => user.id !== currentUserId) // Exclude the current user
           .map((user) => (
             <li key={user.id} className="friend-item">
+              <Link to={`/users/${user.id}`} className="friend-link">
               {user.username}
+              </Link>
               <Link to={`/match/${user.id}`} className="friend-link">
                 <button className="friend-button">Matches</button>
               </Link>

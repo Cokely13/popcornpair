@@ -12,6 +12,8 @@ import Match from './components/Match';
 import Watched from './components/Watched';
 import MovieDetail from './components/MovieDetail';
 import Random from './components/Random';
+import Profile from './components/Profile';
+import UserDetail from './components/userDetail';
 
 /**
  * COMPONENT
@@ -29,12 +31,14 @@ class Routes extends Component {
         {isLoggedIn ? (
           <Switch>
             <Route path="/home" component={Home} />
+            <Route exact path="/profile" component={Profile} />
             <Route exact path="/rate" component={RateMovie} />
             <Route exact path="/match/:userId" component={Match} />
             <Route exact path="/random/:userId" component={Random} />
             <Route exact path="/list" component={FriendsList} />
             <Route exact path="/watched" component={Watched} />
             <Route path="/movies/:movieId" component={MovieDetail} />
+            <Route path="/users/:userId" component={UserDetail} />
             <Redirect to="/home" />
           </Switch>
         ) : (
