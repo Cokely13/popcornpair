@@ -15,6 +15,7 @@ import Random from './components/Random';
 import Profile from './components/Profile';
 import UserDetail from './components/userDetail';
 import Rejected from './components/Rejected';
+import Recommendations from './components/Recommendations';
 
 /**
  * COMPONENT
@@ -41,6 +42,7 @@ class Routes extends Component {
             <Route exact path="/rejected" component={Rejected} />
             <Route path="/movies/:movieId" component={MovieDetail} />
             <Route path="/users/:userId" component={UserDetail} />
+            <Route path="/recommendations" component={Recommendations} />
             <Redirect to="/home" />
           </Switch>
         ) : (

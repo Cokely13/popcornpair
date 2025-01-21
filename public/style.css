@@ -594,3 +594,44 @@ body {
   background-color: #c82333;
 }
 
+.recommendations-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.recommendations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.recommendation-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.recommendation-poster {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.recommendation-info {
+  margin-top: 10px;
+}
+
+.no-poster {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #eee;
+  border-radius: 8px;
+}
+
+
