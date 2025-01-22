@@ -2,10 +2,17 @@ body {
   font-family: sans-serif;
   background-color: #f5f5f5;
   margin: 0;
+  padding: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start; /* Ensures vertical alignment starts below the Navbar */
+  min-height: 100vh; /* Ensures the body takes up full viewport height */
+}
+
+
+.main-content {
+  margin-top: 80px; /* Space below the fixed Navbar */
+  padding: 20px;
 }
 
 .rate-movie-container {
@@ -16,7 +23,7 @@ body {
   max-width: 500px;
   width: 90%;
   text-align: center;
-  margin-bottom: 30px; /* Added bottom margin */
+  margin: 80px auto 30px;
   border: 5px solid #4CAF50; /* Added colorful border */
 }
 
@@ -86,46 +93,49 @@ body {
   background-color: #e53935;
 }
 
-.navbar-container {
-  margin-top: 50px;
-  padding: 10px 20px;
-  background-color: #f8f9fa;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-
-
+ /* Navbar Styling */
 .navbar {
+  position: fixed; /* Keeps the Navbar fixed at the top */
+  top: 0;
+  left: 0;
+  width: 100%; /* Full-width Navbar */
+  height: 60px; /* Navbar height */
+  background-color: #343a40; /* Dark background */
+  color: white;
   display: flex;
-  justify-content: center; /* Centers the content horizontally */
-  align-items: center;    /* Ensures vertical alignment */
-  background-color: #f8f9fa; /* Optional: Navbar background color */
-  padding: 10px 0;        /* Optional: Add padding for spacing */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  z-index: 1000; /* Ensure it stays above other elements */
+  margin-bottom: 200px;
 }
 
+
+
+/* Navbar Links */
 .navbar-links {
   display: flex;
-  gap: 20px; /* Spreads out the links evenly */
+  gap: 20px; /* Space between the links */
 }
 
 .navbar-link {
   text-decoration: none;
-  color: #007bff;
-  font-size: 16px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: color 0.3s;
 }
 
 .navbar-link:hover {
-  color: #0056b3;
-  text-decoration: underline;
+  color: #1e90ff; /* Highlight color on hover */
 }
+
+/* Navbar Title - If Needed */
+.navbar-title {
+  display: none; /* Hide the title if not required */
+}
+
+
 
 .modal {
   position: fixed;
@@ -164,51 +174,14 @@ body {
   background-color: #0056b3;
 }
 
-/* .watched-movies-container {
-  padding: 20px;
-  text-align: center;
-}
 
-.watched-movies-list {
-  list-style: none;
-  padding: 0;
-  margin: 20px auto;
-  max-width: 600px;
-}
-
-.watched-movie-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-}
-
-.movie-title {
-  font-weight: bold;
-}
-
-.rating-form input {
-  width: 50px;
-  margin-right: 10px;
-}
-
-.rating-form button {
-  margin: 0 5px;
-  padding: 5px 10px;
-}
-
-.rate-button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
 
 /* Watched Movies Container */
 .watched-movies-container {
   padding: 20px;
   max-width: 800px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
+  margin: 80px auto 30px;
   font-family: Arial, sans-serif;
   text-align: center;
 }
@@ -404,7 +377,7 @@ body {
 .friends-list-container {
   padding: 20px;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 80px auto 30px;
   font-family: Arial, sans-serif;
   text-align: center;
 }
@@ -487,7 +460,8 @@ body {
 
 .profile-container {
   max-width: 600px;
-  margin: 50px auto;
+  /* margin: 50px auto; */
+  margin: 80px auto 30px;
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 10px;
@@ -597,6 +571,7 @@ body {
 .recommendations-container {
   text-align: center;
   padding: 20px;
+  margin: 80px auto 30px;
 }
 
 .recommendations-list {
@@ -634,8 +609,14 @@ body {
   border-radius: 8px;
 }
 
+/* .search-container {
+  padding: 20px;
+  margin-top: 80px;
+} */
+
 .search-container {
   padding: 20px;
+  margin-top: 80px; /* Avoids extra spacing */
 }
 
 .movies-list {
@@ -645,7 +626,7 @@ body {
   margin-top: 20px;
 }
 
-.movie-item {
+/* .movie-item {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -655,6 +636,18 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+} */
+
+.movie-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
