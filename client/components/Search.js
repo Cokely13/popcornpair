@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
-import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 
 const Search = () => {
   const dispatch = useDispatch();
@@ -57,9 +57,10 @@ const Search = () => {
 
   return (
     <div className="search-container">
-      <h1>Search for Movies</h1>
+    <h1>Search for Movies</h1>
 
-      {/* Search Input */}
+    {/* Search Controls */}
+    <div className="search-controls">
       <input
         type="text"
         placeholder="Search for a movie..."
@@ -67,8 +68,6 @@ const Search = () => {
         onChange={(e) => setSearchQuery(e.target.value)}
         className="search-input"
       />
-
-      {/* Sort Dropdown */}
       <select
         value={sortOption}
         onChange={(e) => setSortOption(e.target.value)}
@@ -78,8 +77,6 @@ const Search = () => {
         <option value="releaseDate">Sort by Release Date</option>
         <option value="rating">Sort by Rating</option>
       </select>
-
-      {/* Genre Filter Dropdown */}
       <select
         value={genreFilter}
         onChange={(e) => setGenreFilter(e.target.value)}
@@ -95,31 +92,39 @@ const Search = () => {
           )
         )}
       </select>
+    </div>
 
-      {/* Movies List */}
-<div className="movies-list">
-  {sortedMovies.map((movie) => (
-    <div key={movie.id} className="movie-item">
-      {movie.posterUrl && (
-        <img
-          src={movie.posterUrl}
-          alt={`${movie.title} Poster`}
-          className="movie-poster"
-        />
-      )}
-      <h2>{movie.title}</h2>
-      <p><strong>Release Date:</strong> {movie.releaseDate || "N/A"}</p>
-      <p><strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}</p>
-      <button
-        onClick={() => handleMarkAsWatched(movie.id)}
-        className="mark-watched-button"
-      >
-        Mark as Watched
-      </button>
+    {/* Movies List */}
+    <div
+      className={`movies-list ${
+        sortedMovies.length === 1 ? "single-result" : ""
+      }`}
+    >
+      {sortedMovies.map((movie) => (
+        <div key={movie.id} className="movie-item">
+          {movie.posterUrl ? (
+            <img
+              src={movie.posterUrl}
+              alt={movie.title}
+              className="movie-poster"
+            />
+          ) : (
+            <div className="no-poster">No Image Available</div>
+          )}
+          <Link to={`/movies/${movie.id}`}><h3>{movie.title || "Untitled Movie"}</h3></Link>
+          <p>
+            <strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}
+          </p>
+          <button
+            className="mark-watched-button"
+            onClick={() => handleMarkAsWatched(movie.id)}
+          >
+            Mark as Watched
+          </button>
+        </div>
+      ))}
     </div>
-  ))}
-</div>
-    </div>
+  </div>
   );
 };
 

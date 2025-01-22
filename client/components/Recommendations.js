@@ -43,7 +43,6 @@ const Recommendations = () => {
       <div className="recommendations-list">
         {recommendations.map((movie) => (
           <div key={movie.id} className="recommendation-item">
-            <Link to={`/movies/${movie.id}`}>
               {movie.posterUrl ? (
                 <img
                   src={movie.posterUrl}
@@ -53,9 +52,8 @@ const Recommendations = () => {
               ) : (
                 <div className="no-poster">No Image Available</div>
               )}
-            </Link>
             <div className="recommendation-info">
-              <h3>{movie.title || "Untitled Movie"}</h3>
+            <Link to={`/movies/${movie.id}`}><h3>{movie.title || "Untitled Movie"}</h3></Link>
               <p><strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}</p>
               <p><strong>Predicted Rating:</strong> {movie.predictedRating?.toFixed(1) || "N/A"}</p>
             </div>
