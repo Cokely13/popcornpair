@@ -11,6 +11,8 @@ import usersReducer from './allUsersStore'
 import singleUserReducer from './singleUserStore'
 import singleUserMovieReducer from './singleUserMovieStore'
 import userMoviesReducer from './allUserMoviesStore'
+import userRecommendationsReducer from './allUserRecomendationsStore'
+import singleUserRecommendationReducer from './singleUserRecomendationStore'
 
 const reducer = combineReducers({ auth,
   allMovies: moviesReducer,
@@ -20,7 +22,9 @@ const reducer = combineReducers({ auth,
   allUsers: usersReducer,
   singleUser: singleUserReducer,
   singleUserMovieReducer,
-  allUserMovies: userMoviesReducer
+  allUserMovies: userMoviesReducer,
+  allUserRecommendations: userRecommendationsReducer,
+  singleUserRecommendation: singleUserRecommendationReducer
  })
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
