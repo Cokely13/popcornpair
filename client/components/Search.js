@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchMovies } from "../store/allMoviesStore";
-import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
+import {fetchUserMovies, createUserMovie, } from "../store/allUserMoviesStore";
+import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 
 const Search = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,8 @@ const Search = () => {
 
   // Get movies the user hasn't watched
   const unwatchedMovies = movies.filter(
-    (movie) => !userMovies.some((userMovie) => userMovie.movieId === movie.id && userMovie.watched)
+    (movie) =>
+      !userMovies.some((userMovie) => userMovie.movieId === movie.id && userMovie.watched)
   );
 
   // Filter movies by search query and genre
@@ -43,88 +45,142 @@ const Search = () => {
     return 0;
   });
 
+  // Check if a movie is already in the user's watchlist
+  const isInWatchlist = (movieId) =>
+    userMovies.some(
+      (userMovie) => userMovie.movieId === movieId && userMovie.watchlist
+    );
+
   // Mark a movie as watched
   const handleMarkAsWatched = async (movieId) => {
     try {
-      await dispatch(
-        createUserMovie({ userId: currentUserId, movieId, watched: true })
+      const userMovie = userMovies.find(
+        (um) => um.movieId === movieId && um.userId === currentUserId
       );
+
+      // console.log("user", userMovie)
+
+      if (userMovie && userMovie.watchlist) {
+        // If the movie is on the watchlist, update it to watched and remove from watchlist
+        await dispatch(
+          updateSingleUserMovie({
+            movieId: userMovie.movieId,
+            watched: true,
+            watchlist: false,
+          })
+        );
+      } else {
+        // Otherwise, create a new entry with watched: true
+        await dispatch(
+          createUserMovie({ userId: currentUserId, movieId, watched: true })
+        );
+      }
+
       alert("Movie marked as watched!");
     } catch (err) {
       console.error("Error marking movie as watched:", err);
     }
   };
 
+  // Add a movie to the watchlist
+  const handleAddToWatchlist = async (movieId) => {
+    try {
+      await dispatch(
+        createUserMovie({ userId: currentUserId, movieId, watchlist: true })
+      );
+      alert("Movie added to watchlist!");
+    } catch (err) {
+      console.error("Error adding movie to watchlist:", err);
+    }
+  };
+
   return (
     <div className="search-container">
-    <h1>Search for Movies</h1>
+      <h1>Search for Movies</h1>
 
-    {/* Search Controls */}
-    <div className="search-controls">
-      <input
-        type="text"
-        placeholder="Search for a movie..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="search-input"
-      />
-      <select
-        value={sortOption}
-        onChange={(e) => setSortOption(e.target.value)}
-        className="sort-dropdown"
-      >
-        <option value="title">Sort by Title</option>
-        <option value="releaseDate">Sort by Release Date</option>
-        <option value="rating">Sort by Rating</option>
-      </select>
-      <select
-        value={genreFilter}
-        onChange={(e) => setGenreFilter(e.target.value)}
-        className="genre-dropdown"
-      >
-        <option value="All">All Genres</option>
-        {/* Dynamically generate genre options */}
-        {[...new Set(movies.flatMap((movie) => movie.genres || []))].map(
-          (genre) => (
-            <option key={genre} value={genre}>
-              {genre}
-            </option>
-          )
-        )}
-      </select>
-    </div>
-
-    {/* Movies List */}
-    <div
-      className={`movies-list ${
-        sortedMovies.length === 1 ? "single-result" : ""
-      }`}
-    >
-      {sortedMovies.map((movie) => (
-        <div key={movie.id} className="movie-item">
-          {movie.posterUrl ? (
-            <img
-              src={movie.posterUrl}
-              alt={movie.title}
-              className="movie-poster"
-            />
-          ) : (
-            <div className="no-poster">No Image Available</div>
+      {/* Search Controls */}
+      <div className="search-controls">
+        <input
+          type="text"
+          placeholder="Search for a movie..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="sort-dropdown"
+        >
+          <option value="title">Sort by Title</option>
+          <option value="releaseDate">Sort by Release Date</option>
+          <option value="rating">Sort by Rating</option>
+        </select>
+        <select
+          value={genreFilter}
+          onChange={(e) => setGenreFilter(e.target.value)}
+          className="genre-dropdown"
+        >
+          <option value="All">All Genres</option>
+          {[...new Set(movies.flatMap((movie) => movie.genres || []))].map(
+            (genre) => (
+              <option key={genre} value={genre}>
+                {genre}
+              </option>
+            )
           )}
-          <Link to={`/movies/${movie.id}`}><h3>{movie.title || "Untitled Movie"}</h3></Link>
-          <p>
-            <strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}
-          </p>
-          <button
-            className="mark-watched-button"
-            onClick={() => handleMarkAsWatched(movie.id)}
+        </select>
+      </div>
+
+      {/* Movies List */}
+      <div
+        className={`movies-list ${
+          sortedMovies.length === 1 ? "single-result" : ""
+        }`}
+      >
+        {sortedMovies.map((movie) => (
+          <div
+            key={movie.id}
+            className={`movie-item ${isInWatchlist(movie.id) ? "watchlist-movie" : ""}`}
           >
-            Mark as Watched
-          </button>
-        </div>
-      ))}
+            {movie.posterUrl ? (
+              <img
+                src={movie.posterUrl}
+                alt={movie.title}
+                className="movie-poster"
+              />
+            ) : (
+              <div className="no-poster">No Image Available</div>
+            )}
+            <Link to={`/movies/${movie.id}`}>
+              <h3>{movie.title || "Untitled Movie"}</h3>
+            </Link>
+            <p>
+              <strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}
+            </p>
+            <div className="movie-actions">
+              <button
+                className="mark-watched-button"
+                onClick={() => handleMarkAsWatched(movie.id)}
+              >
+                Mark as Watched
+              </button>
+              {!isInWatchlist(movie.id) && (
+                <button
+                  className="add-watchlist-button"
+                  onClick={() => handleAddToWatchlist(movie.id)}
+                >
+                  Add to Watchlist
+                </button>
+              )}
+              {isInWatchlist(movie.id) && (
+                <div className="watchlist-tag">On Watchlist</div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
+import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUsers } from "../store/allUsersStore";
 
