@@ -9,6 +9,7 @@ import { fetchUsers } from "../store/allUsersStore";
 const Watched = () => {
   const dispatch = useDispatch();
   const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [rating, setRating] = useState("");
   const [sortCriteria, setSortCriteria] = useState("None");
 
@@ -48,17 +49,33 @@ const Watched = () => {
     }
 
     try {
-      // Update the rating for the selected movie
       await dispatch(updateSingleUserMovie({ userId: currentUserId, movieId, rating }));
-      setSelectedMovieId(null); // Close the rating input
-      setRating(""); // Reset the input field
-      dispatch(fetchUserMovies()); // Refresh the list
+      setSelectedMovieId(null);
+      setRating("");
+      dispatch(fetchUserMovies());
     } catch (err) {
       console.error("Error submitting rating:", err);
     }
   };
 
-  // Handle the case where no movies have been watched
+  const handleWatchedWithSubmit = async (movieId) => {
+    if (!selectedUserId) {
+      alert("Please select a user.");
+      return;
+    }
+
+    try {
+      await dispatch(
+        updateSingleUserMovie({ userId: currentUserId, movieId, watchedWith: selectedUserId })
+      );
+      setSelectedMovieId(null);
+      setSelectedUserId(null);
+      dispatch(fetchUserMovies());
+    } catch (err) {
+      console.error("Error updating Watched With:", err);
+    }
+  };
+
   if (!userMovies.length) {
     return (
       <div className="watched-movies-container">
@@ -92,9 +109,9 @@ const Watched = () => {
           <tr>
             <th>Movie</th>
             <th>Watched With</th>
+            <th>Update Watched With</th>
             <th>Rating</th>
             <th>Date Watched</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -115,26 +132,32 @@ const Watched = () => {
               <td>
                 {users.find((user) => user.id === movie.watchedWith)?.username || "N/A"}
               </td>
-              <td>{movie.rating || "Not Rated"}</td>
-              <td>{movie.dateWatched || "No Date"}</td>
               <td>
                 {selectedMovieId === movie.id ? (
                   <>
-                    <input
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={rating}
-                      onChange={(e) => setRating(e.target.value)}
-                      className="rating-input"
-                    />
-                    <button onClick={() => handleRatingSubmit(movie.id)}>Submit</button>
-                    <button onClick={() => setSelectedMovieId(null)}>Cancel</button>
+                    <select
+                      value={selectedUserId || ""}
+                      onChange={(e) => setSelectedUserId(Number(e.target.value))}
+                    >
+                      <option value="">Select User</option>
+                      {users
+                        .filter((user) => user.id !== currentUserId)
+                        .map((user) => (
+                          <option key={user.id} value={user.id}>
+                            {user.username}
+                          </option>
+                        ))}
+                    </select>
+                    <button onClick={() => handleWatchedWithSubmit(movie.id)}>
+                      Submit
+                    </button>
                   </>
                 ) : (
-                  <button onClick={() => setSelectedMovieId(movie.id)}>Rate</button>
+                  <button onClick={() => setSelectedMovieId(movie.id)}>Update</button>
                 )}
               </td>
+              <td>{movie.rating || "Not Rated"}</td>
+              <td>{movie.dateWatched || "No Date"}</td>
             </tr>
           ))}
         </tbody>
