@@ -97,21 +97,28 @@ const Search = () => {
       </select>
 
       {/* Movies List */}
-      <div className="movies-list">
-        {sortedMovies.map((movie) => (
-          <div key={movie.id} className="movie-item">
-            <h2>{movie.title}</h2>
-            <p><strong>Release Date:</strong> {movie.releaseDate || "N/A"}</p>
-            <p><strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}</p>
-            <button
-              onClick={() => handleMarkAsWatched(movie.id)}
-              className="mark-watched-button"
-            >
-              Mark as Watched
-            </button>
-          </div>
-        ))}
-      </div>
+<div className="movies-list">
+  {sortedMovies.map((movie) => (
+    <div key={movie.id} className="movie-item">
+      {movie.posterUrl && (
+        <img
+          src={movie.posterUrl}
+          alt={`${movie.title} Poster`}
+          className="movie-poster"
+        />
+      )}
+      <h2>{movie.title}</h2>
+      <p><strong>Release Date:</strong> {movie.releaseDate || "N/A"}</p>
+      <p><strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}</p>
+      <button
+        onClick={() => handleMarkAsWatched(movie.id)}
+        className="mark-watched-button"
+      >
+        Mark as Watched
+      </button>
+    </div>
+  ))}
+</div>
     </div>
   );
 };

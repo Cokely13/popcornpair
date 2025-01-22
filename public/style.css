@@ -636,33 +636,33 @@ body {
 
 .search-container {
   padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.search-input,
-.sort-dropdown,
-.genre-dropdown {
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: calc(100% - 40px);
-  max-width: 300px;
 }
 
 .movies-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
+  margin-top: 20px;
 }
 
 .movie-item {
+  background-color: #f9f9f9;
   border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.movie-poster {
+  width: 80%;
+  height: auto;
+  margin-bottom: 10px;
   border-radius: 5px;
-  padding: 15px;
-  width: calc(33.33% - 30px);
-  max-width: 300px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .mark-watched-button {
@@ -670,8 +670,10 @@ body {
   color: white;
   border: none;
   border-radius: 5px;
-  padding: 10px 15px;
+  padding: 8px 12px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
 .mark-watched-button:hover {
