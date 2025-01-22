@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMovies } from "../store/allMoviesStore";
-import { fetchUserMovies } from "../store/allUserMoviesStore";
+import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 
 const Search = () => {
@@ -47,7 +47,7 @@ const Search = () => {
   const handleMarkAsWatched = async (movieId) => {
     try {
       await dispatch(
-        updateSingleUserMovie({ userId: currentUserId, movieId, watched: true })
+        createUserMovie({ userId: currentUserId, movieId, watched: true })
       );
       alert("Movie marked as watched!");
     } catch (err) {

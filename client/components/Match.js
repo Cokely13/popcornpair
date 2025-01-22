@@ -26,24 +26,6 @@ const Match = () => {
     dispatch(fetchSingleUser(userId)); // Ensure user data is fetched
   }, [dispatch]);
 
-  // Find common movies rated "YES" by both users
-  // const commonMovies = ratings
-  //   .filter((rating) => rating.rating === "YES")
-  //   .reduce(
-  //     (acc, rating) => {
-  //       if (rating.userId === currentUserId) {
-  //         acc.currentUserMovies.push(rating.movieId);
-  //       } else if (rating.userId === parseInt(userId)) {
-  //         acc.friendMovies.push(rating.movieId);
-  //       }
-  //       return acc;
-  //     },
-  //     { currentUserMovies: [], friendMovies: [] }
-  //   );
-
-  // const sharedMovies = commonMovies.currentUserMovies.filter((movieId) =>
-  //   commonMovies.friendMovies.includes(movieId)
-  // );
 
   const sharedMovies = ratings
   .filter((rating) => rating.userId === currentUserId && rating.rating === "YES") // Movies rated "YES" by current user
