@@ -14,6 +14,7 @@ const Navbar = ({handleClick, isLoggedIn}) => (
           <Link to="/profile" className="navbar-link">Profile</Link>
           <Link to="/rate" className="navbar-link">Rate</Link>
           <Link to="/watched" className="navbar-link">Watched</Link>
+          <Link to="/watchlist" className="navbar-link">Watchlist</Link>
           <Link to="/list" className="navbar-link">Friends</Link>
           <Link to="/rejected" className="navbar-link">Second Chance</Link>
           <Link to="/recommendations" className="navbar-link">Recommendations</Link>

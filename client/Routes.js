@@ -17,6 +17,7 @@ import UserDetail from './components/userDetail';
 import Rejected from './components/Rejected';
 import Recommendations from './components/Recommendations';
 import Search from './components/Search';
+import Watchlist from './components/Watchlist';
 
 /**
  * COMPONENT
@@ -35,6 +36,7 @@ class Routes extends Component {
           <Switch>
             <Route path="/home" component={Home} />
             <Route exact path="/profile" component={Profile} />
+            <Route exact path="/watchlist" component={Watchlist} />
             <Route exact path="/rate" component={RateMovie} />
             <Route exact path="/match/:userId" component={Match} />
             <Route exact path="/random/:userId" component={Random} />

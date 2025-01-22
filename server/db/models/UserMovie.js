@@ -15,6 +15,10 @@ const UserMovie = db.define('user_movie', {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
+  watchlist: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
   rating: {
     type: Sequelize.INTEGER,
     allowNull: true,

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
-import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { fetchUsers } from "../store/allUsersStore";
 
 const Watched = () => {
@@ -25,18 +24,20 @@ const Watched = () => {
     dispatch(fetchMovies());
   }, [dispatch]);
 
+  // Merge userMovies with movie details
   const watchedMovies = userMovies.map((userMovie) => ({
     ...userMovie,
     ...movies.find((movie) => movie.id === userMovie.movieId),
   }));
 
+  // Apply sorting based on the selected criteria
   const sortedMovies = [...watchedMovies].sort((a, b) => {
     if (sortCriteria === "Date Watched") {
-      return new Date(b.dateWatched) - new Date(a.dateWatched);
+      return new Date(b.dateWatched) - new Date(a.dateWatched); // Most recent first
     } else if (sortCriteria === "Rating") {
-      return (b.rating || 0) - (a.rating || 0);
+      return (b.rating || 0) - (a.rating || 0); // Highest rating first
     }
-    return 0;
+    return 0; // Default order
   });
 
   const handleRatingSubmit = async (movieId) => {
@@ -46,17 +47,24 @@ const Watched = () => {
     }
 
     try {
+      // Update the rating for the selected movie
       await dispatch(updateSingleUserMovie({ userId: currentUserId, movieId, rating }));
-      setSelectedMovieId(null);
-      setRating("");
-      dispatch(fetchUserMovies());
+      setSelectedMovieId(null); // Close the rating input
+      setRating(""); // Reset the input field
+      dispatch(fetchUserMovies()); // Refresh the list
     } catch (err) {
       console.error("Error submitting rating:", err);
     }
   };
 
-  if (!watchedMovies.length) {
-    return <div>No watched movies to display!</div>;
+  // Handle the case where no movies have been watched
+  if (!userMovies.length) {
+    return (
+      <div className="watched-movies-container">
+        <h2>Your Watched Movies</h2>
+        <p>No watched movies to display!</p>
+      </div>
+    );
   }
 
   return (
