@@ -16,6 +16,7 @@ import Profile from './components/Profile';
 import UserDetail from './components/userDetail';
 import Rejected from './components/Rejected';
 import Recommendations from './components/Recommendations';
+import Search from './components/Search';
 
 /**
  * COMPONENT
@@ -40,6 +41,7 @@ class Routes extends Component {
             <Route exact path="/list" component={FriendsList} />
             <Route exact path="/watched" component={Watched} />
             <Route exact path="/rejected" component={Rejected} />
+            <Route exact path="/search" component={Search} />
             <Route path="/movies/:movieId" component={MovieDetail} />
             <Route path="/users/:userId" component={UserDetail} />
             <Route path="/recommendations" component={Recommendations} />

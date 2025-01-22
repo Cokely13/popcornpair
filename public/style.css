@@ -634,4 +634,48 @@ body {
   border-radius: 8px;
 }
 
+.search-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.search-input,
+.sort-dropdown,
+.genre-dropdown {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: calc(100% - 40px);
+  max-width: 300px;
+}
+
+.movies-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.movie-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  width: calc(33.33% - 30px);
+  max-width: 300px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mark-watched-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.mark-watched-button:hover {
+  background-color: #45a049;
+}
+
 
