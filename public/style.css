@@ -272,72 +272,54 @@ body {
   background-color: #aaa;
 } */
 
-/* Watched Movies Container */
-.watched-movies-container {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
-  text-align: center;
+
+</tr>
+))}
+</tbody>
+</table>
+</div>
+);
+};
+
+export default Watched;
+Updated CSS
+Here’s the CSS for the table layout:
+
+css
+Copy
+Edit
+.watched-movies-table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
 }
 
-.watched-movies-container h2 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+.watched-movies-table th,
+.watched-movies-table td {
+border: 1px solid #ddd;
+padding: 10px;
+text-align: center; /* Centers content in each cell */
 }
 
-/* Watched Movies List */
-.watched-movies-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.watched-movies-table th {
+background-color: #f4f4f4;
+font-weight: bold;
 }
 
-/* Individual Movie Item */
-.watched-movie-item {
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  transition: transform 0.2s, box-shadow 0.2s;
+.watched-movies-table td img.movie-poster {
+width: 50px;
+height: auto;
+margin-bottom: 5px;
 }
 
-.watched-movie-item:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.sort-dropdown {
+margin: 20px 0;
+text-align: center;
 }
 
-.watched-movie-item h3 {
-  margin: 0;
-  margin-bottom: 10px; /* Add spacing below the movie title */
-  font-size: 1.5rem;
-  color: #0073e6;
-  cursor: pointer;
-}
-
-.watched-movie-item h3 a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.watched-movie-item h3 a:hover {
-  text-decoration: underline;
-}
-
-.watched-movie-item p {
-  margin: 5px 0 15px 0; /* Add space between the paragraphs */
-  font-size: 1rem;
-  color: #555;
-}
-
-/* Add spacing specifically between "Watched With" and "Your Rating" */
-.watched-movie-item p + p {
-  margin-top: 10px; /* Additional space between subsequent <p> tags */
+.rating-input {
+width: 60px;
+margin-right: 10px;
 }
 
 /* Rating Input */

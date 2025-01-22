@@ -71,7 +71,9 @@ const RateMovie = () => {
   };
 
   return (
+
     <div className="rate-movie-container">
+      <h1>Rate</h1>
       {/* Ensure movie is defined before rendering */}
       {movie ? (
         <>
