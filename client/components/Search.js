@@ -58,7 +58,6 @@ const Search = () => {
         (um) => um.movieId === movieId && um.userId === currentUserId
       );
 
-      // console.log("user", userMovie)
 
       if (userMovie && userMovie.watchlist) {
         // If the movie is on the watchlist, update it to watched and remove from watchlist

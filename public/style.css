@@ -66,17 +66,19 @@ body {
 
 .yes-button,
 .no-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 10px;
+  font-size: 24px; /* Larger icon size */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .yes-button {
-  background-color: #4CAF50;
+  background-color: #4caf50; /* Green */
   color: white;
 }
 
@@ -85,7 +87,7 @@ body {
 }
 
 .no-button {
-  background-color: #F44336;
+  background-color: #f44336; /* Red */
   color: white;
 }
 
