@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserMovies, updateSingleUserMovie } from "../store/allUserMoviesStore";
+import { fetchUserMovies } from "../store/allUserMoviesStore";
+import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { fetchMovies } from "../store/allMoviesStore";
 
 const Watchlist = () => {

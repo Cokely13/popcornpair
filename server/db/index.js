@@ -1,25 +1,33 @@
-//this is the access point for all things database related!
+// this is the access point for all things database related!
 
-const db = require('./db')
+const db = require('./db');
 
-const User = require('./models/User')
-const Movie = require('./models/Movie')
+const User = require('./models/User');
+const Movie = require('./models/Movie');
 const Rating = require('./models/Rating');
 const UserMovie = require('./models/UserMovie');
+const UserRecommendation = require('./models/UserRecommendation'); // Import the new model
 
 // Associations
+// Rating associations
 User.hasMany(Rating);
 Rating.belongsTo(User);
-
-
 
 Movie.hasMany(Rating);
 Rating.belongsTo(Movie);
 
+// UserMovie associations
 User.belongsToMany(Movie, { through: UserMovie });
 Movie.belongsToMany(User, { through: UserMovie });
-//associations could go here!
 
+// UserRecommendation associations
+User.hasMany(UserRecommendation, { as: 'sentRecommendations', foreignKey: 'senderId' });
+User.hasMany(UserRecommendation, { as: 'receivedRecommendations', foreignKey: 'receiverId' });
+UserRecommendation.belongsTo(User, { as: 'sender', foreignKey: 'senderId' });
+UserRecommendation.belongsTo(User, { as: 'receiver', foreignKey: 'receiverId' });
+
+Movie.hasMany(UserRecommendation, { foreignKey: 'movieId' });
+UserRecommendation.belongsTo(Movie, { foreignKey: 'movieId' });
 
 module.exports = {
   db,
@@ -27,6 +35,7 @@ module.exports = {
     User,
     Movie,
     Rating,
-    UserMovie
+    UserMovie,
+    UserRecommendation, // Export the new model
   },
-}
+};
