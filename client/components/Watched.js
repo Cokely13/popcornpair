@@ -59,14 +59,13 @@ const Watched = () => {
   };
 
   const handleWatchedWithSubmit = async (movieId) => {
-    if (!selectedUserId) {
-      alert("Please select a user.");
-      return;
-    }
-
     try {
       await dispatch(
-        updateSingleUserMovie({ userId: currentUserId, movieId, watchedWith: selectedUserId })
+        updateSingleUserMovie({
+          userId: currentUserId,
+          movieId,
+          watchedWith: selectedUserId || null, // Update to `null` if "No One" is selected
+        })
       );
       setSelectedMovieId(null);
       setSelectedUserId(null);
@@ -130,16 +129,18 @@ const Watched = () => {
                 </Link>
               </td>
               <td>
-                {users.find((user) => user.id === movie.watchedWith)?.username || "N/A"}
+                {users.find((user) => user.id === movie.watchedWith)?.username || ""}
               </td>
               <td>
                 {selectedMovieId === movie.id ? (
                   <>
                     <select
                       value={selectedUserId || ""}
-                      onChange={(e) => setSelectedUserId(Number(e.target.value))}
+                      onChange={(e) =>
+                        setSelectedUserId(e.target.value === "" ? null : Number(e.target.value))
+                      }
                     >
-                      <option value="">Select User</option>
+                      <option value="">No One</option>
                       {users
                         .filter((user) => user.id !== currentUserId)
                         .map((user) => (
@@ -148,9 +149,7 @@ const Watched = () => {
                           </option>
                         ))}
                     </select>
-                    <button onClick={() => handleWatchedWithSubmit(movie.id)}>
-                      Submit
-                    </button>
+                    <button onClick={() => handleWatchedWithSubmit(movie.id)}>Submit</button>
                   </>
                 ) : (
                   <button onClick={() => setSelectedMovieId(movie.id)}>Update</button>
