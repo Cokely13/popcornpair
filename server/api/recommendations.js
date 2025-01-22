@@ -1,42 +1,3 @@
-// const router = require('express').Router();
-// const { models: { UserMovie, Movie } } = require('../db');
-// const { getRecommendations } = require('../../ml/app'); // Import Python function
-
-// // GET recommendations for a user
-// router.get('/:userId', async (req, res, next) => {
-//   try {
-//     const { userId } = req.params;
-
-//     // Fetch ratings data for all users
-//     const userMovies = await UserMovie.findAll({
-//       attributes: ['userId', 'movieId', 'rating'],
-//     });
-
-//     // Convert to a format suitable for the Python script
-//     const ratingsData = userMovies.map((um) => ({
-//       UserID: um.userId,
-//       Movie: um.movieId,
-//       Rating: um.rating,
-//     }));
-
-//     // Call the Python recommendation function
-//     const recommendations = getRecommendations(userId, ratingsData);
-
-//     // Fetch movie details for recommendations
-//     const recommendedMovies = await Movie.findAll({
-//       where: {
-//         id: recommendations.map((rec) => rec.movieId),
-//       },
-//     });
-
-//     res.json(recommendedMovies);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
-// module.exports = router;
-
 const router = require('express').Router();
 const { models: { UserMovie, Movie } } = require('../db');
 const axios = require('axios');
@@ -50,21 +11,29 @@ router.get('/:userId', async (req, res, next) => {
       attributes: ['userId', 'movieId', 'rating'],
     });
 
-    const ratingsData = userMovies.map((um) => ({
-      UserID: um.userId,
-      Movie: um.movieId,
-      Rating: um.rating,
-    }));
+    const ratingsData = userMovies
+      .filter((um) => um.rating !== null) // Exclude null ratings
+      .map((um) => ({
+        UserID: um.userId,
+        Movie: um.movieId,
+        Rating: um.rating,
+      }));
 
     // Call the Flask API for recommendations
     const { data: recommendations } = await axios.post(`http://127.0.0.1:5000/recommendations/${userId}`, {
       ratings_data: ratingsData,
     });
 
+    // Check if recommendations is an array
+    if (!Array.isArray(recommendations)) {
+      console.error("Recommendations is not an array:", recommendations);
+      return res.status(500).json({ error: "Invalid response from recommendation engine." });
+    }
+
     // Fetch details for the recommended movies
     const recommendedMovies = await Movie.findAll({
       where: {
-        id: recommendations.map((rec) => rec.movieId),
+        id: recommendations.map((rec) => rec[0]), // Use movie IDs from recommendations
       },
     });
 
