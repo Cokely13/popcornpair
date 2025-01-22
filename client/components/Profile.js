@@ -71,19 +71,30 @@ const Profile = () => {
         <p><strong>Email:</strong> {currentUser?.email || "N/A"}</p>
         <p><strong>Total Movies Watched:</strong> {stats.totalMoviesWatched}</p>
         <p>
-          <strong>Last Movie Watched:</strong>{" "}
-          <Link to={`/movies/${stats.lastMovie?.id}`}>  {stats.lastMovie?.title || "No movies watched"}</Link>  (
-          {stats.lastMovie?.dateWatched || "No date available"})
-        </p>
+  <strong>Last Movie Watched:</strong>{" "}
+  {stats.lastMovie?.id ? (
+    <Link to={`/movies/${stats.lastMovie.id}`}>
+      {stats.lastMovie.title} ({stats.lastMovie.rating})
+    </Link>
+  ) : (
+    "No movies watched"
+  )}{" "}
+  ({stats.lastMovie?.dateWatched || "No date available"})
+</p>
         <p>
           <strong>Average Rating:</strong>{" "}
           {stats.averageRating}
         </p>
         <p>
-          <strong>Highest Rated Movie:</strong>{" "}
-          <Link to={`/movies/${stats.highestRatedMovie?.id}`}> {stats.highestRatedMovie?.title || "No ratings available"} </Link> (
-          {stats.highestRatedMovie?.rating || "No rating"})
-        </p>
+  <strong>Highest Rated Movie:</strong>{" "}
+  {stats.highestRatedMovie?.id ? (
+    <Link to={`/movies/${stats.highestRatedMovie.id}`}>
+      {stats.highestRatedMovie.title} ({stats.highestRatedMovie.rating})
+    </Link>
+  ) : (
+    "No ratings available"
+  )}
+</p>
       </div>
     </div>
   );
