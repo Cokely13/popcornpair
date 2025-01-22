@@ -5,11 +5,15 @@ import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUsers } from "../store/allUsersStore";
+import { createUserRecommendation } from "../store/allUserRecommendationsStore";
 
 const Watched = () => {
   const dispatch = useDispatch();
-  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const [selectedWatchedWithMovieId, setSelectedWatchedWithMovieId] = useState(null);
+  const [selectedActionMovieId, setSelectedActionMovieId] = useState(null);
+  const [selectedRecommendationMovieId, setSelectedRecommendationMovieId] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [message, setMessage] = useState("");
   const [rating, setRating] = useState("");
   const [sortCriteria, setSortCriteria] = useState("None");
 
@@ -42,6 +46,23 @@ const Watched = () => {
     return 0; // Default order
   });
 
+  const handleWatchedWithSubmit = async (movieId) => {
+    try {
+      await dispatch(
+        updateSingleUserMovie({
+          userId: currentUserId,
+          movieId,
+          watchedWith: selectedUserId || null, // Update to null if "No One" is selected
+        })
+      );
+      setSelectedWatchedWithMovieId(null);
+      setSelectedUserId(null);
+      dispatch(fetchUserMovies());
+    } catch (err) {
+      console.error("Error updating Watched With:", err);
+    }
+  };
+
   const handleRatingSubmit = async (movieId) => {
     if (!rating || rating < 1 || rating > 10) {
       alert("Please provide a rating between 1 and 10.");
@@ -50,7 +71,7 @@ const Watched = () => {
 
     try {
       await dispatch(updateSingleUserMovie({ userId: currentUserId, movieId, rating }));
-      setSelectedMovieId(null);
+      setSelectedActionMovieId(null);
       setRating("");
       dispatch(fetchUserMovies());
     } catch (err) {
@@ -58,20 +79,28 @@ const Watched = () => {
     }
   };
 
-  const handleWatchedWithSubmit = async (movieId) => {
+  const handleRecommendationSubmit = async () => {
     try {
+      if (!selectedRecommendationMovieId || !selectedUserId) {
+        alert("Please select a user to recommend the movie to.");
+        return;
+      }
+
       await dispatch(
-        updateSingleUserMovie({
-          userId: currentUserId,
-          movieId,
-          watchedWith: selectedUserId || null, // Update to `null` if "No One" is selected
+        createUserRecommendation({
+          senderId: currentUserId,
+          receiverId: selectedUserId,
+          movieId: selectedRecommendationMovieId,
+          message: message || "", // Optional message
         })
       );
-      setSelectedMovieId(null);
-      setSelectedUserId(null);
-      dispatch(fetchUserMovies());
+
+      alert("Recommendation sent!");
+      setSelectedRecommendationMovieId(null);
+      setMessage("");
     } catch (err) {
-      console.error("Error updating Watched With:", err);
+      console.error("Error creating recommendation:", err);
+      alert("Could not create the recommendation. It may already exist.");
     }
   };
 
@@ -109,7 +138,9 @@ const Watched = () => {
             <th>Movie</th>
             <th>Watched With</th>
             <th>Update Watched With</th>
+            <th>Recommend</th>
             <th>Rating</th>
+            <th>Actions</th>
             <th>Date Watched</th>
           </tr>
         </thead>
@@ -132,7 +163,7 @@ const Watched = () => {
                 {users.find((user) => user.id === movie.watchedWith)?.username || ""}
               </td>
               <td>
-                {selectedMovieId === movie.id ? (
+                {selectedWatchedWithMovieId === movie.id ? (
                   <>
                     <select
                       value={selectedUserId || ""}
@@ -152,15 +183,67 @@ const Watched = () => {
                     <button onClick={() => handleWatchedWithSubmit(movie.id)}>Submit</button>
                   </>
                 ) : (
-                  <button onClick={() => setSelectedMovieId(movie.id)}>Update</button>
+                  <button onClick={() => setSelectedWatchedWithMovieId(movie.id)}>Update</button>
                 )}
               </td>
+              <td>
+                <button onClick={() => setSelectedRecommendationMovieId(movie.id)}>Recommend</button>
+              </td>
               <td>{movie.rating || "Not Rated"}</td>
+              <td>
+                {selectedActionMovieId === movie.id ? (
+                  <>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={rating}
+                      onChange={(e) => setRating(e.target.value)}
+                      className="rating-input"
+                    />
+                    <button onClick={() => handleRatingSubmit(movie.id)}>Submit</button>
+                    <button onClick={() => setSelectedActionMovieId(null)}>Cancel</button>
+                  </>
+                ) : (
+                  <button onClick={() => setSelectedActionMovieId(movie.id)}>Change</button>
+                )}
+              </td>
               <td>{movie.dateWatched || "No Date"}</td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Recommendation Modal */}
+      {selectedRecommendationMovieId && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Recommend Movie</h3>
+            <select
+              value={selectedUserId || ""}
+              onChange={(e) =>
+                setSelectedUserId(e.target.value === "" ? null : Number(e.target.value))
+              }
+            >
+              <option value="">Select a User</option>
+              {users
+                .filter((user) => user.id !== currentUserId)
+                .map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.username}
+                  </option>
+                ))}
+            </select>
+            <textarea
+              placeholder="Add an optional message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <button onClick={handleRecommendationSubmit}>Submit</button>
+            <button onClick={() => setSelectedRecommendationMovieId(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

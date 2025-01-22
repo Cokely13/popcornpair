@@ -11,8 +11,8 @@ import usersReducer from './allUsersStore'
 import singleUserReducer from './singleUserStore'
 import singleUserMovieReducer from './singleUserMovieStore'
 import userMoviesReducer from './allUserMoviesStore'
-import userRecommendationsReducer from './allUserRecomendationsStore'
-import singleUserRecommendationReducer from './singleUserRecomendationStore'
+import userRecommendationsReducer from './allUserRecommendationsStore'
+import singleUserRecommendationReducer from './singleUserRecommendationStore'
 
 const reducer = combineReducers({ auth,
   allMovies: moviesReducer,
