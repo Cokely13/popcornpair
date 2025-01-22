@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUsers } from "../store/allUsersStore";
@@ -68,7 +68,7 @@ const UserDetail = () => {
         <p><strong>Total Movies Watched:</strong> {stats.totalMoviesWatched}</p>
         <p>
           <strong>Last Movie Watched:</strong>{" "}
-          {stats.lastMovie?.title || "No movies watched"} (
+         <Link to={`/movies/${stats.lastMovie?.id}`}>  {stats.lastMovie?.title || "No movies watched"}</Link> (
           {stats.lastMovie?.dateWatched || "No date available"})
         </p>
         <p>
@@ -77,7 +77,7 @@ const UserDetail = () => {
         </p>
         <p>
           <strong>Highest Rated Movie:</strong>{" "}
-          {stats.highestRatedMovie?.title || "No ratings available"} (
+         <Link to={`/movies/${stats.highestRatedMovie?.id}`}>  {stats.highestRatedMovie?.title || "No ratings available"}</Link> (
           {stats.highestRatedMovie?.rating || "No rating"})
         </p>
       </div>
