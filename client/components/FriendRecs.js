@@ -164,7 +164,7 @@ const FriendRecs = () => {
               {rec.accept === "yes"  ? (
                viewType === "received" && !isMovieWatched(rec.movie.id) && (
                 <p>
-                  <strong>Watch:</strong>{" "}
+                  {/* <strong>Watch:</strong>{" "} */}
                   <button
                     onClick={() => handleWatched(rec)}
                     className="watched-button"
@@ -196,8 +196,9 @@ const FriendRecs = () => {
                   <strong>Accepted:</strong> {rec.accept === "no" ? "Rejected" : "Pending"}
                 </p>
               )}
-              <p>
-                <strong>Liked:</strong>{" "}
+              {viewType === "watched" && (
+                <p>
+               <strong>Liked:</strong>{" "}
                 {rec.liked === null
                   ? "Not Rated"
                   : rec.liked === "yes"
@@ -219,7 +220,7 @@ const FriendRecs = () => {
                     </button>
                   </>
                 )}
-              </p>
+              </p>)}
             </div>
           ))
         ) : (
