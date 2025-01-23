@@ -967,3 +967,154 @@ margin-right: 10px;
 .modal-close:hover {
   color: #f44336;
 }
+
+.friend-recs-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 80px auto 30px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.friend-recs-container h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.recs-dropdown {
+  margin-bottom: 20px;
+}
+
+.recs-dropdown select {
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.recs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rec-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: left;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rec-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.rec-item p {
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.rec-item a {
+  text-decoration: none;
+  color: #0073e6;
+}
+
+.rec-item a:hover {
+  text-decoration: underline;
+}
+
+.friend-recs-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 80px auto 30px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.friend-recs-container h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.recs-dropdown {
+  margin-bottom: 20px;
+}
+
+.recs-dropdown select {
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.recs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rec-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: left;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rec-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.response-input {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+button {
+  margin: 5px;
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.respond-button {
+  background-color: #0073e6;
+  color: white;
+}
+
+.accept-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.reject-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.like-button,
+.dislike-button {
+  background-color: #ddd;
+  color: #333;
+}
+
+button:hover {
+  opacity: 0.8;
+}

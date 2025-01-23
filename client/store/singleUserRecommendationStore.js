@@ -27,11 +27,27 @@ export const fetchSingleUserRecommendation = (recommendationId) => {
   };
 };
 
-export const updateSingleUserRecommendation = (recommendationId, updates) => {
+// export const updateSingleUserRecommendation = (recommendationId, updates) => {
+//   return async (dispatch) => {
+//     await Axios.put(`/api/userrecommendations/${recommendationId}`, updates);
+//     const { data: updated } = await Axios.get(`/api/userrecommendations/${recommendationId}`);
+//     dispatch(_updateSingleUserRecommendation(updated));
+//   };
+// };
+
+export const updateSingleUserRecommendation = (recommendation) => {
   return async (dispatch) => {
-    await Axios.put(`/api/userrecommendations/${recommendationId}`, updates);
-    const { data: updated } = await Axios.get(`/api/userrecommendations/${recommendationId}`);
-    dispatch(_updateSingleUserRecommendation(updated));
+    try {
+      // Send the PUT request with the recommendation's id and updates
+      const { id, ...updates } = recommendation;
+      await Axios.put(`/api/userrecommendations/${id}`, updates);
+
+      // Fetch the updated recommendation and dispatch it
+      const { data: updated } = await Axios.get(`/api/userrecommendations/${id}`);
+      dispatch(_updateSingleUserRecommendation(updated));
+    } catch (err) {
+      console.error("Error updating recommendation:", err);
+    }
   };
 };
 
