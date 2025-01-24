@@ -19,6 +19,7 @@ import Recommendations from './components/Recommendations';
 import Search from './components/Search';
 import Watchlist from './components/Watchlist';
 import FriendRecs from './components/FriendRecs';
+import AddMovie from './components/AddMovie';
 
 /**
  * COMPONENT
@@ -49,6 +50,7 @@ class Routes extends Component {
             <Route path="/movies/:movieId" component={MovieDetail} />
             <Route path="/users/:userId" component={UserDetail} />
             <Route path="/recommendations" component={Recommendations} />
+            <Route path="/addmovie" component={AddMovie} />
             <Redirect to="/home" />
           </Switch>
         ) : (
