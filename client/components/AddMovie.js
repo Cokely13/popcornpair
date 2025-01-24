@@ -7,7 +7,7 @@ const AddMovie = () => {
   const [loading, setLoading] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false); // Tracks if a search was performed
 
-  const WATCHMODE_API_KEY = "BTDvdi61sfHiewBl3xLT1RwgNFQ4AfMSao7GcW1e";
+
 
   const handleSearch = async () => {
     if (!searchTerm) {
@@ -21,7 +21,7 @@ const AddMovie = () => {
       console.log("Searching Watchmode API for:", searchTerm);
       const { data } = await axios.get(`https://api.watchmode.com/v1/search/`, {
         params: {
-          apiKey: WATCHMODE_API_KEY,
+          apiKey: REACT_APP_WATCHMODE_API_KEY,
           search_field: "name", // Specify we're searching by name
           search_value: searchTerm, // Pass the movie title here
           search_type: "1", // 1 for movies
@@ -41,7 +41,7 @@ const AddMovie = () => {
     try {
       const detailsResponse = await axios.get(
         `https://api.watchmode.com/v1/title/${movie.id}/details/`,
-        { params: { apiKey: WATCHMODE_API_KEY } }
+        { params: { apiKey: REACT_APP_WATCHMODE_API_KEY } }
       );
       const details = detailsResponse.data;
 
