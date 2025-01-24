@@ -6,9 +6,8 @@ const User = require('./models/User');
 const Movie = require('./models/Movie');
 const Rating = require('./models/Rating');
 const UserMovie = require('./models/UserMovie');
-const Friend = require("./Friend");
-const UserRecommendation = require('./models/UserRecommendation'); // Import the new model
 const Friend = require('./models/Friend');
+const UserRecommendation = require('./models/UserRecommendation'); // Import the new model
 
 // Associations
 // Rating associations
