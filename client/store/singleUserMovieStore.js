@@ -28,7 +28,6 @@ export const fetchSingleUserMovie = (movieId) => {
 };
 
 export const updateSingleUserMovie = (userMovie) => {
-
   return async (dispatch) => {
     await Axios.put(`/api/usermovies/${userMovie.movieId}`, userMovie);
     const { data: updated } = await Axios.get(`/api/usermovies/${userMovie.movieId}`);
