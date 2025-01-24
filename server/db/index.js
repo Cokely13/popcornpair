@@ -30,7 +30,14 @@ UserRecommendation.belongsTo(User, { as: 'receiver', foreignKey: 'receiverId' })
 Movie.hasMany(UserRecommendation, { foreignKey: 'movieId' });
 UserRecommendation.belongsTo(Movie, { foreignKey: 'movieId' });
 
-User.belongsToMany(User, { as: "Friends", through: Friend, foreignKey: "userId", otherKey: "friendId" });
+// A user can have many friends
+User.hasMany(Friend, { foreignKey: 'userId' });
+User.hasMany(Friend, { foreignKey: 'friendId' });
+
+// Friend includes references to the requester
+Friend.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+Friend.belongsTo(User, { as: 'friend', foreignKey: 'friendId' });
+
 
 module.exports = {
   db,

@@ -20,6 +20,7 @@ import Search from './components/Search';
 import Watchlist from './components/Watchlist';
 import FriendRecs from './components/FriendRecs';
 import AddMovie from './components/AddMovie';
+import Users from './components/Users';
 
 /**
  * COMPONENT
@@ -38,6 +39,7 @@ class Routes extends Component {
           <Switch>
             <Route path="/home" component={Home} />
             <Route exact path="/profile" component={Profile} />
+            <Route exact path="/users" component={Users} />
             <Route exact path="/watchlist" component={Watchlist} />
             <Route exact path="/rate" component={RateMovie} />
             <Route exact path="/match/:userId" component={Match} />
