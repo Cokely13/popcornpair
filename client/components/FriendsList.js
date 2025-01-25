@@ -1,27 +1,79 @@
+// import React, { useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchUsers } from "../store/allUsersStore";
+// import { Link } from "react-router-dom";
+
+// const FriendsList = () => {
+//   const dispatch = useDispatch();
+//   const users = useSelector((state) => state.allUsers);
+//   const currentUserId = useSelector((state) => state.auth.id);
+
+//   useEffect(() => {
+//     dispatch(fetchUsers());
+//   }, [dispatch]);
+
+//   return (
+//     <div className="friends-list-container">
+//       <h2>Friends List</h2>
+//       <ul className="friends-list">
+//         {users
+//           .filter((user) => user.id !== currentUserId) // Exclude the current user
+//           .map((user) => (
+//             <li key={user.id} className="friend-item">
+//               <Link to={`/users/${user.id}`} className="friend-link">
+//               {user.username}
+//               </Link>
+//               <Link to={`/match/${user.id}`} className="friend-link">
+//                 <button className="friend-button">Matches</button>
+//               </Link>
+//               <Link to={`/random/${user.id}`} className="friend-link">
+//                 <button className="random-button">Random Match</button>
+//               </Link>
+//             </li>
+//           ))}
+//       </ul>
+//     </div>
+//   );
+// };
+
+// export default FriendsList;
+
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../store/allUsersStore";
+import { fetchFriends } from "../store/allFriendsStore";
 import { Link } from "react-router-dom";
 
 const FriendsList = () => {
   const dispatch = useDispatch();
   const users = useSelector((state) => state.allUsers);
+  const friends = useSelector((state) => state.allFriends);
   const currentUserId = useSelector((state) => state.auth.id);
 
   useEffect(() => {
     dispatch(fetchUsers());
+    dispatch(fetchFriends());
   }, [dispatch]);
+
+  // Filter users to only show friends with accepted status
+  const acceptedFriends = users.filter((user) => {
+    return friends.some(
+      (friend) =>
+        friend.status === "accepted" &&
+        ((friend.userId === currentUserId && friend.friendId === user.id) ||
+          (friend.friendId === currentUserId && friend.userId === user.id))
+    );
+  });
 
   return (
     <div className="friends-list-container">
       <h2>Friends List</h2>
       <ul className="friends-list">
-        {users
-          .filter((user) => user.id !== currentUserId) // Exclude the current user
-          .map((user) => (
+        {acceptedFriends.length ? (
+          acceptedFriends.map((user) => (
             <li key={user.id} className="friend-item">
               <Link to={`/users/${user.id}`} className="friend-link">
-              {user.username}
+                {user.username}
               </Link>
               <Link to={`/match/${user.id}`} className="friend-link">
                 <button className="friend-button">Matches</button>
@@ -30,10 +82,14 @@ const FriendsList = () => {
                 <button className="random-button">Random Match</button>
               </Link>
             </li>
-          ))}
+          ))
+        ) : (
+          <p>You currently have no friends.</p>
+        )}
       </ul>
     </div>
   );
 };
 
 export default FriendsList;
+

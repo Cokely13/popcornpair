@@ -25,7 +25,7 @@ const Search = () => {
   // Get movies the user hasn't watched
   const unwatchedMovies = movies.filter(
     (movie) =>
-      !userMovies.some((userMovie) => userMovie.movieId === movie.id && userMovie.watched)
+      !userMovies.some((userMovie) => userMovie.movieId === movie.id && userMovie.watched && userMovie.userId == currentUserId)
   );
 
   // Filter movies by search query and genre
