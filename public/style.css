@@ -1143,3 +1143,98 @@ button:hover {
   background-color: #3e8e41; /* Even darker green when clicked */
   transform: scale(1); /* Return to original size */
 }
+
+/* Users Container */
+.users-container {
+  width: 80%;
+  margin: 80px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.users-title {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Users List */
+.users-list {
+  list-style: none;
+  padding: 0;
+}
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Username */
+.username {
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 20px;
+}
+
+/* Buttons */
+.add-friend-button,
+.accept-button,
+.deny-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-friend-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.add-friend-button:hover {
+  background-color: #45a049;
+}
+
+.accept-button {
+  background-color: #2196f3;
+  color: white;
+}
+
+.accept-button:hover {
+  background-color: #1e88e5;
+}
+
+.deny-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.deny-button:hover {
+  background-color: #e53935;
+}
+
+/* Status Labels */
+.pending-status {
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.friend-status {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.not-friend-status {
+  color: #f44336;
+  font-weight: bold;
+}
