@@ -82,16 +82,55 @@ const Search = () => {
   };
 
   // Add a movie to the watchlist
+  // const handleAddToWatchlist = async (movieId) => {
+  //   try {
+  //     await dispatch(
+  //       createUserMovie({ userId: currentUserId, movieId, watchlist: true })
+  //     );
+  //     alert("Movie added to watchlist!");
+  //   } catch (err) {
+  //     console.error("Error adding movie to watchlist:", err);
+  //   }
+  // };
+
   const handleAddToWatchlist = async (movieId) => {
     try {
+      // Fetch the predicted rating from the Flask API
+      // const response = await fetch('/api/predict-rating', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ userId: currentUserId, movieId }),
+      // });
+      const response = await fetch('http://127.0.0.1:5000/api/predict-rating', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUserId, movieId }),
+      });
+
+      const data = await response.json();
+
+      // Check if the API returned a predicted rating
+      const predictedRating = response.ok && data.predictedRating !== undefined
+        ? data.predictedRating
+        : 0.0; // Fallback to 0.0 if no rating is returned
+
+      // Add the movie to the watchlist with the predicted rating
       await dispatch(
-        createUserMovie({ userId: currentUserId, movieId, watchlist: true })
+        createUserMovie({
+          userId: currentUserId,
+          movieId,
+          watchlist: true,
+          predictedRating,
+        })
       );
-      alert("Movie added to watchlist!");
+
+      alert(`Movie added to watchlist! Predicted Rating: ${predictedRating}`);
     } catch (err) {
-      console.error("Error adding movie to watchlist:", err);
+      console.error('Error adding movie to watchlist or fetching predicted rating:', err);
+      alert('Something went wrong. Please try again.');
     }
   };
+
 
   return (
     <div className="search-container">

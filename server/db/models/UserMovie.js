@@ -31,6 +31,11 @@ const UserMovie = db.define('user_movie', {
     type: Sequelize.INTEGER, // Stores the userId of the person they watched the movie with
     allowNull: true,
   },
+  predictedRating: {
+    type: Sequelize.FLOAT,
+    allowNull: false,
+    defaultValue: 0.0 // Always have a fallback value
+},
   dateWatched: {
     type: Sequelize.DATEONLY, // Stores only the date (YYYY-MM-DD)
     allowNull: true,
