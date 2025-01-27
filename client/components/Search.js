@@ -67,7 +67,10 @@ const Search = () => {
         (um) => um.movieId === movieId && um.userId === currentUserId
       );
 
-      if (userMovie && userMovie.status === "watchlist" ||userMovie && userMovie.status === "none") {
+      if (
+        userMovie &&
+        (userMovie.status === "watchlist" || userMovie.status === "none")
+      ) {
         // If the movie is currently "watchlist", update status to "watched"
         await dispatch(
           updateSingleUserMovie({

@@ -187,11 +187,16 @@ const Watchlist = () => {
 
   // 4. Mark as watched (Set status to "watched")
   const handleMarkAsWatched = async (movieId) => {
+
     try {
+
+      const userMovie = userMovies.find(
+        (um) => um.movieId === movieId && um.userId === currentUserId
+      );
       await dispatch(
         updateSingleUserMovie({
           userId: currentUserId,
-          movieId,
+          movieId: userMovie.movieId,
           status: "watched",
         })
       );

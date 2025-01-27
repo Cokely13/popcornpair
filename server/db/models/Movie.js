@@ -45,6 +45,10 @@ const Movie = db.define('movie', {
     type: Sequelize.INTEGER, // Runtime in minutes (e.g., 120)
     allowNull: true,
   },
+  streaming: {
+    type: Sequelize.STRING,  // We'll store something like "Netflix, Hulu, Amazon Prime"
+    allowNull: true,
+  },
 });
 
 module.exports = Movie;

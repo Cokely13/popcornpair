@@ -12,18 +12,18 @@ router.get('/', async (req, res, next) => {
 });
 
 // Get a single user-movie relationship by movieId
-router.get('/:movieId', async (req, res, next) => {
-  try {
-    const userMovie = await UserMovie.findOne({ where: { movieId: req.params.movieId } });
-    if (userMovie) {
-      res.json(userMovie);
-    } else {
-      res.status(404).send('User-movie relationship not found');
-    }
-  } catch (err) {
-    next(err);
-  }
-});
+// router.get('/:movieId', async (req, res, next) => {
+//   try {
+//     const userMovie = await UserMovie.findOne({ where: { movieId: req.params.movieId } });
+//     if (userMovie) {
+//       res.json(userMovie);
+//     } else {
+//       res.status(404).send('User-movie relationship not found');
+//     }
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 // Create a new user-movie relationship
 // router.post('/', async (req, res, next) => {
@@ -54,16 +54,48 @@ router.post('/', async (req, res, next) => {
 });
 
 // Update a user-movie relationship by movieId
-router.put('/:movieId', async (req, res, next) => {
-  console.log("made it",req.params )
+// router.put('/:movieId', async (req, res, next) => {
+//   console.log("made it",req.params )
+//   try {
+//     const userMovie = await UserMovie.findOne({ where: { movieId: req.params.movieId } });
+//     if (userMovie) {
+//       const updatedUserMovie = await userMovie.update(req.body);
+//       res.send(updatedUserMovie);
+//     } else {
+//       res.status(404).send('User-movie relationship not found');
+//     }
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
+router.put('/:userId/:movieId', async (req, res, next) => {
   try {
-    const userMovie = await UserMovie.findOne({ where: { movieId: req.params.movieId } });
-    if (userMovie) {
-      const updatedUserMovie = await userMovie.update(req.body);
-      res.send(updatedUserMovie);
-    } else {
-      res.status(404).send('User-movie relationship not found');
+    const { userId, movieId } = req.params;
+    const updates = req.body; // e.g. status, rating, etc.
+    const userMovie = await UserMovie.findOne({
+      where: { userId, movieId }
+    });
+    if (!userMovie) {
+      return res.status(404).send('UserMovie not found');
     }
+    await userMovie.update(updates);
+    res.send(userMovie);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/:userId/:movieId', async (req, res, next) => {
+  try {
+    const { userId, movieId } = req.params;
+    const userMovie = await UserMovie.findOne({
+      where: { userId, movieId }
+    });
+    if (!userMovie) {
+      return res.status(404).send('UserMovie not found');
+    }
+    res.send(userMovie);
   } catch (err) {
     next(err);
   }

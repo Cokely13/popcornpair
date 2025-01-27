@@ -45,6 +45,7 @@ async function seed() {
 
       const details = detailsResponse.data;
 
+
       await Movie.create({
         title: details.title || 'Untitled',
         description: details.plot_overview || 'No description available',
@@ -56,6 +57,7 @@ async function seed() {
         userRating: details.user_rating || null,
         criticScore: details.critic_score || null,
         runtimeMinutes: details.runtime_minutes || null,
+        streaming: details.networks || null,
       });
     }
 
@@ -94,3 +96,4 @@ if (module === require.main) {
 }
 
 module.exports = seed;
+
