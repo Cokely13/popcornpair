@@ -11,13 +11,18 @@ const UserMovie = db.define('user_movie', {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
-  watched: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
-  },
-  watchlist: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
+  // watched: {
+  //   type: Sequelize.BOOLEAN,
+  //   defaultValue: false,
+  // },
+  // watchlist: {
+  //   type: Sequelize.BOOLEAN,
+  //   defaultValue: false,
+  // },
+  status: {
+    type: Sequelize.ENUM('watchlist', 'watched', 'none'),
+    allowNull: false,
+    defaultValue: 'watchlist', // or 'watched', depending on what makes sense
   },
   rating: {
     type: Sequelize.INTEGER,

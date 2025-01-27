@@ -1,3 +1,5 @@
+
+
 // import React, { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { fetchUserMovies } from "../store/allUserMoviesStore";
@@ -8,25 +10,36 @@
 //   const dispatch = useDispatch();
 //   const currentUserId = useSelector((state) => state.auth.id);
 //   const userMovies = useSelector((state) => state.allUserMovies).filter(
-//     (userMovie) => userMovie.userId === currentUserId && userMovie.watchlist
+//     (userMovie) => userMovie.userId === currentUserId
 //   );
 //   const movies = useSelector((state) => state.allMovies);
 
+
 //   const [sortCriteria, setSortCriteria] = useState("None");
+//   // const [predictions, setPredictions] = useState({}); // State to store predictions
 
 //   useEffect(() => {
+//     // Fetch user movies and all movies
 //     dispatch(fetchUserMovies());
 //     dispatch(fetchMovies());
 //   }, [dispatch]);
 
-//   const watchlistMovies = userMovies.map((userMovie) => ({
+
+
+//   const watchlistMovies = userMovies
+//   .filter((um) => um.watchlist === true && um.watched !== true)
+//   .map((userMovie) => ({
 //     ...userMovie,
 //     ...movies.find((movie) => movie.id === userMovie.movieId),
+//     predictedRating: userMovie.predictedRating || "N/A",
 //   }));
 
 //   const sortedMovies = [...watchlistMovies].sort((a, b) => {
 //     if (sortCriteria === "Title") {
 //       return a.title.localeCompare(b.title);
+//     }
+//     if (sortCriteria === "Predicted Rating") {
+//       return b.predictedRating - a.predictedRating; // Sort by predicted rating (descending)
 //     }
 //     return 0; // Default order
 //   });
@@ -74,6 +87,7 @@
 //         >
 //           <option value="None">None</option>
 //           <option value="Title">Title</option>
+//           <option value="Predicted Rating">Predicted Rating</option>
 //         </select>
 //       </div>
 
@@ -83,6 +97,9 @@
 //           <div key={movie.movieId} className="watchlist-movie-item">
 //             <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
 //             <h3>{movie.title || "Untitled Movie"}</h3>
+//             <p>
+//               <strong>Predicted Rating:</strong> {movie.predictedRating}
+//             </p>
 //             <div className="watchlist-actions">
 //               <button onClick={() => handleRemoveFromWatchlist(movie.id)}>Remove</button>
 //               <button onClick={() => handleMarkAsWatched(movie.id)}>Mark as Watched</button>
@@ -105,73 +122,75 @@ import { fetchMovies } from "../store/allMoviesStore";
 const Watchlist = () => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.auth.id);
+
+  // Grab all userMovie entries and filter to just this user
   const userMovies = useSelector((state) => state.allUserMovies).filter(
-    (userMovie) => userMovie.userId === currentUserId && userMovie.watchlist
+    (userMovie) => userMovie.userId === currentUserId
   );
+
+  // Grab all movies (to merge movie details)
   const movies = useSelector((state) => state.allMovies);
 
   const [sortCriteria, setSortCriteria] = useState("None");
-  // const [predictions, setPredictions] = useState({}); // State to store predictions
 
   useEffect(() => {
-    // Fetch user movies and all movies
     dispatch(fetchUserMovies());
     dispatch(fetchMovies());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   // Fetch predictions for the user's watchlist
-  //   const fetchPredictions = async () => {
-  //     try {
-  //       const response = await fetch(`/api/predictions/${currentUserId}`);
-  //       const data = await response.json();
+  // 1. Filter down to only those with status === "watchlist"
+  const watchlistMovies = userMovies
+    .filter((um) => um.status === "watchlist")
+    .map((userMovie) => {
+      const movie = movies.find((m) => m.id === userMovie.movieId) || {};
+      return {
+        ...userMovie,
+        ...movie,
+        predictedRating: userMovie.predictedRating || "N/A",
+      };
+    });
 
-  //       // Map predictions by movieId for easy access
-  //       const predictionsMap = data.reduce((acc, prediction) => {
-  //         acc[prediction.movieId] = prediction.predictedRating;
-  //         return acc;
-  //       }, {});
-  //       setPredictions(predictionsMap);
-  //     } catch (err) {
-  //       console.error("Error fetching predictions:", err);
-  //     }
-  //   };
-
-  //   if (currentUserId) {
-  //     fetchPredictions();
-  //   }
-  // }, [currentUserId]);
-
-  const watchlistMovies = userMovies.map((userMovie) => ({
-    ...userMovie,
-    ...movies.find((movie) => movie.id === userMovie.movieId),
-    predictedRating: userMovie.predictedRating || "N/A", // Add predicted rating
-  }));
-
+  // 2. Sort based on sortCriteria
   const sortedMovies = [...watchlistMovies].sort((a, b) => {
     if (sortCriteria === "Title") {
       return a.title.localeCompare(b.title);
     }
     if (sortCriteria === "Predicted Rating") {
-      return b.predictedRating - a.predictedRating; // Sort by predicted rating (descending)
+      // Convert to number (in case "N/A"), or default to 0
+      const ratingA = isNaN(a.predictedRating) ? 0 : +a.predictedRating;
+      const ratingB = isNaN(b.predictedRating) ? 0 : +b.predictedRating;
+      return ratingB - ratingA; // descending
     }
-    return 0; // Default order
+    return 0; // Default: no sorting
   });
 
+  // 3. Remove from watchlist (Set status to "none" or delete the record)
   const handleRemoveFromWatchlist = async (movieId) => {
     try {
+      // If you only have "watchlist" or "watched" in your enum,
+      // you might either delete the record or set it to "watched".
+      // If your enum has "none", you can do status: "none".
       await dispatch(
-        updateSingleUserMovie({ userId: currentUserId, movieId, watchlist: false })
+        updateSingleUserMovie({
+          userId: currentUserId,
+          movieId,
+          status: "none", // or "watched" or some other approach
+        })
       );
     } catch (err) {
       console.error("Error removing from watchlist:", err);
     }
   };
 
+  // 4. Mark as watched (Set status to "watched")
   const handleMarkAsWatched = async (movieId) => {
     try {
       await dispatch(
-        updateSingleUserMovie({ userId: currentUserId, movieId, watched: true, watchlist: false })
+        updateSingleUserMovie({
+          userId: currentUserId,
+          movieId,
+          status: "watched",
+        })
       );
     } catch (err) {
       console.error("Error marking as watched:", err);
@@ -209,14 +228,22 @@ const Watchlist = () => {
       <div className="watchlist-movies">
         {sortedMovies.map((movie) => (
           <div key={movie.movieId} className="watchlist-movie-item">
-            <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
+            {movie.posterUrl ? (
+              <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
+            ) : (
+              <div className="no-poster">No Image Available</div>
+            )}
             <h3>{movie.title || "Untitled Movie"}</h3>
             <p>
               <strong>Predicted Rating:</strong> {movie.predictedRating}
             </p>
             <div className="watchlist-actions">
-              <button onClick={() => handleRemoveFromWatchlist(movie.id)}>Remove</button>
-              <button onClick={() => handleMarkAsWatched(movie.id)}>Mark as Watched</button>
+              <button onClick={() => handleRemoveFromWatchlist(movie.movieId)}>
+                Remove
+              </button>
+              <button onClick={() => handleMarkAsWatched(movie.movieId)}>
+                Mark as Watched
+              </button>
             </div>
           </div>
         ))}
