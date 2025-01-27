@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
 import { updateSingleUserRecommendation } from "../store/singleUserRecommendationStore";
-import { createUserMovie, fetchUserMovies } from "../store/allUserMoviesStore";
+import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
+import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { Link } from "react-router-dom";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
@@ -15,6 +16,8 @@ const FriendRecs = () => {
   const currentUserId = useSelector((state) => state.auth.id);
   const recommendations = useSelector((state) => state.allUserRecommendations);
   const userMovies = useSelector((state) => state.allUserMovies);
+
+
 
   useEffect(() => {
     dispatch(fetchUserRecommendations());
@@ -33,8 +36,63 @@ const FriendRecs = () => {
     refreshRecommendations();
   };
 
-  const handleAcceptRecommendation = async (recId, accept) => {
-    await dispatch(updateSingleUserRecommendation({ id: recId, accept }));
+  const handleAddToWatchlist = async (movieId) => {
+    try {
+      // Optionally fetch a predicted rating
+      const response = await fetch("http://127.0.0.1:5000/api/predict-rating", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUserId, movieId }),
+      });
+      const data = await response.json();
+
+      const predictedRating =
+        response.ok && data.predictedRating !== undefined
+          ? data.predictedRating
+          : 0.0;
+
+      // Add or create the userMovie record with "watchlist" status
+      const userMovie = userMovies.find(
+        (um) => um.movieId === movieId && um.userId === currentUserId
+      );
+
+      if (userMovie && userMovie.status === "none") {
+        // If the movie is currently "watchlist", update status to "watched"
+        await dispatch(
+          updateSingleUserMovie({
+            userId: userMovie.userId,
+            movieId: userMovie.movieId,
+            status: "watchlist",
+          })
+        );
+        dispatch(fetchUserMovies());
+      } else {
+      await dispatch(
+        createUserMovie({
+          userId: currentUserId,
+          movieId,
+          status: "watchlist",
+          predictedRating,
+        })
+      );}
+
+      alert(`Movie added to watchlist! Predicted Rating: ${predictedRating}`);
+    } catch (err) {
+      console.error(
+        "Error adding movie to watchlist or fetching predicted rating:",
+        err
+      );
+      alert("Something went wrong. Please try again.");
+    }
+  };
+
+  const handleAcceptRecommendation = async (rec, accept) => {
+    console.log("yes", rec)
+    await dispatch(updateSingleUserRecommendation({ id: rec.id, accept }));
+    if(accept == 'yes'){
+      console.log("!!!!!")
+      handleAddToWatchlist(rec.movie.id,)
+    }
     refreshRecommendations();
   };
 
@@ -45,15 +103,32 @@ const FriendRecs = () => {
 
   const handleWatched = async (rec) => {
     try {
-      await dispatch(
-        createUserMovie({
-          userId: currentUserId,
-          movieId: rec.movie.id,
-          watched: true,
-        })
+      const userMovie = userMovies.find(
+        (um) => um.movieId === rec.movieId && um.userId === currentUserId
       );
+
+      if (userMovie && userMovie.status === "watchlist" ||userMovie && userMovie.status === "none") {
+        // If the movie is currently "watchlist", update status to "watched"
+        await dispatch(
+          updateSingleUserMovie({
+            userId: userMovie.userId,
+            movieId: userMovie.movieId,
+            status: "watched",
+          })
+        );
+        dispatch(fetchUserMovies());
+      } else {
+        // Otherwise, create a new entry with status: "watched"
+        await dispatch(
+          createUserMovie({
+            userId: currentUserId,
+            movieId: rec.movieId,
+            status: "watched",
+          })
+        );
+      }
+
       alert("Movie marked as watched!");
-      refreshRecommendations();
     } catch (err) {
       console.error("Error marking movie as watched:", err);
     }
@@ -65,7 +140,7 @@ const FriendRecs = () => {
       (userMovie) =>
         userMovie.movieId === movieId &&
         userMovie.userId === currentUserId && // Ensure it's for the current user
-        userMovie.watched === true
+        userMovie.status === "watched"
     );
   };
 
@@ -178,13 +253,13 @@ const FriendRecs = () => {
                   <strong>Accepted:</strong>{" "}
                   <>
                     <button
-                      onClick={() => handleAcceptRecommendation(rec.id, "yes")}
+                      onClick={() => handleAcceptRecommendation(rec, "yes")}
                       className="accept-button"
                     >
                       I'll Watch It!
                     </button>
                     <button
-                      onClick={() => handleAcceptRecommendation(rec.id, "no")}
+                      onClick={() => handleAcceptRecommendation(rec, "no")}
                       className="reject-button"
                     >
                       Pass

@@ -38,11 +38,13 @@ export const fetchSingleUserRecommendation = (recommendationId) => {
 export const updateSingleUserRecommendation = (recommendation) => {
   return async (dispatch) => {
     try {
-      // Send the PUT request with the recommendation's id and updates
+      // Expect shape like { id: 123, accept: "yes" } or { id: 123, response: "some text" }, etc.
       const { id, ...updates } = recommendation;
+
+      // PUT the updates to your server
       await Axios.put(`/api/userrecommendations/${id}`, updates);
 
-      // Fetch the updated recommendation and dispatch it
+      // Now fetch the updated record
       const { data: updated } = await Axios.get(`/api/userrecommendations/${id}`);
       dispatch(_updateSingleUserRecommendation(updated));
     } catch (err) {

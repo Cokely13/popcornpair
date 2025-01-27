@@ -131,6 +131,8 @@ const Watchlist = () => {
   // Grab all movies (to merge movie details)
   const movies = useSelector((state) => state.allMovies);
 
+
+
   const [sortCriteria, setSortCriteria] = useState("None");
 
   useEffect(() => {
@@ -177,6 +179,7 @@ const Watchlist = () => {
           status: "none", // or "watched" or some other approach
         })
       );
+      dispatch(fetchUserMovies());
     } catch (err) {
       console.error("Error removing from watchlist:", err);
     }
@@ -192,6 +195,7 @@ const Watchlist = () => {
           status: "watched",
         })
       );
+      dispatch(fetchUserMovies());
     } catch (err) {
       console.error("Error marking as watched:", err);
     }
