@@ -1,12 +1,12 @@
-userId,movieId,rating,watched,dateWatched,title,genres,criticScore,runtimeMinutes,avgFriendRating
-4,4,6,true,2025-01-24,Mufasa: The Lion King,Adventure|Family|Animation,57,118,
-2,7,7,true,2025-01-24,Werewolves,Action|Horror|Thriller,47,94,
-3,8,9,false,2025-01-24,Flow,Animation|Fantasy|Adventure,92,85,
-4,8,9,true,2025-01-24,Flow,Animation|Fantasy|Adventure,92,85,9
-4,6,7,true,2025-01-24,Gladiator II,Action|Adventure|Drama,68,148,
-1,1,7,true,2025-01-24,Venom: The Last Dance,Action|Science Fiction|Adventure,41,109,
-1,8,9,true,2025-01-24,Flow,Animation|Fantasy|Adventure,92,85,9
-2,6,4,true,2025-01-24,Gladiator II,Action|Adventure|Drama,68,148,
-1,6,3,true,2025-01-24,Gladiator II,Action|Adventure|Drama,68,148,7
-1,2,7,true,2025-01-24,Kraven the Hunter,Action|Science Fiction|Adventure|Fantasy|Thriller,26,127,
-1,10,1,true,2025-01-24,Moana 2,Animation|Adventure|Family|Comedy,60,100,
+userId,movieId,rating,status,dateWatched,title,genres,criticScore,runtimeMinutes,avgFriendRating
+1,8,9,watched,2025-01-27,Absolution,Action|Crime|Thriller,56,112,8
+1,10,6,watched,2025-01-27,Moana 2,Animation|Adventure|Family|Comedy,60,100,6
+1,4,3,watched,2025-01-27,Red One,Action|Fantasy|Comedy,32,124,
+3,8,8,watched,2025-01-27,Absolution,Action|Crime|Thriller,56,112,
+3,5,7,watched,2025-01-27,Gladiator II,Action|Adventure|Drama,68,148,
+3,10,6,watched,2025-01-27,Moana 2,Animation|Adventure|Family|Comedy,60,100,
+3,7,10,watched,2025-01-27,Flow,Animation|Fantasy|Adventure,92,85,
+2,4,2,watched,2025-01-27,Red One,Action|Fantasy|Comedy,32,124,3
+1,7,10,watched,2025-01-28,Flow,Animation|Fantasy|Adventure,92,85,10
+2,7,9,watched,2025-01-28,Flow,Animation|Fantasy|Adventure,92,85,10
+4,7,10,watched,2025-01-27,Flow,Animation|Fantasy|Adventure,92,85,10
