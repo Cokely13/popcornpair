@@ -4,18 +4,18 @@ const db = require('./db');
 
 const User = require('./models/User');
 const Movie = require('./models/Movie');
-const Rating = require('./models/Rating');
+// const Rating = require('./models/Rating');
 const UserMovie = require('./models/UserMovie');
 const Friend = require('./models/Friend');
 const UserRecommendation = require('./models/UserRecommendation'); // Import the new model
 
 // Associations
 // Rating associations
-User.hasMany(Rating);
-Rating.belongsTo(User);
+// User.hasMany(Rating);
+// Rating.belongsTo(User);
 
-Movie.hasMany(Rating);
-Rating.belongsTo(Movie);
+// Movie.hasMany(Rating);
+// Rating.belongsTo(Movie);
 
 // UserMovie associations
 User.belongsToMany(Movie, { through: UserMovie });
@@ -44,7 +44,7 @@ module.exports = {
   models: {
     User,
     Movie,
-    Rating,
+    // Rating,
     UserMovie,
     UserRecommendation, // Export the new model
     Friend

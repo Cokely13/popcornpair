@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {
-  models: { User, Movie, Rating, UserMovie, UserRecommendation },
+  models: { User, Movie,UserMovie, UserRecommendation },
 } = require('../db');
 
 module.exports = router;
@@ -9,7 +9,7 @@ router.get('/', async (req, res, next) => {
   try {
     const users = await User.findAll({
       attributes: ['id', 'username', 'email', 'isAdmin'],
-      include: [Movie, Rating,],
+      include: [Movie, ],
     });
     res.json(users);
   } catch (err) {
@@ -39,7 +39,7 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id, {
-      include: [Movie, Rating,],
+      include: [Movie,],
       attributes: ['id', 'username'],
     });
     res.json(user);

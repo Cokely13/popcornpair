@@ -66,8 +66,6 @@ const AddMovie = () => {
     }
   };
 
-  console.log("sear", searchResults)
-
   return (
     <div className="add-movie-container">
       <h2>Add a Movie</h2>

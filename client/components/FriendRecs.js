@@ -87,10 +87,8 @@ const FriendRecs = () => {
   };
 
   const handleAcceptRecommendation = async (rec, accept) => {
-    console.log("yes", rec)
     await dispatch(updateSingleUserRecommendation({ id: rec.id, accept }));
     if(accept == 'yes'){
-      console.log("!!!!!")
       handleAddToWatchlist(rec.movie.id,)
     }
     refreshRecommendations();

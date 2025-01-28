@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMovies } from "../store/allMoviesStore";
-import { fetchRatings, createRating } from "../store/allRatingsStore";
 import { fetchUserMovies , createUserMovie} from "../store/allUserMoviesStore";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const RateMovie = () => {
   const dispatch = useDispatch();
   const movies = useSelector((state) => state.allMovies);
-  const ratings = useSelector((state) => state.allRatings);
   const userMovies = useSelector((state) => state.allUserMovies);
   const [shuffledMovies, setShuffledMovies] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -16,7 +14,6 @@ const RateMovie = () => {
 
   useEffect(() => {
     dispatch(fetchMovies());
-    dispatch(fetchRatings(currentUserId)); // Fetch ratings for the logged-in user
     dispatch(fetchUserMovies());
   }, [dispatch, currentUserId]);
 
@@ -35,7 +32,7 @@ const RateMovie = () => {
     // Shuffle the movies
     const shuffled = unratedMovies.sort(() => Math.random() - 0.5);
     setShuffledMovies(shuffled);
-  }, [movies, ratings, userMovies, currentUserId]);
+  }, [movies, userMovies, currentUserId]);
 
   useEffect(() => {
     if (currentIndex >= shuffledMovies.length) {
