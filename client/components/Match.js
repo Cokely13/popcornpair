@@ -205,29 +205,51 @@ const Match = () => {
   }, [dispatch]);
 
   // Get shared movies rated "YES" by both users
-  const sharedMovies = ratings
-    .filter((rating) => rating.userId === currentUserId && rating.rating === "YES")
-    .map((rating) => rating.movieId)
-    .filter((movieId) =>
-      ratings.some(
-        (friendRating) =>
-          friendRating.userId === parseInt(userId) &&
-          friendRating.movieId === movieId &&
-          friendRating.rating === "YES"
-      )
-    )
-    .filter((movieId) =>
-      !userMovies.some(
-        (userMovie) => userMovie.movieId === movieId && userMovie.watched === true
-      )
-    );
+  // const sharedMovies = ratings
+  //   .filter((rating) => rating.userId === currentUserId && rating.rating === "YES")
+  //   .map((rating) => rating.movieId)
+  //   .filter((movieId) =>
+  //     ratings.some(
+  //       (friendRating) =>
+  //         friendRating.userId === parseInt(userId) &&
+  //         friendRating.movieId === movieId &&
+  //         friendRating.rating === "YES"
+  //     )
+  //   )
+  //   .filter((movieId) =>
+  //     !userMovies.some(
+  //       (userMovie) => userMovie.movieId === movieId && userMovie.watched === true
+  //     )
+  //   );
 
-  // Filter matched movies by selected genre
-  const matchedMovies = movies
-    .filter((movie) => sharedMovies.includes(movie.id))
-    .filter((movie) =>
-      selectedGenre === "All" || movie.genres?.includes(selectedGenre)
-    );
+  const currentUserWatchlist = userMovies
+  .filter(
+    (um) =>
+      um.userId === currentUserId &&
+      um.status === "watchlist"
+  )
+  .map((um) => um.movieId);
+
+// 2. Get watchlist entries for the friend
+const friendWatchlist = userMovies
+  .filter(
+    (um) =>
+      um.userId === parseInt(userId) &&
+      um.status === "watchlist"
+  )
+  .map((um) => um.movieId);
+
+  const sharedMovieIds = currentUserWatchlist.filter((movieId) =>
+    friendWatchlist.includes(movieId)
+  );
+
+// 3. Intersection: Movies in *both* watchlists
+const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
+
+  // 5. Filter by genre if needed
+  const matchedMovies = sharedMovies.filter((movie) =>
+    selectedGenre === "All" || movie.genres?.includes(selectedGenre)
+  );
 
   const genres = [
     "All",
