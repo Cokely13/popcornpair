@@ -307,6 +307,8 @@ const Watched = () => {
   const userMovies = useSelector((state) => state.allUserMovies);
   const movies = useSelector((state) => state.allMovies);
   const users = useSelector((state) => state.allUsers);
+  const [showModal, setShowModal] = useState(false);
+const [friendWatchersList, setFriendWatchersList] = useState([]);
 
   // All friend records (both directions)
   const allFriends = useSelector((state) => state.allFriends);
@@ -364,6 +366,17 @@ const Watched = () => {
         rating: fw.rating || "Not Rated",
       };
     });
+  };
+
+  const handleFriendsWatchedClick = (movieId) => {
+    // 1) get watchers
+    const watchers = getFriendWatchersForMovie(movieId);
+
+    // 2) store them in state
+    setFriendWatchersList(watchers);
+
+    // 3) open the modal
+    setShowModal(true);
   };
 
   // 6) Count how many friends have watched
@@ -458,6 +471,25 @@ const Watched = () => {
           <option value="Rating">Rating</option>
         </select>
       </div>
+      {showModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Friends Who Watched</h2>
+      {friendWatchersList.length ? (
+        <ul>
+          {friendWatchersList.map((fw, idx) => (
+            <li key={idx}>
+              {fw.username} (Rating: {fw.rating})
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No friends found.</p>
+      )}
+      <button onClick={() => setShowModal(false)}>Close</button>
+    </div>
+  </div>
+)}
 
       {/* Movies Table */}
       <table className="watched-movies-table">
@@ -524,8 +556,15 @@ const Watched = () => {
                   )}
                 </td>
 
-                {/* # Friends Watched (dummy clickable or a modal if you like) */}
-                <td>{friendWatchersCount}</td>
+                <td>
+  {friendWatchersCount > 0 ? (
+    <button onClick={() => handleFriendsWatchedClick(movie.movieId)}>
+      {friendWatchersCount}
+    </button>
+  ) : (
+    "0"
+  )}
+</td>
 
                 <td>
                   {selectedRecommendationMovieId === movie.id ? (
