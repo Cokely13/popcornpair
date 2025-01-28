@@ -50,7 +50,7 @@ class Routes extends Component {
             <Route exact path="/search" component={Search} />
             <Route exact path="/friendrecs" component={FriendRecs} />
             <Route path="/movies/:movieId" component={MovieDetail} />
-            <Route path="/users/:userId" component={UserDetail} />
+            <Route exact path="/users/:userId" component={UserDetail} />
             <Route path="/recommendations" component={Recommendations} />
             <Route path="/addmovie" component={AddMovie} />
             <Redirect to="/home" />
