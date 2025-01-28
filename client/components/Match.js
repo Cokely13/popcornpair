@@ -5,6 +5,7 @@ import { fetchMovies } from "../store/allMoviesStore";
 import { createUserMovie } from "../store/allUserMoviesStore";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchSingleUser } from "../store/singleUserStore";
+import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 
 const Match = () => {
   const { userId } = useParams(); // Friend's ID
@@ -100,31 +101,61 @@ const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
     }
   };
 
-  const handleWatch = async () => {
+  // const handleWatch = async () => {
+  //   try {
+  //     // Create UserMovie for the current user
+  //     await dispatch(
+  //       createUserMovie({
+  //         userId: currentUserId,
+  //         movieId: movie.id,
+  //         watched: true,
+  //         watchedWith: userId,
+  //       })
+  //     );
+
+  //     // Create UserMovie for the friend
+  //     await dispatch(
+  //       createUserMovie({
+  //         userId: parseInt(userId),
+  //         movieId: movie.id,
+  //         watched: true,
+  //         watchedWith: currentUserId,
+  //       })
+  //     );
+
+  //     alert("Movie marked as watched!");
+  //   } catch (err) {
+  //     console.error("Error creating UserMovie:", err);
+  //   }
+  // };
+
+  const handleWatch = async (movieId) => {
+
     try {
-      // Create UserMovie for the current user
+      const userMovie = userMovies.find(
+        (um) => um.movieId === movieId && um.userId === currentUserId
+      );
+
       await dispatch(
-        createUserMovie({
+        updateSingleUserMovie({
           userId: currentUserId,
-          movieId: movie.id,
-          watched: true,
-          watchedWith: userId,
+          movieId: userMovie.movieId,
+          status: "watched",
+          watchedWith: userId
         })
       );
 
-      // Create UserMovie for the friend
       await dispatch(
-        createUserMovie({
-          userId: parseInt(userId),
-          movieId: movie.id,
-          watched: true,
-          watchedWith: currentUserId,
+        updateSingleUserMovie({
+          userId: userId,
+          movieId: userMovie.movieId,
+          status: "watched",
+          watchedWith: currentUserId
         })
       );
-
-      alert("Movie marked as watched!");
+      dispatch(fetchUserMovies());
     } catch (err) {
-      console.error("Error creating UserMovie:", err);
+      console.error("Error marking as watched:", err);
     }
   };
 
@@ -168,7 +199,7 @@ const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
 
       {/* Buttons */}
       <div className="button-container">
-        <button className="watch-button" onClick={handleWatch}>
+        <button className="watch-button" onClick={() => handleWatch(movie.id)}>
           Watch
         </button>
         <button className="next-button" onClick={handleNext}>
