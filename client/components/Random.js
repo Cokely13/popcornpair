@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRatings } from "../store/allRatingsStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { createUserMovie } from "../store/allUserMoviesStore";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
@@ -13,47 +12,74 @@ const Random = () => {
   const [randomMovie, setRandomMovie] = useState(null);
 
   const currentUserId = useSelector((state) => state.auth.id);
-  const ratings = useSelector((state) => state.allRatings) || [];
   const movies = useSelector((state) => state.allMovies) || [];
   const userMovies = useSelector((state) => state.allUserMovies) || [];
   const friend = useSelector((state) => state.singleUser) || [];
 
   useEffect(() => {
-    dispatch(fetchRatings());
     dispatch(fetchMovies());
     dispatch(fetchUserMovies());
     dispatch(fetchSingleUser(userId));
   }, [dispatch]);
 
-  // Find common movies rated "YES" by both users
-  const sharedMovies = ratings
-    .filter((rating) => rating.userId === currentUserId && rating.rating === "YES") // Movies rated "YES" by current user
-    .map((rating) => rating.movieId)
-    .filter((movieId) =>
-      ratings.some(
-        (friendRating) =>
-          friendRating.userId === parseInt(userId) &&
-          friendRating.movieId === movieId &&
-          friendRating.rating === "YES"
-      )
-    )
-    .filter(
-      (movieId) =>
-        !userMovies.some(
-          (userMovie) => userMovie.movieId === movieId && userMovie.watched
-        )
-    );
+  const currentUserWatchlist = userMovies
+  .filter(
+    (um) =>
+      um.userId === currentUserId &&
+      um.status === "watchlist"
+  )
+  .map((um) => um.movieId);
 
-  const matchedMovies = movies.filter((movie) => sharedMovies.includes(movie.id));
+// 2. Get watchlist entries for the friend
+const friendWatchlist = userMovies
+  .filter(
+    (um) =>
+      um.userId === parseInt(userId) &&
+      um.status === "watchlist"
+  )
+  .map((um) => um.movieId);
+
+  const sharedMovieIds = currentUserWatchlist.filter((movieId) =>
+    friendWatchlist.includes(movieId)
+  );
+
+// 3. Intersection: Movies in *both* watchlists
+const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
+
+  // 5. Filter by genre if needed
+  // const matchedMovies = sharedMovies.filter((movie) =>
+  //   selectedGenre === "All" || movie.genres?.includes(selectedGenre)
+  // );
+
+  // Find common movies rated "YES" by both users
+  // const sharedMovies = ratings
+  //   .filter((rating) => rating.userId === currentUserId && rating.rating === "YES") // Movies rated "YES" by current user
+  //   .map((rating) => rating.movieId)
+  //   .filter((movieId) =>
+  //     ratings.some(
+  //       (friendRating) =>
+  //         friendRating.userId === parseInt(userId) &&
+  //         friendRating.movieId === movieId &&
+  //         friendRating.rating === "YES"
+  //     )
+  //   )
+  //   .filter(
+  //     (movieId) =>
+  //       !userMovies.some(
+  //         (userMovie) => userMovie.movieId === movieId && userMovie.watched
+  //       )
+  //   );
+
+  // const matchedMovies = movies.filter((movie) => sharedMovies.includes(movie.id));
 
   useEffect(() => {
-    if (matchedMovies.length) {
-      const randomIndex = Math.floor(Math.random() * matchedMovies.length);
-      setRandomMovie(matchedMovies[randomIndex]);
+    if (sharedMovies.length) {
+      const randomIndex = Math.floor(Math.random() * sharedMovies.length);
+      setRandomMovie(sharedMovies[randomIndex]);
     } else {
       setRandomMovie(null); // No matched movies
     }
-  }, [matchedMovies]);
+  }, [sharedMovies]);
 
   const handleWatch = async () => {
     if (!randomMovie) return;
