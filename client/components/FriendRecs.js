@@ -9,7 +9,7 @@ import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const FriendRecs = () => {
   const dispatch = useDispatch();
-  const [viewType, setViewType] = useState("sent");
+  const [viewType, setViewType] = useState("received");
   const [editingResponseId, setEditingResponseId] = useState(null);
   const [responseText, setResponseText] = useState("");
 
@@ -146,8 +146,8 @@ const FriendRecs = () => {
 
   // Filter recommendations based on view type
   const filteredRecs = recommendations.filter((rec) => {
-    if (viewType === "sent") return rec.senderId === currentUserId;
     if (viewType === "received") return rec.receiverId === currentUserId && !isMovieWatched(rec.movie.id);
+    if (viewType === "sent") return rec.senderId === currentUserId;
     if (viewType === "watched") return rec.receiverId === currentUserId && isMovieWatched(rec.movie.id);
     return false;
   });
@@ -164,8 +164,8 @@ const FriendRecs = () => {
           value={viewType}
           onChange={(e) => setViewType(e.target.value)}
         >
-          <option value="sent">Recommendations Sent</option>
           <option value="received">Recommendations Received</option>
+          <option value="sent">Recommendations Sent</option>
           <option value="watched">Recommendations Watched</option>
         </select>
       </div>
@@ -300,10 +300,10 @@ const FriendRecs = () => {
           ))
         ) : (
           <p>
-            {viewType === "sent"
-              ? "You have not sent any recommendations."
-              : viewType === "received"
+            {viewType === "received"
               ? "You have not received any recommendations."
+              : viewType === "sent"
+              ? "You have not sent any recommendations."
               : "You have not watched any recommended movies."}
           </p>
         )}

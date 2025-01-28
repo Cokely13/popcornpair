@@ -9,7 +9,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.auth.id);
   const userMovies = useSelector((state) => state.allUserMovies).filter(
-    (userMovie) => userMovie.userId === currentUserId && userMovie.watched
+    (userMovie) => userMovie.userId === currentUserId && userMovie.status == "watched"
   );
   const movies = useSelector((state) => state.allMovies);
   const currentUser = useSelector((state) =>

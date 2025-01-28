@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchRatings, createRating } from "../store/allRatingsStore";
-import { fetchUserMovies } from "../store/allUserMoviesStore";
+import { fetchUserMovies , createUserMovie} from "../store/allUserMoviesStore";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const RateMovie = () => {
@@ -12,36 +12,30 @@ const RateMovie = () => {
   const userMovies = useSelector((state) => state.allUserMovies);
   const [shuffledMovies, setShuffledMovies] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { id } = useSelector((state) => state.auth);
+  const  currentUserId  = useSelector((state) => state.auth.id);
 
   useEffect(() => {
     dispatch(fetchMovies());
-    dispatch(fetchRatings(id)); // Fetch ratings for the logged-in user
+    dispatch(fetchRatings(currentUserId)); // Fetch ratings for the logged-in user
     dispatch(fetchUserMovies());
-  }, [dispatch, id]);
+  }, [dispatch, currentUserId]);
 
   useEffect(() => {
     // Filter and shuffle the movies
     const unratedMovies = movies.filter((movie) => {
-      const isRated = ratings.some(
-        (rating) =>
-          rating.movieId === movie.id && rating.userId === id
-      );
+    const isInUserMovies = userMovies.some(
+      (userMovie) =>
+        userMovie.userId === currentUserId && userMovie.movieId === movie.id
+    );
 
-      const isInUserMovies = userMovies.some(
-        (userMovie) =>
-          userMovie.userId === id &&
-          userMovie.movieId === movie.id &&
-          (userMovie.watched || userMovie.watchlist)
-      );
-
-      return !isRated && !isInUserMovies;
-    });
+    // We only keep movies that do *not* match the above:
+    return !isInUserMovies;
+  })
 
     // Shuffle the movies
     const shuffled = unratedMovies.sort(() => Math.random() - 0.5);
     setShuffledMovies(shuffled);
-  }, [movies, ratings, userMovies, id]);
+  }, [movies, ratings, userMovies, currentUserId]);
 
   useEffect(() => {
     if (currentIndex >= shuffledMovies.length) {
@@ -51,24 +45,79 @@ const RateMovie = () => {
 
   const movie = shuffledMovies[currentIndex];
 
-  const handleRating = async (rating) => {
-    if (!movie) {
-      console.error("No movie available for rating.");
-      return;
-    }
+  // const handleRating = async (rating) => {
+  //   if (!movie) {
+  //     console.error("No movie available for rating.");
+  //     return;
+  //   }
 
+  //   try {
+  //     await dispatch(
+  //       createRating({
+  //         userId: id,
+  //         movieId: movie.id,
+  //         rating,
+  //       })
+  //     );
+
+  //     handleNextMovie();
+  //   } catch (err) {
+  //     console.error("Error submitting rating:", err);
+  //   }
+  // };
+
+  const handleAddToWatchlist = async (movieId) => {
     try {
-      await dispatch(
-        createRating({
-          userId: id,
-          movieId: movie.id,
-          rating,
-        })
-      );
+      console.log("movieId!!!", movieId)
+      // Optionally fetch a predicted rating
+      const response = await fetch("http://127.0.0.1:5000/api/predict-rating", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUserId, movieId }),
+      });
+      const data = await response.json();
 
-      handleNextMovie();
+      const predictedRating =
+        response.ok && data.predictedRating !== undefined
+          ? data.predictedRating
+          : 0.0;
+
+      // Add or create the userMovie record with "watchlist" status
+      // const userMovie = userMovies.find(
+      //   (um) => um.movieId === movieId && um.userId === currentUserId
+      // );
+
+      // if (userMovie && userMovie.status === "none") {
+      //   // If the movie is currently "watchlist", update status to "watched"
+      //   await dispatch(
+      //     updateSingleUserMovie({
+      //       userId: userMovie.userId,
+      //       movieId: userMovie.movieId,
+      //       status: "watchlist",
+      //     })
+      //   );
+      //   dispatch(fetchUserMovies());
+      // } else {
+
+      console.log("current", currentUserId)
+      console.log("movie", movieId)
+      await dispatch(
+        createUserMovie({
+          userId: currentUserId,
+          movieId,
+          status: "watchlist",
+          predictedRating,
+        })
+      )
+
+      alert(`Movie added to watchlist! Predicted Rating: ${predictedRating}`);
     } catch (err) {
-      console.error("Error submitting rating:", err);
+      console.error(
+        "Error adding movie to watchlist or fetching predicted rating:",
+        err
+      );
+      console.log("movieIdddd", movieId)
+      alert("Something went wrong!!!! Please try again.");
     }
   };
 
@@ -109,21 +158,21 @@ const RateMovie = () => {
           <div className="button-container">
             <button
               className="yes-button"
-              onClick={() => handleRating("YES")}
+              onClick={() => handleAddToWatchlist(movie.id)}
               title="Thumbs Up"
             >
               <FaThumbsUp />
             </button>
-            <button
+            {/* <button
               className="maybe-button"
               onClick={handleNextMovie}
               title="Maybe Later"
             >
               Maybe Later
-            </button>
+            </button> */}
             <button
               className="no-button"
-              onClick={() => handleRating("NO")}
+              onClick={handleNextMovie}
               title="Thumbs Down"
             >
               <FaThumbsDown />
