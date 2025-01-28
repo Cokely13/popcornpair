@@ -81,33 +81,33 @@ const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
     }
   }, [sharedMovies]);
 
-  const handleWatch = async () => {
-    if (!randomMovie) return;
+  const handleWatch = async (movieId) => {
 
     try {
-      // Create UserMovie for the current user
+      const userMovie = userMovies.find(
+        (um) => um.movieId === movieId && um.userId === currentUserId
+      );
+
       await dispatch(
-        createUserMovie({
+        updateSingleUserMovie({
           userId: currentUserId,
-          movieId: randomMovie.id,
-          watched: true,
-          watchedWith: userId,
+          movieId: userMovie.movieId,
+          status: "watched",
+          watchedWith: userId
         })
       );
 
-      // Create UserMovie for the friend
       await dispatch(
-        createUserMovie({
-          userId: parseInt(userId),
-          movieId: randomMovie.id,
-          watched: true,
-          watchedWith: currentUserId,
+        updateSingleUserMovie({
+          userId: userId,
+          movieId: userMovie.movieId,
+          status: "watched",
+          watchedWith: currentUserId
         })
       );
-
-      alert("Movie marked as watched!");
+      dispatch(fetchUserMovies());
     } catch (err) {
-      console.error("Error creating UserMovie:", err);
+      console.error("Error marking as watched:", err);
     }
   };
 
@@ -147,7 +147,7 @@ const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
 
           {/* Watch Button */}
           <div className="button-container">
-            <button className="watch-button" onClick={handleWatch}>
+          <button className="watch-button" onClick={() => handleWatch(movie.id)}>
               Watch
             </button>
           </div>
