@@ -36,8 +36,6 @@ export const fetchFriends = () => {
 };
 
 export const addFriend = (friend) => {
-
-  console.log("HEREE", friend)
   return async (dispatch) => {
     const { data: created } = await Axios.post("/api/friends", friend);
     dispatch(_addFriend(created));

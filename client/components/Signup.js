@@ -57,7 +57,7 @@ const mapDispatch = (dispatch) => ({
       return;
     }
 
-    dispatch(authenticate(username, password, 'signup'));
+    dispatch(authenticate(username, password, email, 'signup'));
   },
 });
 
