@@ -89,6 +89,10 @@ const User = db.define('user', {
   password: {
     type: Sequelize.STRING,
   },
+  image: {
+    type: Sequelize.STRING,
+    defaultValue: 'profile.jpg', // Provide a default image if needed
+  },
   email: {
     type: Sequelize.STRING,
     unique: true,
