@@ -87,8 +87,31 @@ const Home = () => {
             <p>
               Find overlapping watchlist movies with your friends, and watch together!
             </p>
-            <Link to="/match" className="feature-link">
+            <Link to="/list" className="feature-link">
               Match with Friends
+            </Link>
+          </div>
+         <div className="feature-card">
+            <h3>Recommendations</h3>
+            <p>
+              Receive direct suggestions from friends or suggest movies
+              to them. Find which titles they haven’t seen yet!
+            </p>
+            <Link to="/recommendations" className="feature-link">
+              Go to Recommendations
+            </Link>
+          </div>
+
+          {/* Card 6: Our Unique Algorithm */}
+          <div className="feature-card">
+            <h3>Personalized Ratings</h3>
+            <p>
+              Our smart algorithm uses critic scores, friend ratings, and
+              your own rating history to estimate how much you'll enjoy
+              each movie on your watchlist.
+            </p>
+            <Link to="/algorithm" className="feature-link">
+              Learn About Our Algorithm
             </Link>
           </div>
         </div>

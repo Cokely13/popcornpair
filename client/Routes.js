@@ -21,6 +21,7 @@ import Watchlist from './components/Watchlist';
 import FriendRecs from './components/FriendRecs';
 import AddMovie from './components/AddMovie';
 import Users from './components/Users';
+import Algorithm from './components/Algorithm';
 
 /**
  * COMPONENT
@@ -48,10 +49,11 @@ class Routes extends Component {
             <Route exact path="/watched" component={Watched} />
             <Route exact path="/rejected" component={Rejected} />
             <Route exact path="/search" component={Search} />
-            <Route exact path="/friendrecs" component={FriendRecs} />
+            <Route exact path="/algorithm" component={Algorithm} />
+            <Route exact path="/recommendations" component={FriendRecs} />
             <Route path="/movies/:movieId" component={MovieDetail} />
             <Route exact path="/users/:userId" component={UserDetail} />
-            <Route path="/recommendations" component={Recommendations} />
+            {/* <Route path="/recommendations" component={Recommendations} /> */}
             <Route path="/addmovie" component={AddMovie} />
             <Redirect to="/home" />
           </Switch>
