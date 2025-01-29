@@ -10,3 +10,4 @@ userId,movieId,rating,status,dateWatched,title,criticScore,userRating,avgFriendR
 1,7,10,watched,2025-01-28,Flow,92,8.1,10
 2,7,9,watched,2025-01-28,Flow,92,8.1,10
 4,7,10,watched,2025-01-27,Flow,92,8.1,10
+4,3,4,watched,2025-01-28,Mufasa: The Lion King,57,6.9,

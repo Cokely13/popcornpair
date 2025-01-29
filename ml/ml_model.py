@@ -169,71 +169,190 @@
 #     return round(predicted_rating, 2)
 
 
+# import pandas as pd
+# from sklearn.ensemble import GradientBoostingRegressor  # Handles non-linear relationships
+# from sklearn.preprocessing import MinMaxScaler
+# import numpy as np
+
+# # Function to predict the rating for a specific user and movie
+# def predict_rating_for_movie(user_id, movie_id):
+#     # Load the dataset
+#     data = pd.read_csv("training_data.csv")
+
+#     # Handle missing values for avgFriendRating
+#     data['avgFriendRating'].fillna(data['rating'].mean(), inplace=True)  # Fallback to dataset mean if missing
+
+#     # Scale criticScore from 0-100 to match the 1–10 scale
+#     data['criticScore'] = data['criticScore'] / 10.0
+
+#     # Check if the user has rated any movies
+#     user_ratings = data[data['userId'] == user_id]
+
+#     if not user_ratings.empty:
+#         # Calculate user-specific tendencies
+#         user_avg_rating = user_ratings['rating'].mean()
+#         avg_friend_rating_all = data['avgFriendRating'].mean()
+#         user_rating_tendency = user_avg_rating - avg_friend_rating_all
+#     else:
+#         user_rating_tendency = None  # No adjustment for users with no ratings
+
+#     # Prepare training data (excluding target movie)
+#     train_data = data[data['movieId'] != movie_id]
+#     X_train = train_data[['criticScore', 'userRating', 'avgFriendRating']]
+#     y_train = train_data['rating']
+
+#     # Train a Gradient Boosting model
+#     model = GradientBoostingRegressor(n_estimators=100, max_depth=3, random_state=42)
+#     model.fit(X_train, y_train)
+
+#     # Get the specific movie's data for prediction
+#     target_movie = data[data['movieId'] == movie_id]
+
+#     if target_movie.empty:
+#         print(f"Warning: No data found for user {user_id} and movie {movie_id}. Defaulting to mean rating.")
+#         return round(y_train.mean(), 2)  # Default to average rating
+
+#     X_test = target_movie[['criticScore', 'userRating', 'avgFriendRating']].copy()
+
+#     # Adjust for user tendency (ONLY if user has prior ratings)
+#     if user_rating_tendency is not None:
+#         X_test['userRating'] += user_rating_tendency
+
+#     # Predict the rating
+#     predicted_rating = model.predict(X_test)[0]
+
+#     # 🚨 **Fix: Ensure Friend-Based Floor Works Properly**
+#     # Get all users who rated the movie
+#     friend_ratings = data[(data['movieId'] == movie_id) & (data['userId'] != user_id)]['rating']
+
+#     if not friend_ratings.empty:
+#         # Count how many of the friends rated the movie 9+
+#         high_rating_friends = (friend_ratings >= 9).sum()
+#         num_friends = len(friend_ratings)
+
+#         # If 75%+ of friends gave the movie a 9 or 10, enforce a floor of 8
+#         if num_friends > 0 and (high_rating_friends / num_friends) >= 0.75:
+#             print(f"🔥 Boosting rating floor for movie {movie_id} - {round((high_rating_friends / num_friends) * 100, 2)}% of friends rated 9+")
+#             predicted_rating = max(predicted_rating, 8)
+
+#     # Return rounded predicted rating
+#     return round(predicted_rating, 2)
+
+# import pandas as pd
+# from sklearn.ensemble import GradientBoostingRegressor  # Handles non-linear relationships
+# from sklearn.preprocessing import MinMaxScaler
+# import numpy as np
+
+# def load_data():
+#     """Load the training data CSV into a Pandas DataFrame."""
+#     try:
+#         data = pd.read_csv("training_data.csv")  # Make sure the path is correct
+#         return data
+#     except Exception as e:
+#         print(f"❌ Error loading dataset: {e}")
+#         return None  # Return None if file loading fails
+
+# def predict_rating(user_id, movie_id, data):
+#     # Extract movie data
+#     movie_row = data[data['movieId'] == movie_id]
+
+#     if movie_row.empty:
+#         print(f"⚠️ No data found for movie {movie_id}. Defaulting to critic score + user rating blend.")
+#         return round((data['criticScore'].mean() / 10 + data['userRating'].mean()) / 2, 2)
+
+#     # Extract critic score (scaled) and user rating
+#     critic_score = movie_row['criticScore'].values[0] / 10
+#     user_rating = movie_row['userRating'].values[0]
+
+#     # Base Prediction (if no friends have watched)
+#     base_prediction = round((critic_score + user_rating) / 2, 2)
+
+#     # Get Friend Ratings
+#     friend_ratings = data[(data['movieId'] == movie_id) & (data['userId'] != user_id)]['rating'].dropna()
+
+#     if friend_ratings.empty:
+#         print(f"🔹 No friend ratings for movie {movie_id}. Using base prediction.")
+#         return base_prediction
+
+#     # Adjust with Friend Ratings
+#     avg_friend_rating = friend_ratings.mean()
+#     adjusted_prediction = round((0.5 * avg_friend_rating) + (0.25 * base_prediction) + (0.25 * (critic_score + user_rating)), 2)
+
+#     # Get User's Past Ratings
+#     user_ratings = data[data['userId'] == user_id][['rating', 'movieId']].dropna()
+
+#     if user_ratings.empty:
+#         print(f"🔹 User {user_id} has no past ratings. Skipping bias correction.")
+#         return adjusted_prediction
+
+#     # Calculate User Bias
+#     past_predictions = data[(data['userId'] == user_id) & (data['rating'].notna())]['rating']
+#     avg_user_rating = user_ratings['rating'].mean()
+#     avg_past_predictions = past_predictions.mean()
+
+#     user_bias = avg_user_rating - avg_past_predictions
+#     final_prediction = round(adjusted_prediction + user_bias, 2)
+
+#     print(f"✅ Final Prediction for User {user_id}, Movie {movie_id}: {final_prediction}")
+#     return final_prediction
+
+
 import pandas as pd
-from sklearn.ensemble import GradientBoostingRegressor  # Handles non-linear relationships
-from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
-# Function to predict the rating for a specific user and movie
-def predict_rating_for_movie(user_id, movie_id):
-    # Load the dataset
-    data = pd.read_csv("training_data.csv")
+def load_data():
+    """Load the training data CSV into a Pandas DataFrame."""
+    try:
+        data = pd.read_csv("training_data.csv")  # Ensure correct file path
+        return data
+    except Exception as e:
+        print(f"❌ Error loading dataset: {e}")
+        return None  # Return None if file loading fails
 
-    # Handle missing values for avgFriendRating
-    data['avgFriendRating'].fillna(data['rating'].mean(), inplace=True)  # Fallback to dataset mean if missing
+def predict_rating(user_id, movie_id, data):
+    # Extract movie data
+    movie_row = data[data['movieId'] == movie_id]
 
-    # Scale criticScore from 0-100 to match the 1–10 scale
-    data['criticScore'] = data['criticScore'] / 10.0
+    if movie_row.empty:
+        print(f"⚠️ No data found for movie {movie_id}. Defaulting to critic score + user rating blend.")
+        return round((data['criticScore'].mean() / 10 + data['userRating'].mean()) / 2, 2)
 
-    # Check if the user has rated any movies
-    user_ratings = data[data['userId'] == user_id]
+    # Extract critic score (scaled) and user rating
+    critic_score = movie_row['criticScore'].values[0] / 10
+    user_rating = movie_row['userRating'].values[0]
 
-    if not user_ratings.empty:
-        # Calculate user-specific tendencies
-        user_avg_rating = user_ratings['rating'].mean()
-        avg_friend_rating_all = data['avgFriendRating'].mean()
-        user_rating_tendency = user_avg_rating - avg_friend_rating_all
-    else:
-        user_rating_tendency = None  # No adjustment for users with no ratings
+    # Base Prediction (if no friends have watched)
+    base_prediction = round((critic_score + user_rating) / 2, 2)
 
-    # Prepare training data (excluding target movie)
-    train_data = data[data['movieId'] != movie_id]
-    X_train = train_data[['criticScore', 'userRating', 'avgFriendRating']]
-    y_train = train_data['rating']
+    # Get Friend Ratings
+    friend_ratings = data[(data['movieId'] == movie_id) & (data['userId'] != user_id)]['rating'].dropna()
 
-    # Train a Gradient Boosting model
-    model = GradientBoostingRegressor(n_estimators=100, max_depth=3, random_state=42)
-    model.fit(X_train, y_train)
+    if friend_ratings.empty:
+        print(f"🔹 No friend ratings for movie {movie_id}. Using base prediction.")
+        return base_prediction
 
-    # Get the specific movie's data for prediction
-    target_movie = data[data['movieId'] == movie_id]
+    # Adjust with Friend Ratings
+    avg_friend_rating = friend_ratings.mean()
+    adjusted_prediction = round((0.5 * avg_friend_rating) + (0.25 * base_prediction) + (0.25 * (critic_score + user_rating)), 2)
 
-    if target_movie.empty:
-        print(f"Warning: No data found for user {user_id} and movie {movie_id}. Defaulting to mean rating.")
-        return round(y_train.mean(), 2)  # Default to average rating
+    # Get User's Past Ratings
+    user_ratings = data[data['userId'] == user_id][['rating', 'movieId']].dropna()
 
-    X_test = target_movie[['criticScore', 'userRating', 'avgFriendRating']].copy()
+    if user_ratings.empty:
+        print(f"🔹 User {user_id} has no past ratings. Skipping bias correction.")
+        return max(1, min(10, adjusted_prediction))  # ✅ Clamp to [1, 10]
 
-    # Adjust for user tendency (ONLY if user has prior ratings)
-    if user_rating_tendency is not None:
-        X_test['userRating'] += user_rating_tendency
+    # Calculate User Bias
+    past_predictions = data[(data['userId'] == user_id) & (data['rating'].notna())]['rating']
+    avg_user_rating = user_ratings['rating'].mean()
+    avg_past_predictions = past_predictions.mean()
 
-    # Predict the rating
-    predicted_rating = model.predict(X_test)[0]
+    user_bias = avg_user_rating - avg_past_predictions
+    final_prediction = round(adjusted_prediction + user_bias, 2)
 
-    # 🚨 **Fix: Ensure Friend-Based Floor Works Properly**
-    # Get all users who rated the movie
-    friend_ratings = data[(data['movieId'] == movie_id) & (data['userId'] != user_id)]['rating']
+    # ✅ Ensure final prediction is between 1 and 10
+    final_prediction = max(1, min(10, final_prediction))
 
-    if not friend_ratings.empty:
-        # Count how many of the friends rated the movie 9+
-        high_rating_friends = (friend_ratings >= 9).sum()
-        num_friends = len(friend_ratings)
+    print(f"✅ Final Prediction for User {user_id}, Movie {movie_id}: {final_prediction}")
+    return final_prediction
 
-        # If 75%+ of friends gave the movie a 9 or 10, enforce a floor of 8
-        if num_friends > 0 and (high_rating_friends / num_friends) >= 0.75:
-            print(f"🔥 Boosting rating floor for movie {movie_id} - {round((high_rating_friends / num_friends) * 100, 2)}% of friends rated 9+")
-            predicted_rating = max(predicted_rating, 8)
-
-    # Return rounded predicted rating
-    return round(predicted_rating, 2)
