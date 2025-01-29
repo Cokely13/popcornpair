@@ -1508,3 +1508,52 @@ button:hover {
 
 /* src/components/Navbar.css */
 
+.profile-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* User Image */
+.profile-image {
+  width: 150px;  /* Set fixed size */
+  height: 150px; /* Set fixed size */
+  border-radius: 50%; /* Make it circular */
+  object-fit: cover; /* Ensure it covers the space */
+  border: 3px solid #1e90ff; /* Optional: Add border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Placeholder for No Image */
+.no-profile-image {
+  width: 150px;
+  height: 150px;
+  background-color: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #666;
+  font-size: 14px;
+  border-radius: 50%;
+}
+
+/* Edit Profile Inputs */
+.edit-profile input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.photo-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-upload-section input {
+  margin-bottom: 10px;
+}

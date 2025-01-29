@@ -38,7 +38,7 @@ router.get('/', async (req, res, next) => {
   try {
     const users = await User.findAll({
       attributes: ['id', 'username', 'email', 'isAdmin'],
-      include: [Movie, ],
+      include: [Movie,]
     });
     res.json(users);
   } catch (err) {
@@ -85,8 +85,8 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id, {
-      include: [Movie,],
-      attributes: ['id', 'username'],
+      include: [Movie],
+      attributes: ['id', 'username', 'email', 'image', ],
     });
     res.json(user);
   } catch (err) {
