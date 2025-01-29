@@ -5,10 +5,14 @@ import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { Link } from "react-router-dom";
 
+
 const Watchlist = () => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.auth.id);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
 
+  const [showRatingModal, setShowRatingModal] = useState(false);
+   const [rating, setRating] = useState("");
   // Grab all userMovie entries and filter to just this user
   const userMovies = useSelector((state) => state.allUserMovies).filter(
     (userMovie) => userMovie.userId === currentUserId
@@ -72,25 +76,66 @@ const Watchlist = () => {
   };
 
   // 4. Mark as watched (Set status to "watched")
-  const handleMarkAsWatched = async (movieId) => {
+  // const handleMarkAsWatched = async (movieId) => {
 
+  //   try {
+
+  //     const userMovie = userMovies.find(
+  //       (um) => um.movieId === movieId && um.userId === currentUserId
+  //     );
+  //     await dispatch(
+  //       updateSingleUserMovie({
+  //         userId: currentUserId,
+  //         movieId: userMovie.movieId,
+  //         status: "watched",
+  //       })
+  //     );
+  //     dispatch(fetchUserMovies());
+  //   } catch (err) {
+  //     console.error("Error marking as watched:", err);
+  //   }
+  // };
+
+  const handleMarkAsWatched = (movieId) => {
+    setSelectedMovieId(movieId);
+    setShowRatingModal(true); // Open the rating modal
+  };
+
+  // 8) Submit rating or skip
+  const handleSubmitRating = async (skip = false) => {
     try {
+      if (!selectedMovieId) return;
 
       const userMovie = userMovies.find(
-        (um) => um.movieId === movieId && um.userId === currentUserId
-      );
-      await dispatch(
-        updateSingleUserMovie({
-          userId: currentUserId,
-          movieId: userMovie.movieId,
-          status: "watched",
-        })
-      );
-      dispatch(fetchUserMovies());
-    } catch (err) {
-      console.error("Error marking as watched:", err);
-    }
-  };
+              (um) => um.movieId === selectedMovieId && um.userId === currentUserId
+            );
+
+
+        await dispatch(
+          updateSingleUserMovie({
+            userId: userMovie.userId,
+            movieId: userMovie.movieId,
+            status: "watched",
+            rating: skip ? null : Number(rating), // Only set rating if user selected
+          })
+        )
+        setShowRatingModal(false);
+        setRating("");
+        setSelectedMovieId(null);
+          dispatch(fetchUserMovies());
+          if (!skip && rating) {
+            alert(`Movie marked as watched with a rating of ${rating}!`);
+          } else {
+            alert("Movie marked as watched!");
+          }
+        } catch (err) {
+          console.error("Error submitting rating:", err);
+        }
+      };
+
+
+
+
 
   if (!watchlistMovies.length) {
     return (
@@ -143,6 +188,43 @@ const Watchlist = () => {
           </div>
         ))}
       </div>
+      {showRatingModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Rate the Movie</h2>
+            <p>Would you like to give this movie a rating now?</p>
+            <select
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
+            >
+              <option value="">Select a rating</option>
+              {[...Array(10)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+            <div className="modal-buttons">
+              <button
+                onClick={() => handleSubmitRating(false)}
+                disabled={!rating} // Must pick rating to submit
+              >
+                Submit Rating
+              </button>
+              <button onClick={() => handleSubmitRating(true)}>Skip</button>
+              <button
+                onClick={() => {
+                  setShowRatingModal(false);
+                  setSelectedMovieId(null);
+                  setRating("");
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Link to={`/rejected`} className="friend-link">
                 <button className="friend-button">Second Chance</button>
               </Link>

@@ -4,6 +4,25 @@ import { Link } from "react-router-dom";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
+import { fetchFriends } from "../store/allFriendsStore";
+import { fetchUsers } from "../store/allUsersStore";
+
+// Utility: Get accepted friends
+function getAcceptedFriendUserIds(currentUserId, allFriends) {
+  const friendSet = new Set();
+
+  allFriends
+    .filter((f) => f.status === "accepted")
+    .forEach((f) => {
+      if (f.userId === currentUserId) {
+        friendSet.add(f.friendId);
+      } else if (f.friendId === currentUserId) {
+        friendSet.add(f.userId);
+      }
+    });
+
+  return friendSet;
+}
 
 const Search = () => {
   const dispatch = useDispatch();
@@ -11,38 +30,38 @@ const Search = () => {
   const movies = useSelector((state) => state.allMovies);
   const userMovies = useSelector((state) => state.allUserMovies);
   const currentUserId = useSelector((state) => state.auth.id);
+  const allFriends = useSelector((state) => state.allFriends);
+  const users = useSelector((state) => state.allUsers);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("title");
-  const [genreFilter, setGenreFilter] = useState("All");
+    const [showRatingModal, setShowRatingModal] = useState(false);
+  const [rating, setRating] = useState("");
 
-  // 1. Fetch movies and userMovies on component mount
   useEffect(() => {
     dispatch(fetchMovies());
     dispatch(fetchUserMovies());
+    dispatch(fetchFriends());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
-  // 2. Filter out movies that the user has already marked as "watched"
+  const acceptedFriendIds = getAcceptedFriendUserIds(currentUserId, allFriends);
+
   const unwatchedMovies = movies.filter(
     (movie) =>
       !userMovies.some(
         (userMovie) =>
           userMovie.movieId === movie.id &&
-          userMovie.status === "watched" && // Check status
+          userMovie.status === "watched" &&
           userMovie.userId === currentUserId
       )
   );
 
-  // 3. Filter movies by search query and genre
-  const filteredMovies = unwatchedMovies
-    .filter((movie) =>
-      movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .filter((movie) =>
-      genreFilter === "All" || movie.genres?.includes(genreFilter)
-    );
+  const filteredMovies = unwatchedMovies.filter((movie) =>
+    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  // 4. Sort movies based on sortOption
   const sortedMovies = [...filteredMovies].sort((a, b) => {
     if (sortOption === "title") return a.title.localeCompare(b.title);
     if (sortOption === "releaseDate")
@@ -51,56 +70,73 @@ const Search = () => {
     return 0;
   });
 
-  // 5. Check if a movie is already in the user's watchlist
   const isInWatchlist = (movieId) =>
     userMovies.some(
       (userMovie) =>
         userMovie.movieId === movieId &&
-        userMovie.status === "watchlist" && // Check status
+        userMovie.status === "watchlist" &&
         userMovie.userId === currentUserId
     );
 
-  // 6. Mark a movie as watched
-  const handleMarkAsWatched = async (movieId) => {
+
+  // 7) "Mark as Watched" logic → Show rating modal
+  const handleMarkAsWatched = (movieId) => {
+    setSelectedMovieId(movieId);
+    setShowRatingModal(true); // Open the rating modal
+  };
+
+  // 8) Submit rating or skip
+  const handleSubmitRating = async (skip = false) => {
     try {
+      if (!selectedMovieId) return;
+
+      // Check if there's already a userMovie record
       const userMovie = userMovies.find(
-        (um) => um.movieId === movieId && um.userId === currentUserId
+        (um) => um.movieId === selectedMovieId && um.userId === currentUserId
       );
 
-      if (
-        userMovie &&
-        (userMovie.status === "watchlist" || userMovie.status === "none")
-      ) {
-        // If the movie is currently "watchlist", update status to "watched"
+      if (userMovie && (userMovie.status === "watchlist" || userMovie.status === "none")) {
+        // If the movie is on watchlist or none, update to "watched" + rating
         await dispatch(
           updateSingleUserMovie({
             userId: userMovie.userId,
             movieId: userMovie.movieId,
             status: "watched",
+            rating: skip ? null : Number(rating), // Only set rating if user selected
           })
         );
-        dispatch(fetchUserMovies());
       } else {
-        // Otherwise, create a new entry with status: "watched"
+        // Otherwise, create a new userMovie entry
         await dispatch(
           createUserMovie({
             userId: currentUserId,
-            movieId,
+            movieId: selectedMovieId,
             status: "watched",
+            rating: skip ? null : Number(rating),
           })
         );
       }
 
-      alert("Movie marked as watched!");
+      // Cleanup
+      setShowRatingModal(false);
+      setRating("");
+      setSelectedMovieId(null);
+
+      // Refresh user movies
+      dispatch(fetchUserMovies());
+
+      if (!skip && rating) {
+        alert(`Movie marked as watched with a rating of ${rating}!`);
+      } else {
+        alert("Movie marked as watched!");
+      }
     } catch (err) {
-      console.error("Error marking movie as watched:", err);
+      console.error("Error submitting rating:", err);
     }
   };
 
-  // 7. Add a movie to the watchlist
   const handleAddToWatchlist = async (movieId) => {
     try {
-      // Optionally fetch a predicted rating
       const response = await fetch("http://127.0.0.1:5000/api/predict-rating", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,13 +149,11 @@ const Search = () => {
           ? data.predictedRating
           : 0.0;
 
-      // Add or create the userMovie record with "watchlist" status
       const userMovie = userMovies.find(
         (um) => um.movieId === movieId && um.userId === currentUserId
       );
 
       if (userMovie && userMovie.status === "none") {
-        // If the movie is currently "watchlist", update status to "watched"
         await dispatch(
           updateSingleUserMovie({
             userId: userMovie.userId,
@@ -129,14 +163,15 @@ const Search = () => {
         );
         dispatch(fetchUserMovies());
       } else {
-      await dispatch(
-        createUserMovie({
-          userId: currentUserId,
-          movieId,
-          status: "watchlist",
-          predictedRating,
-        })
-      );}
+        await dispatch(
+          createUserMovie({
+            userId: currentUserId,
+            movieId,
+            status: "watchlist",
+            predictedRating,
+          })
+        );
+      }
 
       alert(`Movie added to watchlist! Predicted Rating: ${predictedRating}`);
     } catch (err) {
@@ -148,11 +183,31 @@ const Search = () => {
     }
   };
 
+  // Get # Friends Watched and their Avg Rating
+  const getFriendWatchStats = (movieId) => {
+    const friendWatchers = userMovies.filter(
+      (um) =>
+        um.movieId === movieId &&
+        um.status === "watched" &&
+        acceptedFriendIds.has(um.userId)
+    );
+
+    const numFriendsWatched = friendWatchers.length;
+    const avgRating =
+      numFriendsWatched > 0
+        ? (
+            friendWatchers.reduce((sum, fw) => sum + (fw.rating || 0), 0) /
+            numFriendsWatched
+          ).toFixed(1)
+        : null;
+
+    return { numFriendsWatched, avgRating };
+  };
+
   return (
     <div className="search-container">
       <h1>Search for Movies</h1>
 
-      {/* Search Controls */}
       <div className="search-controls">
         <input
           type="text"
@@ -170,80 +225,107 @@ const Search = () => {
           <option value="releaseDate">Sort by Release Date</option>
           <option value="rating">Sort by Rating</option>
         </select>
-        <select
-          value={genreFilter}
-          onChange={(e) => setGenreFilter(e.target.value)}
-          className="genre-dropdown"
-        >
-          <option value="All">All Genres</option>
-          {[...new Set(movies.flatMap((movie) => movie.genres || []))].map(
-            (genre) => (
-              <option key={genre} value={genre}>
-                {genre}
-              </option>
-            )
-          )}
-        </select>
       </div>
 
-      {/* Movies List */}
       <div
         className={`movies-list ${
           sortedMovies.length === 1 ? "single-result" : ""
         }`}
       >
-        {sortedMovies.map((movie) => (
-          <div
-            key={movie.id}
-            className={`movie-item ${
-              isInWatchlist(movie.id) ? "watchlist-movie" : ""
-            }`}
-          >
-            {movie.posterUrl ? (
-              <img
-                src={movie.posterUrl}
-                alt={movie.title}
-                className="movie-poster"
-              />
-            ) : (
-              <div className="no-poster">No Image Available</div>
-            )}
+        {sortedMovies.map((movie) => {
+          const { numFriendsWatched, avgRating } = getFriendWatchStats(
+            movie.id
+          );
 
-            <Link to={`/movies/${movie.id}`}>
-              <h3>{movie.title || "Untitled Movie"}</h3>
-            </Link>
+          return (
+            <div
+              key={movie.id}
+              className={`movie-item ${
+                isInWatchlist(movie.id) ? "watchlist-movie" : ""
+              }`}
+            >
+              {movie.posterUrl ? (
+                <img
+                  src={movie.posterUrl}
+                  alt={movie.title}
+                  className="movie-poster"
+                />
+              ) : (
+                <div className="no-poster">No Image Available</div>
+              )}
 
-            <p>
-              <strong>Genres:</strong> {movie.genres?.join(", ") || "N/A"}
-            </p>
+              <Link to={`/movies/${movie.id}`}>
+                <h3>{movie.title || "Untitled Movie"}</h3>
+              </Link>
 
-            <div className="movie-actions">
-            {!isInWatchlist(movie.id) && (
+              <p>
+                <strong># Friends Watched:</strong> {numFriendsWatched}{" "}
+                {numFriendsWatched > 0 && avgRating !== null && (
+                  <span>(Avg Rating: {avgRating})</span>
+                )}
+              </p>
+
+              <div className="movie-actions">
+                {!isInWatchlist(movie.id) && (
+                  <button
+                    className="add-watchlist-button"
+                    onClick={() => handleAddToWatchlist(movie.id)}
+                  >
+                    Add to Watchlist
+                  </button>
+                )}
                 <button
-                  className="add-watchlist-button"
-                  onClick={() => handleAddToWatchlist(movie.id)}
+                  className="mark-watched-button"
+                  onClick={() => handleMarkAsWatched(movie.id)}
                 >
-                  Add to Watchlist
+                  Watched
                 </button>
-              )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Rating Modal */}
+     {showRatingModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Rate the Movie</h2>
+            <p>Would you like to give this movie a rating now?</p>
+            <select
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
+            >
+              <option value="">Select a rating</option>
+              {[...Array(10)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+            <div className="modal-buttons">
               <button
-                className="mark-watched-button"
-                onClick={() => handleMarkAsWatched(movie.id)}
+                onClick={() => handleSubmitRating(false)}
+                disabled={!rating} // Must pick rating to submit
               >
-               Watched
+                Submit Rating
               </button>
-
-
-
-              {isInWatchlist(movie.id) && (
-                <div className="watchlist-tag">On Watchlist</div>
-              )}
+              <button onClick={() => handleSubmitRating(true)}>Skip</button>
+              <button
+                onClick={() => {
+                  setShowRatingModal(false);
+                  setSelectedMovieId(null);
+                  setRating("");
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Search;
+
