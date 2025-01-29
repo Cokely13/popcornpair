@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { fetchMovies } from "../store/allMoviesStore";
+import { Link } from "react-router-dom";
 
 const Watchlist = () => {
   const dispatch = useDispatch();
@@ -132,16 +133,19 @@ const Watchlist = () => {
               <strong>Predicted Rating:</strong> {movie.predictedRating}
             </p>
             <div className="watchlist-actions">
+            <button onClick={() => handleMarkAsWatched(movie.movieId)}>
+               Watched
+              </button>
               <button onClick={() => handleRemoveFromWatchlist(movie.movieId)}>
                 Remove
-              </button>
-              <button onClick={() => handleMarkAsWatched(movie.movieId)}>
-                Mark as Watched
               </button>
             </div>
           </div>
         ))}
       </div>
+      <Link to={`/rejected`} className="friend-link">
+                <button className="friend-button">Second Chance</button>
+              </Link>
     </div>
   );
 };

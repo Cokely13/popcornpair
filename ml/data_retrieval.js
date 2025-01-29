@@ -195,6 +195,8 @@
 
 // // Run the script
 // main();
+
+
 const { models: { UserMovie, Movie, Friend } } = require('../server/db'); // Adjust the path as needed
 const _ = require('lodash');
 const { Op } = require('sequelize');
@@ -213,7 +215,7 @@ async function fetchData() {
     });
 
     const movies = await Movie.findAll({
-      attributes: ['id', 'title', 'genres', 'criticScore', 'runtimeMinutes'],
+      attributes: ['id', 'title', 'criticScore', 'userRating'],
       raw: true,
     });
 
@@ -251,9 +253,8 @@ function enrichData(userMovies, movies, friends) {
       return {
         ...entry,
         title: movie?.title || 'Unknown',
-        genres: movie?.genres || [],
         criticScore: movie?.criticScore || null,
-        runtimeMinutes: movie?.runtimeMinutes || null,
+        userRating: movie?.userRating || null,
         avgFriendRating,
       };
     });
@@ -268,7 +269,7 @@ function enrichData(userMovies, movies, friends) {
  */
 function saveToCSV(data, filePath) {
   try {
-    const csvHeader = 'userId,movieId,rating,status,dateWatched,title,genres,criticScore,runtimeMinutes,avgFriendRating';
+    const csvHeader = 'userId,movieId,rating,status,dateWatched,title,criticScore,userRating,avgFriendRating';
     const csvRows = data.map((row) =>
       [
         row.userId,
@@ -277,9 +278,8 @@ function saveToCSV(data, filePath) {
         row.status,
         row.dateWatched,
         row.title,
-        row.genres.join('|'), // Join genres into a string
         row.criticScore,
-        row.runtimeMinutes,
+        row.userRating,
         row.avgFriendRating,
       ].join(',')
     );
@@ -361,3 +361,4 @@ async function main() {
 
 // Run the script
 main();
+

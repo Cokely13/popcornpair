@@ -1,12 +1,12 @@
-userId,movieId,rating,status,dateWatched,title,genres,criticScore,runtimeMinutes,avgFriendRating
-1,8,9,watched,2025-01-27,Absolution,Action|Crime|Thriller,56,112,8
-1,10,6,watched,2025-01-27,Moana 2,Animation|Adventure|Family|Comedy,60,100,6
-1,4,3,watched,2025-01-27,Red One,Action|Fantasy|Comedy,32,124,
-3,8,8,watched,2025-01-27,Absolution,Action|Crime|Thriller,56,112,
-3,5,7,watched,2025-01-27,Gladiator II,Action|Adventure|Drama,68,148,
-3,10,6,watched,2025-01-27,Moana 2,Animation|Adventure|Family|Comedy,60,100,
-3,7,10,watched,2025-01-27,Flow,Animation|Fantasy|Adventure,92,85,
-2,4,2,watched,2025-01-27,Red One,Action|Fantasy|Comedy,32,124,3
-1,7,10,watched,2025-01-28,Flow,Animation|Fantasy|Adventure,92,85,10
-2,7,9,watched,2025-01-28,Flow,Animation|Fantasy|Adventure,92,85,10
-4,7,10,watched,2025-01-27,Flow,Animation|Fantasy|Adventure,92,85,10
+userId,movieId,rating,status,dateWatched,title,criticScore,userRating,avgFriendRating
+1,8,9,watched,2025-01-27,Absolution,56,5.4,8
+1,10,6,watched,2025-01-27,Moana 2,60,7.2,6
+1,4,3,watched,2025-01-27,Red One,32,6.5,
+3,8,8,watched,2025-01-27,Absolution,56,5.4,
+3,5,7,watched,2025-01-27,Gladiator II,68,6.8,
+3,10,6,watched,2025-01-27,Moana 2,60,7.2,
+3,7,10,watched,2025-01-27,Flow,92,8.1,
+2,4,2,watched,2025-01-27,Red One,32,6.5,3
+1,7,10,watched,2025-01-28,Flow,92,8.1,10
+2,7,9,watched,2025-01-28,Flow,92,8.1,10
+4,7,10,watched,2025-01-27,Flow,92,8.1,10

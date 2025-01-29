@@ -218,14 +218,7 @@ const Search = () => {
             </p>
 
             <div className="movie-actions">
-              <button
-                className="mark-watched-button"
-                onClick={() => handleMarkAsWatched(movie.id)}
-              >
-                Mark as Watched
-              </button>
-
-              {!isInWatchlist(movie.id) && (
+            {!isInWatchlist(movie.id) && (
                 <button
                   className="add-watchlist-button"
                   onClick={() => handleAddToWatchlist(movie.id)}
@@ -233,6 +226,14 @@ const Search = () => {
                   Add to Watchlist
                 </button>
               )}
+              <button
+                className="mark-watched-button"
+                onClick={() => handleMarkAsWatched(movie.id)}
+              >
+               Watched
+              </button>
+
+
 
               {isInWatchlist(movie.id) && (
                 <div className="watchlist-tag">On Watchlist</div>
