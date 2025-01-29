@@ -66,7 +66,7 @@ const Search = () => {
     if (sortOption === "title") return a.title.localeCompare(b.title);
     if (sortOption === "releaseDate")
       return new Date(a.releaseDate) - new Date(b.releaseDate);
-    if (sortOption === "rating") return b.averageRating - a.averageRating;
+    if (sortOption === "rating") return b.avgRating - a.avgRating;
     return 0;
   });
 
@@ -257,7 +257,9 @@ const Search = () => {
               <Link to={`/movies/${movie.id}`}>
                 <h3>{movie.title || "Untitled Movie"}</h3>
               </Link>
-
+              <p>
+                <strong>User Rating:</strong> {movie.userRating}{" "}
+              </p>
               <p>
                 <strong># Friends Watched:</strong> {numFriendsWatched}{" "}
                 {numFriendsWatched > 0 && avgRating !== null && (
