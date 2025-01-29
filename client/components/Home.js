@@ -35,7 +35,7 @@ const Home = () => {
     <div className="home-container">
       {/* Hero / Header Section */}
       <section className="hero-section">
-        <h1>Welcome to Popcorn Pair!</h1>
+        <h1>Welcome to PopcornPair!</h1>
         <p>Your hub for discovering, sharing, and rating movies with friends.</p>
         <Link to="/search" className="hero-button">
           Find Movies

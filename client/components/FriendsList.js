@@ -186,7 +186,7 @@ const FriendsList = () => {
             </li>
           ))
         ) : (
-          <p>You currently have no friends.</p>
+          <p></p>
         )}
       </ul>
 
@@ -222,7 +222,7 @@ const FriendsList = () => {
 
       {showUserSearch && (
         <div className="user-search-panel">
-          <h3>Find New Friends</h3>
+          <h3>Find Friends</h3>
           <input
             type="text"
             placeholder="Search users..."
@@ -318,3 +318,4 @@ const FriendsList = () => {
 };
 
 export default FriendsList;
+
