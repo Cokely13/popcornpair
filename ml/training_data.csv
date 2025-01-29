@@ -10,4 +10,10 @@ userId,movieId,rating,status,dateWatched,title,criticScore,userRating,avgFriendR
 1,7,10,watched,2025-01-28,Flow,92,8.1,10
 2,7,9,watched,2025-01-28,Flow,92,8.1,10
 4,7,10,watched,2025-01-27,Flow,92,8.1,10
+5,9,5,watched,2025-01-28,Venom: The Last Dance,41,6.2,
+5,5,6,watched,2025-01-29,Gladiator II,68,6.8,7
+5,10,6,watched,2025-01-28,Moana 2,60,7.2,6
+5,11,8,watched,2025-01-28,Rounders,59,7.5,
 4,3,4,watched,2025-01-28,Mufasa: The Lion King,57,6.9,
+4,9,4,watched,2025-01-28,Venom: The Last Dance,41,6.2,5
+2,3,6,watched,2025-01-28,Mufasa: The Lion King,57,6.9,4

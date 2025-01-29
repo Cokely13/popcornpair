@@ -16,6 +16,10 @@ const FriendRecs = () => {
   const currentUserId = useSelector((state) => state.auth.id);
   const recommendations = useSelector((state) => state.allUserRecommendations);
   const userMovies = useSelector((state) => state.allUserMovies);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+
+    const [showRatingModal, setShowRatingModal] = useState(false);
+  const [rating, setRating] = useState("");
 
 
 
@@ -89,7 +93,7 @@ const FriendRecs = () => {
   const handleAcceptRecommendation = async (rec, accept) => {
     await dispatch(updateSingleUserRecommendation({ id: rec.id, accept }));
     if(accept == 'yes'){
-      handleAddToWatchlist(rec.movie.id,)
+      handleAddToWatchlist(rec.movieId,)
     }
     refreshRecommendations();
   };
@@ -99,38 +103,94 @@ const FriendRecs = () => {
     refreshRecommendations();
   };
 
-  const handleWatched = async (rec) => {
+  // const handleWatched = async (rec) => {
+  //   try {
+  //     const userMovie = userMovies.find(
+  //       (um) => um.movieId === rec.movieId && um.userId === currentUserId
+  //     );
+
+  //     if (userMovie && userMovie.status === "watchlist" ||userMovie && userMovie.status === "none") {
+  //       // If the movie is currently "watchlist", update status to "watched"
+  //       await dispatch(
+  //         updateSingleUserMovie({
+  //           userId: userMovie.userId,
+  //           movieId: userMovie.movieId,
+  //           status: "watched",
+  //         })
+  //       );
+  //       dispatch(fetchUserMovies());
+  //     } else {
+  //       // Otherwise, create a new entry with status: "watched"
+  //       await dispatch(
+  //         createUserMovie({
+  //           userId: currentUserId,
+  //           movieId: rec.movieId,
+  //           status: "watched",
+  //         })
+  //       );
+  //     }
+
+  //     alert("Movie marked as watched!");
+  //   } catch (err) {
+  //     console.error("Error marking movie as watched:", err);
+  //   }
+  // };
+
+  const handleMarkAsWatched = (movieId) => {
+    setSelectedMovieId(movieId.movieId);
+    setShowRatingModal(true); // Open the rating modal
+  };
+
+  // 8) Submit rating or skip
+  const handleSubmitRating = async (skip = false) => {
     try {
+      if (!selectedMovieId) return;
+
+      // Check if there's already a userMovie record
       const userMovie = userMovies.find(
-        (um) => um.movieId === rec.movieId && um.userId === currentUserId
+        (um) => um.movieId === selectedMovieId && um.userId === currentUserId
       );
 
-      if (userMovie && userMovie.status === "watchlist" ||userMovie && userMovie.status === "none") {
-        // If the movie is currently "watchlist", update status to "watched"
+      if (userMovie && (userMovie.status === "watchlist" || userMovie.status === "none")) {
+        // If the movie is on watchlist or none, update to "watched" + rating
         await dispatch(
           updateSingleUserMovie({
             userId: userMovie.userId,
             movieId: userMovie.movieId,
             status: "watched",
+            rating: skip ? null : Number(rating), // Only set rating if user selected
           })
         );
-        dispatch(fetchUserMovies());
       } else {
-        // Otherwise, create a new entry with status: "watched"
+        // Otherwise, create a new userMovie entry
         await dispatch(
           createUserMovie({
             userId: currentUserId,
-            movieId: rec.movieId,
+            movieId: selectedMovieId,
             status: "watched",
+            rating: skip ? null : Number(rating),
           })
         );
       }
 
-      alert("Movie marked as watched!");
+      // Cleanup
+      setShowRatingModal(false);
+      setRating("");
+      setSelectedMovieId(null);
+
+      // Refresh user movies
+      dispatch(fetchUserMovies());
+
+      if (!skip && rating) {
+        alert(`Movie marked as watched with a rating of ${rating}!`);
+      } else {
+        alert("Movie marked as watched!");
+      }
     } catch (err) {
-      console.error("Error marking movie as watched:", err);
+      console.error("Error submitting rating:", err);
     }
   };
+
 
   // Check if a recommendation has been marked as watched
   const isMovieWatched = (movieId) => {
@@ -239,7 +299,7 @@ const FriendRecs = () => {
                 <p>
                   {/* <strong>Watch:</strong>{" "} */}
                   <button
-                    onClick={() => handleWatched(rec)}
+                    onClick={() => handleMarkAsWatched(rec)}
                     className="watched-button"
                   >
                     Watch
@@ -306,6 +366,43 @@ const FriendRecs = () => {
           </p>
         )}
       </div>
+      {showRatingModal && (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>Rate the Movie</h2>
+        <p>Would you like to give this movie a rating now?</p>
+        <select
+          value={rating}
+          onChange={(e) => setRating(e.target.value)}
+        >
+          <option value="">Select a rating</option>
+          {[...Array(10)].map((_, i) => (
+            <option key={i + 1} value={i + 1}>
+              {i + 1}
+            </option>
+          ))}
+        </select>
+        <div className="modal-buttons">
+          <button
+            onClick={() => handleSubmitRating(false)}
+            disabled={!rating} // Must pick rating to submit
+          >
+            Submit Rating
+          </button>
+          <button onClick={() => handleSubmitRating(true)}>Skip</button>
+          <button
+            onClick={() => {
+              setShowRatingModal(false);
+              setSelectedMovieId(null);
+              setRating("");
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
     </div>
   );
 };

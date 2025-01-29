@@ -5,6 +5,7 @@ import { fetchMovies } from "../store/allMoviesStore";
 import { createUserMovie } from "../store/allUserMoviesStore";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchSingleUser } from "../store/singleUserStore";
+import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 
 const Random = () => {
   const { userId } = useParams(); // Friend's ID
@@ -15,6 +16,9 @@ const Random = () => {
   const movies = useSelector((state) => state.allMovies) || [];
   const userMovies = useSelector((state) => state.allUserMovies) || [];
   const friend = useSelector((state) => state.singleUser) || [];
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+    const [showRatingModal, setShowRatingModal] = useState(false);
+  const [rating, setRating] = useState("");
 
   useEffect(() => {
     dispatch(fetchMovies());
@@ -46,31 +50,6 @@ const friendWatchlist = userMovies
 // 3. Intersection: Movies in *both* watchlists
 const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
 
-  // 5. Filter by genre if needed
-  // const matchedMovies = sharedMovies.filter((movie) =>
-  //   selectedGenre === "All" || movie.genres?.includes(selectedGenre)
-  // );
-
-  // Find common movies rated "YES" by both users
-  // const sharedMovies = ratings
-  //   .filter((rating) => rating.userId === currentUserId && rating.rating === "YES") // Movies rated "YES" by current user
-  //   .map((rating) => rating.movieId)
-  //   .filter((movieId) =>
-  //     ratings.some(
-  //       (friendRating) =>
-  //         friendRating.userId === parseInt(userId) &&
-  //         friendRating.movieId === movieId &&
-  //         friendRating.rating === "YES"
-  //     )
-  //   )
-  //   .filter(
-  //     (movieId) =>
-  //       !userMovies.some(
-  //         (userMovie) => userMovie.movieId === movieId && userMovie.watched
-  //       )
-  //   );
-
-  // const matchedMovies = movies.filter((movie) => sharedMovies.includes(movie.id));
 
   useEffect(() => {
     if (sharedMovies.length) {
@@ -81,35 +60,91 @@ const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
     }
   }, [sharedMovies]);
 
-  const handleWatch = async (movieId) => {
+  // const handleWatch = async (movieId) => {
 
+  //   try {
+  //     const userMovie = userMovies.find(
+  //       (um) => um.movieId === movieId && um.userId === currentUserId
+  //     );
+
+  //     await dispatch(
+  //       updateSingleUserMovie({
+  //         userId: currentUserId,
+  //         movieId: userMovie.movieId,
+  //         status: "watched",
+  //         watchedWith: userId
+  //       })
+  //     );
+
+  //     await dispatch(
+  //       updateSingleUserMovie({
+  //         userId: userId,
+  //         movieId: userMovie.movieId,
+  //         status: "watched",
+  //         watchedWith: currentUserId
+  //       })
+  //     );
+  //     dispatch(fetchUserMovies());
+  //   } catch (err) {
+  //     console.error("Error marking as watched:", err);
+  //   }
+  // };
+
+  const handleMarkAsWatched = (movieId) => {
+    setSelectedMovieId(movieId);
+    setShowRatingModal(true); // Open the rating modal
+  };
+
+  // 8) Submit rating or skip
+  const handleSubmitRating = async (skip = false) => {
     try {
+      if (!selectedMovieId) return;
+
+      // Check if there's already a userMovie record
       const userMovie = userMovies.find(
-        (um) => um.movieId === movieId && um.userId === currentUserId
+        (um) => um.movieId === selectedMovieId && um.userId === currentUserId
       );
 
-      await dispatch(
-        updateSingleUserMovie({
-          userId: currentUserId,
-          movieId: userMovie.movieId,
-          status: "watched",
-          watchedWith: userId
-        })
-      );
 
-      await dispatch(
-        updateSingleUserMovie({
-          userId: userId,
-          movieId: userMovie.movieId,
-          status: "watched",
-          watchedWith: currentUserId
-        })
-      );
+        await dispatch(
+          updateSingleUserMovie({
+            userId: currentUserId,
+            movieId: userMovie.movieId,
+            status: "watched",
+            rating: skip ? null : Number(rating), // Only set rating if user selected
+            watchedWith: userId
+          })
+        );
+
+        await dispatch(
+                updateSingleUserMovie({
+                  userId: userId,
+                  movieId: userMovie.movieId,
+                  status: "watched",
+                  watchedWith: currentUserId
+                })
+              );
+
+
+
+      // Cleanup
+      setShowRatingModal(false);
+      setRating("");
+      setSelectedMovieId(null);
+
+      // Refresh user movies
       dispatch(fetchUserMovies());
+
+      if (!skip && rating) {
+        alert(`Movie marked as watched with a rating of ${rating}!`);
+      } else {
+        alert("Movie marked as watched!");
+      }
     } catch (err) {
-      console.error("Error marking as watched:", err);
+      console.error("Error submitting rating:", err);
     }
   };
+
 
   return (
     <div className="rate-movie-container">
@@ -147,7 +182,7 @@ const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
 
           {/* Watch Button */}
           <div className="button-container">
-          <button className="watch-button" onClick={() => handleWatch(movie.id)}>
+          <button className="watch-button" onClick={() => handleMarkAsWatched(randomMovie.id)}>
               Watch
             </button>
           </div>
@@ -155,6 +190,43 @@ const sharedMovies = movies.filter((m) => sharedMovieIds.includes(m.id));
       ) : (
         <div>Sorry, there are no movies to show.</div>
       )}
+      {showRatingModal && (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>Rate the Movie</h2>
+        <p>Would you like to give this movie a rating now?</p>
+        <select
+          value={rating}
+          onChange={(e) => setRating(e.target.value)}
+        >
+          <option value="">Select a rating</option>
+          {[...Array(10)].map((_, i) => (
+            <option key={i + 1} value={i + 1}>
+              {i + 1}
+            </option>
+          ))}
+        </select>
+        <div className="modal-buttons">
+          <button
+            onClick={() => handleSubmitRating(false)}
+            disabled={!rating} // Must pick rating to submit
+          >
+            Submit Rating
+          </button>
+          <button onClick={() => handleSubmitRating(true)}>Skip</button>
+          <button
+            onClick={() => {
+              setShowRatingModal(false);
+              setSelectedMovieId(null);
+              setRating("");
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
     </div>
   );
 };
