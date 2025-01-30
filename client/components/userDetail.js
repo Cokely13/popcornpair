@@ -1,5 +1,7 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+// eslint-disable-next-line no-unused-vars
 import { useParams, Link } from "react-router-dom";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
