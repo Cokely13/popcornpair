@@ -174,6 +174,11 @@ const FriendsList = () => {
         {acceptedFriends.length ? (
           acceptedFriends.map((user) => (
             <li key={user.id} className="friend-item">
+              <img
+                      src={user.image || "/default-profile.png"}
+                      alt={user.username}
+                      className="friend-profile-pic"
+                    />
               <Link to={`/users/${user.id}`} className="friend-link">
                 {user.username}
               </Link>
@@ -197,6 +202,11 @@ const FriendsList = () => {
           <ul>
             {incomingRequestUsers.map(({ friendRecord, sender }) => (
               <li key={friendRecord.id}>
+                 <img
+                      src={sender.image || "/default-profile.png"}
+                      alt={sender.username}
+                      className="friend-profile-pic"
+                    />
                 {sender ? sender.username : `User #${friendRecord.friendId}`}
                 <button
                   onClick={() => handleAcceptFriend(friendRecord)}
@@ -241,6 +251,11 @@ const FriendsList = () => {
                   // No relationship => can add friend
                   return (
                     <li key={user.id} className="search-user-item">
+                       <img
+                      src={user.image || "/default-profile.png"}
+                      alt={user.username}
+                      className="friend-profile-pic"
+                    />
                       {user.username}{" "}
                       <button
                         onClick={() => handleAddFriend(user.id)}
@@ -253,6 +268,11 @@ const FriendsList = () => {
                 } else if (status === "accepted") {
                   return (
                     <li key={user.id} className="search-user-item">
+                       <img
+                      src={user.image || "/default-profile.png"}
+                      alt={user.username}
+                      className="friend-profile-pic"
+                    />
                       {user.username} <span>Already Friends</span>
                     </li>
                   );
@@ -262,6 +282,11 @@ const FriendsList = () => {
                     // They want to friend me
                     return (
                       <li key={friendRecord.id} className="search-user-item">
+                         <img
+                      src={user.image || "/default-profile.png"}
+                      alt={user.username}
+                      className="friend-profile-pic"
+                    />
                         {user.username} <span>Wants to friend you!</span>
                       </li>
                     );
@@ -269,6 +294,11 @@ const FriendsList = () => {
                     // I'm the sender
                     return (
                       <li key={friendRecord.id} className="search-user-item">
+                         <img
+                      src={user.image || "/default-profile.png"}
+                      alt={user.username}
+                      className="friend-profile-pic"
+                    />
                         {user.username}{" "}
                         <span className="pending-status">Pending</span>
                       </li>
@@ -281,6 +311,11 @@ const FriendsList = () => {
                     // I denied them => show "Unblock"
                     return (
                       <li key={friendRecord.id} className="search-user-item">
+                         <img
+                      src={user.image || "/default-profile.png"}
+                      alt={user.username}
+                      className="friend-profile-pic"
+                    />
                         {user.username}{" "}
                         <span className="not-friend-status">
                           Denied{" "}
@@ -302,6 +337,11 @@ const FriendsList = () => {
                   // Fallback for other statuses
                   return (
                     <li key={friendRecord.id} className="search-user-item">
+                       <img
+                      src={user.image || "/default-profile.png"}
+                      alt={user.username}
+                      className="friend-profile-pic"
+                    />
                       {user.username} <span>{status}</span>
                     </li>
                   );

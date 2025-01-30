@@ -102,12 +102,12 @@ body {
   left: 0;
   width: 100%; /* Full-width Navbar */
   height: 60px; /* Navbar height */
-  background-color: #343a40; /* Dark background */
+  background-color: grey; /* Dark background */
   color: white;
   display: flex;
   justify-content: center; /* Center content horizontally */
   align-items: center; /* Center content vertically */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000; /* Ensure it stays above other elements */
   margin-bottom: 200px;
 }
@@ -117,6 +117,7 @@ body {
 /* Navbar Links */
 .navbar-links {
   display: flex;
+  color: #ffffff;
   gap: 20px; /* Space between the links */
 }
 
@@ -129,7 +130,7 @@ body {
 }
 
 .navbar-link:hover {
-  color: #1e90ff; /* Highlight color on hover */
+  color: white; /* Highlight color on hover */
 }
 
 /* Navbar Title - If Needed */
@@ -1556,4 +1557,136 @@ button:hover {
 
 .photo-upload-section input {
   margin-bottom: 10px;
+}
+
+.photo-preview {
+  width: 150px;  /* Set fixed size */
+  height: 150px; /* Set fixed size */
+  /* border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #1e90ff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+}
+
+/* Friends List Container */
+.friends-list-container {
+  max-width: 600px;
+  margin: 80px auto 30px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+/* Friends List */
+.friends-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Individual Friend Item */
+.friend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.friend-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Profile Section - Name and Picture */
+.friend-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Friend Profile Picture */
+.friend-profile-pic{
+  width: 50px;  /* Adjust size */
+  height: 50px;
+  border-radius: 50%; /* Circular image */
+  object-fit: cover;
+  border: 2px solid #007bff; /* Add border color */
+}
+
+/* Buttons */
+.friend-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.friend-button,
+.random-button {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #0073e6;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.friend-button:hover,
+.random-button:hover {
+  background-color: #005bb5;
+}
+
+.random-button {
+  background-color: #f76c6c;
+}
+
+.random-button:hover {
+  background-color: #d85c5c;
+}
+
+/* Search Section */
+.user-search-panel {
+  padding: 20px;
+}
+
+.user-search-input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 300px;
+}
+
+.search-users-list {
+  list-style: none;
+  padding: 0;
+}
+
+.search-user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.add-friend-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-friend-button:hover {
+  background-color: #218838;
 }

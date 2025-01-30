@@ -190,9 +190,8 @@ const Profile = () => {
   return (
     <div className="profile-container">
      <div className="profile-image-container">
-        {previewUrl ? (
-          <img src={previewUrl} alt="Preview" className="profile-image" />
-        ) : user.image ? (
+
+          {user.image ? (
           <img src={user.image} alt="Profile" className="profile-image" />
         ) : (
           <div className="no-profile-image">No Image</div>
@@ -281,7 +280,12 @@ const Profile = () => {
                   // or the user is the target? Depending on your structure, you might need to see who the *other* user is.
                   const friendUser = users.find((u) => u.id === request.friendId);
                   return (
-                    <li key={request.id}>
+                    <ul key={request.id}>
+                       <img
+                      src={friendUser.image || "/default-profile.png"}
+                      alt={friendUser.username}
+                      className="friend-profile-pic"
+                    />
                       {friendUser?.username || `User #${request.friendId}`}
                       <button
                         onClick={() => handleAcceptFriend(request)}
@@ -295,7 +299,7 @@ const Profile = () => {
                       >
                         Deny
                       </button>
-                    </li>
+                    </ul>
                   );
                 })}
               </ul>
