@@ -66,5 +66,9 @@
     "webpack": "^5.15.0",
     "webpack-cli": "^4.3.1"
   },
+  "engines": {
+  "node": "22.x",
+  "npm": "10.x"
+}
   "proxy": "http://127.0.0.1:5000"
 }
