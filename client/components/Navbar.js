@@ -5,6 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { logout } from '../store'; // Adjust the path as needed
 import AuthModal from './AuthModal';
 import ProtectedLink from './ProtectedLink';
+import './Navbar.css'
 
 const Navbar = ({ handleClick, isLoggedIn, location }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,11 +32,14 @@ const Navbar = ({ handleClick, isLoggedIn, location }) => {
   return (
     <div className="navbar-container">
       <nav className="navbar">
-        <Link to="/" className="navbar-brand">PopCornPair</Link>
+      <Link to="/" className="navbar-logo">
+        🎬 PopCornPair
+      </Link>
+        {/* <Link to="/" className="navbar-brand">PopCornPair</Link> */}
         {isLoggedIn ? (
           <div className="navbar-links">
             {/* The navbar will show these links after you log in */}
-            <ProtectedLink to="/home" className="navbar-link">Home</ProtectedLink>
+            <ProtectedLink to="/home" className="navbar-link" >Home</ProtectedLink>
             <ProtectedLink to="/profile" className="navbar-link">Profile</ProtectedLink>
             <ProtectedLink to="/watchlist" className="navbar-link">Watchlist</ProtectedLink>
             <ProtectedLink to="/watched" className="navbar-link">Watched</ProtectedLink>
@@ -49,8 +53,8 @@ const Navbar = ({ handleClick, isLoggedIn, location }) => {
         ) : (
           <div className="navbar-links">
             {/* The navbar will show these links before you log in */}
-            <button className="navbar-link" onClick={() => openModal('login')}>Login</button>
-            <button className="navbar-link" onClick={() => openModal('signup')}>Sign Up</button>
+            <Link className="navbar-link" onClick={() => openModal('login')}>Login</Link>
+            <Link className="navbar-link" onClick={() => openModal('signup')}>Sign Up</Link>
           </div>
         )}
       </nav>
