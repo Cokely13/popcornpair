@@ -1690,3 +1690,9 @@ button:hover {
 .add-friend-button:hover {
   background-color: #218838;
 }
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}

@@ -42,6 +42,9 @@ export const authenticate = (username, password, method, email = null) => async 
   }
 };
 
+
+
+
 export const logout = () => {
   window.localStorage.removeItem(TOKEN)
   history.push('/login')
