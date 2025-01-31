@@ -167,15 +167,16 @@ const FriendsList = () => {
 
   return (
     <div className="friends-list-container">
-      <h2>Friends List</h2>
-
+      <section className="hero-section">
+      <h1>Friends List</h1>
+      </section>
       {/* Accepted Friends */}
       <ul className="friends-list">
         {acceptedFriends.length ? (
           acceptedFriends.map((user) => (
             <li key={user.id} className="friend-item">
               <img
-                      src={user.image || "/default-profile.png"}
+                      src={user?.image || "/default-profile.png"}
                       alt={user.username}
                       className="friend-profile-pic"
                     />
@@ -198,7 +199,9 @@ const FriendsList = () => {
       {/* If there's at least one new request for me */}
       {incomingRequestUsers.length > 0 && (
         <div className="new-requests-section">
+          <section className="hero-section">
           <h3>New Friend Request</h3>
+          </section>
           <ul>
             {incomingRequestUsers.map(({ friendRecord, sender }) => (
               <li key={friendRecord.id}>
@@ -252,7 +255,7 @@ const FriendsList = () => {
                   return (
                     <li key={user.id} className="search-user-item">
                        <img
-                      src={user.image || "/default-profile.png"}
+                      src={user?.image || "/default-profile.png"}
                       alt={user.username}
                       className="friend-profile-pic"
                     />
@@ -269,7 +272,7 @@ const FriendsList = () => {
                   return (
                     <li key={user.id} className="search-user-item">
                        <img
-                      src={user.image || "/default-profile.png"}
+                      src={user?.image || "/default-profile.png"}
                       alt={user.username}
                       className="friend-profile-pic"
                     />
@@ -283,7 +286,7 @@ const FriendsList = () => {
                     return (
                       <li key={friendRecord.id} className="search-user-item">
                          <img
-                      src={user.image || "/default-profile.png"}
+                      src={user?.image || "/default-profile.png"}
                       alt={user.username}
                       className="friend-profile-pic"
                     />
@@ -295,7 +298,7 @@ const FriendsList = () => {
                     return (
                       <li key={friendRecord.id} className="search-user-item">
                          <img
-                      src={user.image || "/default-profile.png"}
+                      src={user?.image || "/default-profile.png"}
                       alt={user.username}
                       className="friend-profile-pic"
                     />
@@ -312,7 +315,7 @@ const FriendsList = () => {
                     return (
                       <li key={friendRecord.id} className="search-user-item">
                          <img
-                      src={user.image || "/default-profile.png"}
+                      src={user?.image || "/default-profile.png"}
                       alt={user.username}
                       className="friend-profile-pic"
                     />
@@ -338,7 +341,7 @@ const FriendsList = () => {
                   return (
                     <li key={friendRecord.id} className="search-user-item">
                        <img
-                      src={user.image || "/default-profile.png"}
+                      src={user?.image || "/default-profile.png"}
                       alt={user.username}
                       className="friend-profile-pic"
                     />

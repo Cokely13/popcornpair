@@ -103,39 +103,6 @@ const FriendRecs = () => {
     refreshRecommendations();
   };
 
-  // const handleWatched = async (rec) => {
-  //   try {
-  //     const userMovie = userMovies.find(
-  //       (um) => um.movieId === rec.movieId && um.userId === currentUserId
-  //     );
-
-  //     if (userMovie && userMovie.status === "watchlist" ||userMovie && userMovie.status === "none") {
-  //       // If the movie is currently "watchlist", update status to "watched"
-  //       await dispatch(
-  //         updateSingleUserMovie({
-  //           userId: userMovie.userId,
-  //           movieId: userMovie.movieId,
-  //           status: "watched",
-  //         })
-  //       );
-  //       dispatch(fetchUserMovies());
-  //     } else {
-  //       // Otherwise, create a new entry with status: "watched"
-  //       await dispatch(
-  //         createUserMovie({
-  //           userId: currentUserId,
-  //           movieId: rec.movieId,
-  //           status: "watched",
-  //         })
-  //       );
-  //     }
-
-  //     alert("Movie marked as watched!");
-  //   } catch (err) {
-  //     console.error("Error marking movie as watched:", err);
-  //   }
-  // };
-
   const handleMarkAsWatched = (movieId) => {
     setSelectedMovieId(movieId.movieId);
     setShowRatingModal(true); // Open the rating modal
@@ -212,8 +179,9 @@ const FriendRecs = () => {
 
   return (
     <div className="friend-recs-container">
-      <h2>Friend Recommendations</h2>
-
+      <section className="hero-section">
+      <h1>Friend Recommendations</h1>
+      </section>
       {/* Filter Dropdown */}
       <div className="recs-dropdown">
         <label htmlFor="recs-view">View: </label>

@@ -93,8 +93,9 @@ const Rejected = () => {
 
   return (
     <div className="rate-movie-container">
+      <section className="hero-section">
       <h1>Second Chance</h1>
-
+      </section>
       {/* Movie Poster */}
       {movie.posterUrl ? (
         <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />

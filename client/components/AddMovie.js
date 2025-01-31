@@ -68,7 +68,9 @@ const AddMovie = () => {
 
   return (
     <div className="add-movie-container">
-      <h2>Add a Movie</h2>
+      <section className="hero-section">
+      <h1>Add a Movie</h1>
+      </section>
       <div className="search-bar">
         <input
           type="text"

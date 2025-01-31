@@ -149,6 +149,13 @@ body {
   background-color: #0056b3;
 }
 
+.add-movie-container{
+padding: 20px;
+margin-top: 80px; /* Ensures spacing below the navbar */
+text-align: center; /* Centers all child elements horizontally */
+}
+
+
 
 
 /* Watched Movies Container */
