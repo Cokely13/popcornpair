@@ -4,11 +4,13 @@ import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
 import { updateSingleUserRecommendation } from "../store/singleUserRecommendationStore";
 import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
+import { fetchUsers } from "../store/allUsersStore";
 import { Link } from "react-router-dom";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const FriendRecs = () => {
   const dispatch = useDispatch();
+  const users = useSelector((state) => state.allUsers);
   const [viewType, setViewType] = useState("received");
   const [editingResponseId, setEditingResponseId] = useState(null);
   const [responseText, setResponseText] = useState("");
@@ -26,6 +28,7 @@ const FriendRecs = () => {
   useEffect(() => {
     dispatch(fetchUserRecommendations());
     dispatch(fetchUserMovies());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   const refreshRecommendations = () => {
@@ -176,11 +179,10 @@ const FriendRecs = () => {
     if (viewType === "watched") return rec.receiverId === currentUserId && isMovieWatched(rec.movie.id);
     return false;
   });
-
   return (
     <div className="friend-recs-container">
       <section className="hero-section">
-      <h1>Recommendations</h1>
+      <h1>RECOMMENDATIONS</h1>
       </section>
       {/* Filter Dropdown */}
       <div className="recs-dropdown">
@@ -211,6 +213,7 @@ const FriendRecs = () => {
               </p>
               {viewType === "sent" ? null : (
                 <p>
+                  {/* {users.find((user) => user.username === rec.sender)?.id || ""} */}
                   <strong>From:</strong> {rec.sender?.username || "N/A"}
                 </p>
               )}

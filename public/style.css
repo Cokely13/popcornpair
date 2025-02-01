@@ -256,35 +256,7 @@ text-align: center; /* Centers all child elements horizontally */
 
 
 
-.watched-movies-table {
-width: 100%;
-border-collapse: collapse;
-margin-top: 20px;
-}
 
-.watched-movies-table th,
-.watched-movies-table td {
-border: 1px solid #ddd;
-padding: 10px;
-text-align: center; /* Centers content in each cell */
-}
-
-.watched-movies-table th {
-background-color: #f4f4f4;
-font-weight: bold;
-}
-
-.watched-movies-table td img.movie-poster {
-width: 80px;
-height: auto;
-margin-bottom: 5px;
-}
-
-.watched-movies-table td img.friend-poster {
-  width: 40px;
-  height: auto;
-  margin-bottom: 5px;
-  }
 
 .sort-dropdown {
 margin: 20px 0;

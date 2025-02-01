@@ -7,11 +7,13 @@ import { fetchUsers } from "../store/allUsersStore";
 import { fetchFriends } from "../store/allFriendsStore";
 import { updateSingleFriend } from "../store/singleFriendStore";
 import { fetchSingleUser, updateSingleUser } from "../store/singleUserStore";
+import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
 import './Profile.css'
 
 const Profile = () => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.auth.id);
+  const recommendations = useSelector((state) => state.allUserRecommendations);
   const userMovies = useSelector((state) => state.allUserMovies).filter(
     (um) => um.userId === currentUserId && um.status === "watched"
   );
@@ -23,6 +25,7 @@ const Profile = () => {
   const friends = useSelector((state) => state.allFriends);
   const users = useSelector((state) => state.allUsers);
   const user = useSelector((state) => state.singleUser);
+  const myrecs = recommendations.filter((rec) => rec.receiverId == currentUserId && rec.accept == null )
 
   // NEW: State to control the Pending Requests modal
   const [showPendingModal, setShowPendingModal] = useState(false);
@@ -38,6 +41,7 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(fetchSingleUser(currentUserId));
+    dispatch(fetchUserRecommendations());
     dispatch(fetchUserMovies());
     dispatch(fetchMovies());
     dispatch(fetchUsers());
@@ -190,6 +194,9 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
+      <section className="hero-section">
+      <h1>PROFILE</h1>
+      </section>
      <div className="profile-image-container">
 
           {user.image ? (
@@ -212,6 +219,14 @@ const Profile = () => {
             <button onClick={() => setShowPendingModal(true)}>
               {pendingRequestsCount}
             </button>
+          ) : (
+            "0"
+          )}
+        </p>
+        <p>
+          <strong>Pending Recs:</strong>{" "}
+          {myrecs.length > 0 ? (
+         <Link to={`/recommendations`}>  {myrecs.length} </Link>
           ) : (
             "0"
           )}

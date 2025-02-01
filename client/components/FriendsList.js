@@ -168,7 +168,7 @@ const FriendsList = () => {
   return (
     <div className="friends-list-container">
       <section className="hero-section">
-      <h1>Friends List</h1>
+      <h1>FRIENDS</h1>
       </section>
       {/* Accepted Friends */}
       <ul className="friends-list">
@@ -206,8 +206,8 @@ const FriendsList = () => {
             {incomingRequestUsers.map(({ friendRecord, sender }) => (
               <ul className="search-user-item"  key={friendRecord.id}>
                  <img
-                      src={sender.image || "/default-profile.png"}
-                      alt={sender.username}
+                      src={sender?.image || "/default-profile.png"}
+                      alt={sender?.username}
                       className="friend-profile-pic"
                     />
                 {sender ? sender.username : `User #${friendRecord.friendId}`}

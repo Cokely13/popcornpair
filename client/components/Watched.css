@@ -1,0 +1,90 @@
+/* Watched Movies Table - Modern Styling */
+
+.watched-movies-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: sans-serif;
+}
+
+.watched-movies-table th,
+.watched-movies-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.watched-movies-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 15px 20px;
+  border: 1px solid #ccc;
+}
+
+/* Image Styles */
+.watched-movies-table td img.movie-poster {
+  width: 80px;
+  height: auto;
+  margin-bottom: 5px;
+}
+
+.watched-movies-table td img.friend-poster {
+  width: 40px;
+  height: auto;
+  margin-bottom: 5px;
+}
+
+/* Stack cell content vertically with a gap */
+.cell-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Update Button (for Watched With) */
+.update-btn {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.update-btn:hover {
+  background-color: #218838;
+}
+
+/* Change Button (for Rating) */
+.change-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  margin-top: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.change-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Recommend Button */
+.recommend-btn {
+  background-color: #ff6363;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.recommend-btn:hover {
+  background-color: #e54e4e;
+}

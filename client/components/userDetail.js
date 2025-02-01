@@ -87,7 +87,9 @@ const UserDetail = () => {
 
   return (
     <div className="profile-container">
-      <h1>{user.username}'s Details</h1>
+      <section className="hero-section">
+      <h1>USER PAGE</h1>
+      </section>
       <div className="profile-image-container">
 
 {user.image ? (
@@ -100,7 +102,9 @@ const UserDetail = () => {
 <div className="no-profile-image">No Image</div>
 )}
 </div>
+
       <div className="profile-info">
+      <h2> {user.username}</h2>
         <p>
           <strong>Total Movies Watched:</strong>{" "}
           {totalMoviesWatched}

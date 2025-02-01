@@ -141,7 +141,7 @@ const Watchlist = () => {
     return (
       <div className="watchlist-container">
         <section className="hero-section">
-        <h2>Your Watchlist</h2>
+        <h1>WATCHLIST</h1>
         </section>
         <p>No movies on the watchlist!</p>
       </div>
@@ -151,7 +151,7 @@ const Watchlist = () => {
   return (
     <div className="watchlist-container">
       <section className="hero-section">
-      <h2>Your Watchlist</h2>
+      <h1>WATCHLIST</h1>
       </section>
       {/* Sort Dropdown */}
       <div className="sort-dropdown">

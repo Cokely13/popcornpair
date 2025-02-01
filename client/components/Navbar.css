@@ -131,3 +131,45 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+.navbar-notifications {
+  position: absolute;
+  top: 10px;
+  right: 80px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.notification.friend {
+  background-color: #ff6363;
+  color: white;
+}
+
+.notification.friend:hover {
+  background-color: #e54e4e;
+}
+
+.notification.movie {
+  background-color: #007bff;
+  color: white;
+}
+
+.notification.movie:hover {
+  background-color: #0056b3;
+}
+
+.notification img {
+  width: 16px;
+  height: 16px;
+}

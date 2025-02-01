@@ -1,13 +1,23 @@
 
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector, connect } from "react-redux";
 import { Link, withRouter } from 'react-router-dom';
 import { logout } from '../store'; // Adjust the path as needed
 import AuthModal from './AuthModal';
 import ProtectedLink from './ProtectedLink';
+import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
+import { fetchFriends } from "../store/allFriendsStore";
 import './Navbar.css'
 
 const Navbar = ({ handleClick, isLoggedIn, location }) => {
+  const dispatch = useDispatch();
+  const currentUserId = useSelector((state) => state.auth.id);
+  const recommendations = useSelector((state) => state.allUserRecommendations);
+const pendingRequests = useSelector((state) => state.allFriends)
+  .filter((friend) => friend.userId === currentUserId && friend.status === "pending");
+const newRecs = recommendations.filter(
+  (rec) => rec.receiverId == currentUserId && rec.accept === null
+);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalFormType, setModalFormType] = useState('login'); // 'login' or 'signup'
 
@@ -16,6 +26,11 @@ const Navbar = ({ handleClick, isLoggedIn, location }) => {
     setIsModalOpen(true);
   };
   const closeModal = () => setIsModalOpen(false);
+
+  useEffect(() => {
+    dispatch(fetchUserRecommendations());
+    dispatch(fetchFriends());
+  }, [dispatch]);
 
   // Watch for location changes to open AuthModal
   useEffect(() => {
@@ -32,6 +47,20 @@ const Navbar = ({ handleClick, isLoggedIn, location }) => {
   return (
     <div className="navbar-container">
       <nav className="navbar">
+      <div className="navbar-notifications">
+  {pendingRequests.length > 0 && (
+    <Link to="/list" className="notification friend">
+      <img src="/friend.jpg" alt="Friend Icon" />
+      {pendingRequests.length} Friend Request{pendingRequests.length > 1 ? "s" : ""}
+    </Link>
+  )}
+  {newRecs.length > 0 && (
+    <Link to="/recommendations" className="notification movie">
+      <img src="/movie.jpg" alt="Movie Icon" />
+      {newRecs.length} New Recommendation{newRecs.length > 1 ? "s" : ""}
+    </Link>
+  )}
+</div>
       <Link to="/" className="navbar-logo">
         🎬 PopCornPair
       </Link>

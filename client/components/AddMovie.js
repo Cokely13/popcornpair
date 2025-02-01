@@ -69,7 +69,7 @@ const AddMovie = () => {
   return (
     <div className="add-movie-container">
       <section className="hero-section">
-      <h1>Add a Movie</h1>
+      <h1>ADD</h1>
       </section>
       <div className="search-bar">
         <input
@@ -101,7 +101,7 @@ const AddMovie = () => {
             <p>No results found. Try searching for another movie.</p>
           )
         ) : (
-          <p>Search for a movie to see results!</p>
+          <p>Search for a movie to add!</p>
         )}
       </div>
     </div>
