@@ -7,6 +7,7 @@ import { fetchUsers } from "../store/allUsersStore";
 import { fetchFriends } from "../store/allFriendsStore";
 import { updateSingleFriend } from "../store/singleFriendStore";
 import { fetchSingleUser, updateSingleUser } from "../store/singleUserStore";
+import './Profile.css'
 
 const Profile = () => {
   const dispatch = useDispatch();

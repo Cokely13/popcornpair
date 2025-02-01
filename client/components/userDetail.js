@@ -1,7 +1,6 @@
-// eslint-disable-next-line no-unused-vars
+
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// eslint-disable-next-line no-unused-vars
 import { useParams, Link } from "react-router-dom";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
@@ -18,6 +17,8 @@ const UserDetail = () => {
   const movies = useSelector((state) => state.allMovies);
 
   const user = users.find((u) => u.id == userId);
+
+  console.log("user", user)
 
   useEffect(() => {
     dispatch(fetchUserMovies());
@@ -87,7 +88,18 @@ const UserDetail = () => {
   return (
     <div className="profile-container">
       <h1>{user.username}'s Details</h1>
+      <div className="profile-image-container">
 
+{user.image ? (
+ <img
+ src={(user.image && user.image.trim() !== "") ? user.image : "/default-profile.png"}
+ alt={user.username}
+ className="profile-image"
+/>
+) : (
+<div className="no-profile-image">No Image</div>
+)}
+</div>
       <div className="profile-info">
         <p>
           <strong>Total Movies Watched:</strong>{" "}

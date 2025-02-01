@@ -1,0 +1,37 @@
+/* UserDetail Styles */
+.profile-container {
+  max-width: 800px;
+  margin: 100px auto 0;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333333;
+}
+
+.profile-info p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #555555;
+}
+
+.profile-info strong {
+  color: #ff6363;
+}
+
+.profile-info a {
+  color: #ff6363;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.profile-info a:hover {
+  color: #e54e4e;
+  text-decoration: underline;
+}

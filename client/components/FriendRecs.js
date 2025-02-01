@@ -180,7 +180,7 @@ const FriendRecs = () => {
   return (
     <div className="friend-recs-container">
       <section className="hero-section">
-      <h1>Friend Recommendations</h1>
+      <h1>Recommendations</h1>
       </section>
       {/* Filter Dropdown */}
       <div className="recs-dropdown">
