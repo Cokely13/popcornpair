@@ -140,7 +140,9 @@ const Watchlist = () => {
   if (!watchlistMovies.length) {
     return (
       <div className="watchlist-container">
+        <section className="hero-section">
         <h2>Your Watchlist</h2>
+        </section>
         <p>No movies on the watchlist!</p>
       </div>
     );
@@ -148,8 +150,9 @@ const Watchlist = () => {
 
   return (
     <div className="watchlist-container">
+      <section className="hero-section">
       <h2>Your Watchlist</h2>
-
+      </section>
       {/* Sort Dropdown */}
       <div className="sort-dropdown">
         <label htmlFor="sort">Sort By: </label>
@@ -228,6 +231,7 @@ const Watchlist = () => {
       <Link to={`/rejected`} className="friend-link">
                 <button className="friend-button">Second Chance</button>
               </Link>
+
     </div>
   );
 };

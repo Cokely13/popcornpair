@@ -186,7 +186,9 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
   if (!currentUserWatched.length) {
     return (
       <div className="watched-movies-container">
+        <section className="hero-section">
         <h2>Your Watched Movies</h2>
+        </section>
         <p>No watched movies to display!</p>
       </div>
     );
@@ -194,8 +196,9 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
 
   return (
     <div className="watched-movies-container">
+      <section className="hero-section">
       <h2>Your Watched Movies</h2>
-
+      </section>
       {/* Sorting Dropdown */}
       <div className="sort-dropdown">
         <label htmlFor="sort">Sort By: </label>

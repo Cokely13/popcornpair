@@ -206,7 +206,7 @@ const Search = () => {
 
   return (
     <div className="search-container">
-       <section className="hero-section">
+<section className="hero-section">
       <h1>Search for Movies</h1>
       </section>
       <div className="search-controls">
