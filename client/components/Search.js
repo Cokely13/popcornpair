@@ -229,7 +229,7 @@ const Search = () => {
       </div>
 
       <div
-        className={`movies-list ${
+        className={`watchlist-movies ${
           sortedMovies.length === 1 ? "single-result" : ""
         }`}
       >
@@ -267,7 +267,7 @@ const Search = () => {
                   <span>(Avg Rating: {avgRating})</span>
                 )}
               </p>
-
+              <Link to="/addmovie" className="add-movie-button">Add Movie</Link>
               <div className="movie-actions">
                 {!isInWatchlist(movie.id) && (
                   <button

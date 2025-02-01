@@ -275,10 +275,16 @@ font-weight: bold;
 }
 
 .watched-movies-table td img.movie-poster {
-width: 50px;
+width: 80px;
 height: auto;
 margin-bottom: 5px;
 }
+
+.watched-movies-table td img.friend-poster {
+  width: 40px;
+  height: auto;
+  margin-bottom: 5px;
+  }
 
 .sort-dropdown {
 margin: 20px 0;
@@ -577,6 +583,7 @@ margin-right: 10px;
 }
 
 .search-container {
+  max-width: 1200px;
   padding: 20px;
   margin-top: 80px; /* Ensures spacing below the navbar */
   text-align: center; /* Centers all child elements horizontally */
@@ -1536,4 +1543,17 @@ button:hover {
   color: red;
   font-size: 0.9rem;
   margin-bottom: 10px;
+}
+
+.add-movie-button {
+  position: fixed;
+  top: 80px;
+  right: 80px;
+  background-color: #ff6363;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 1100;
 }

@@ -234,151 +234,155 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
 
       {/* Movies Table */}
       <table className="watched-movies-table">
-        <thead>
-          <tr>
-            <th>Movie</th>
-            <th>Watched With</th>
-            <th>Update Watched With</th>
-            <th># Friends Watched</th>
-            <th>Recommend</th>
-            <th>Rating</th>
-            <th>Actions</th>
-            <th>Date Watched</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedMovies.map((movie) => {
-            const friendWatchersCount = getFriendWatchersCount(movie.movieId);
+  <thead>
+    <tr>
+      <th>Movie</th>
+      <th># Friends Watched</th>
+      <th>Recommend</th>
+      <th>Rating</th>
+      <th>Watched With</th>
+      <th>Date Watched</th>
+    </tr>
+  </thead>
+  <tbody>
+    {sortedMovies.map((movie) => {
+      const friendWatchersCount = getFriendWatchersCount(movie.movieId);
+      return (
+        <tr key={movie.movieId}>
+          <td>
+            <Link to={`/movies/${movie.id}`}>
+              {movie.posterUrl && (
+                <img
+                  src={movie.posterUrl}
+                  alt={movie.title}
+                  className="movie-poster"
+                />
+              )}
+              <div>{movie.title || "Untitled Movie"}</div>
+            </Link>
+          </td>
 
-            return (
-              <tr key={movie.movieId}>
-                <td>
-                  <Link to={`/movies/${movie.id}`}>
-                    {movie.posterUrl && (
-                      <img
-                        src={movie.posterUrl}
-                        alt={movie.title}
-                        className="movie-poster"
-                      />
-                    )}
-                    <div>{movie.title || "Untitled Movie"}</div>
-                  </Link>
-                </td>
+          <td>
+            {friendWatchersCount > 0 ? (
+              <button onClick={() => handleFriendsWatchedClick(movie.movieId)}>
+                {friendWatchersCount}
+              </button>
+            ) : (
+              "0"
+            )}
+          </td>
 
-                <td>
-                  {users.find((user) => user.id === movie.watchedWith)?.username || ""}
-                </td>
+          <td>
+            {selectedRecommendationMovieId === movie.id ? (
+              <div className="recommendation-form">
+                <select
+                  value={selectedUserId || ""}
+                  onChange={(e) =>
+                    setSelectedUserId(e.target.value === "" ? null : Number(e.target.value))
+                  }
+                >
+                  <option value="">Select a user</option>
+                  {users
+                    .filter((u) => acceptedFriendIds.has(u.id))
+                    .filter(
+                      (u) =>
+                        !userMovies.some(
+                          (um) =>
+                            um.userId === u.id &&
+                            um.movieId === movie.movieId &&
+                            um.status === "watched"
+                        )
+                    )
+                    .map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.username}
+                      </option>
+                    ))}
+                </select>
 
-                <td>
-                  {selectedWatchedWithMovieId === movie.id ? (
-                    <>
-                      <select
-                        value={selectedUserId || ""}
-                        onChange={(e) =>
-                          setSelectedUserId(e.target.value === "" ? null : Number(e.target.value))
-                        }
-                      >
-                        <option value="">No One</option>
-                        {/* Maybe you only want to show accepted friends here too? */}
-                        {users
-                          .filter((u) => acceptedFriendIds.has(u.id))
-                          .map((u) => (
-                            <option key={u.id} value={u.id}>
-                              {u.username}
-                            </option>
-                          ))}
-                      </select>
-                      <button onClick={() => handleWatchedWithSubmit(movie.id)}>Submit</button>
-                    </>
-                  ) : (
-                    <button onClick={() => setSelectedWatchedWithMovieId(movie.id)}>
-                      Update
-                    </button>
-                  )}
-                </td>
+                <input
+                  type="text"
+                  placeholder="Enter a message..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
 
-                <td>
-  {friendWatchersCount > 0 ? (
-    <button onClick={() => handleFriendsWatchedClick(movie.movieId)}>
-      {friendWatchersCount}
-    </button>
-  ) : (
-    "0"
-  )}
-</td>
+                <button onClick={handleRecommendationSubmit}>Submit</button>
+                <button onClick={() => setSelectedRecommendationMovieId(null)}>
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setSelectedRecommendationMovieId(movie.id)}>
+                Recommend
+              </button>
+            )}
+          </td>
 
-                <td>
-                  {selectedRecommendationMovieId === movie.id ? (
-                    <div className="recommendation-form">
-                      <select
-                        value={selectedUserId || ""}
-                        onChange={(e) =>
-                          setSelectedUserId(e.target.value === "" ? null : Number(e.target.value))
-                        }
-                      >
-                        <option value="">Select a user</option>
-                        {users
-                          // Only show ACCEPTED friends
-                          .filter((u) => acceptedFriendIds.has(u.id))
-                          // Exclude watchers
-                          .filter(
-                            (u) =>
-                              !userMovies.some(
-                                (um) =>
-                                  um.userId === u.id &&
-                                  um.movieId === movie.movieId &&
-                                  um.status === "watched"
-                              )
-                          )
-                          .map((u) => (
-                            <option key={u.id} value={u.id}>
-                              {u.username}
-                            </option>
-                          ))}
-                      </select>
-
-                      <input
-                        type="text"
-                        placeholder="Enter a message..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                      />
-
-                      <button onClick={handleRecommendationSubmit}>Submit</button>
-                      <button onClick={() => setSelectedRecommendationMovieId(null)}>Cancel</button>
-                    </div>
-                  ) : (
-                    <button onClick={() => setSelectedRecommendationMovieId(movie.id)}>
-                      Recommend
-                    </button>
-                  )}
-                </td>
-
-                <td>{movie.rating || "Not Rated"}</td>
-                <td>
-                  {selectedActionMovieId === movie.id ? (
-                    <>
-                      <input
-                        type="number"
-                        min="1"
-                        max="10"
-                        value={rating}
-                        onChange={(e) => setRating(e.target.value)}
-                        className="rating-input"
-                      />
-                      <button onClick={() => handleRatingSubmit(movie.id)}>Submit</button>
-                      <button onClick={() => setSelectedActionMovieId(null)}>Cancel</button>
-                    </>
-                  ) : (
-                    <button onClick={() => setSelectedActionMovieId(movie.id)}>Change</button>
-                  )}
-                </td>
-                <td>{movie.dateWatched || "No Date"}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+          <td>
+            {movie.rating || "Not Rated"}
+            <br />
+            {selectedActionMovieId === movie.id ? (
+              <>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                  className="rating-input"
+                />
+                <button onClick={() => handleRatingSubmit(movie.id)}>Submit</button>
+                <button onClick={() => setSelectedActionMovieId(null)}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button onClick={() => setSelectedActionMovieId(movie.id)}>
+                Change
+              </button>
+            )}
+          </td>
+          <td>
+          <Link to={`/users/${users.find((user) => user.id === movie.watchedWith)?.id}`} className="friend-link">
+          <img
+                  src={users.find((user) => user.id === movie.watchedWith)?.image || ""}
+                  alt={movie.title}
+                  className="friend-poster"
+                />
+                </Link>
+            <br />
+            {selectedWatchedWithMovieId === movie.id ? (
+              <>
+                <select
+                  value={selectedUserId || ""}
+                  onChange={(e) =>
+                    setSelectedUserId(e.target.value === "" ? null : Number(e.target.value))
+                  }
+                >
+                  <option value="">No One</option>
+                  {users
+                    .filter((u) => acceptedFriendIds.has(u.id))
+                    .map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.username}
+                      </option>
+                    ))}
+                </select>
+                <button onClick={() => handleWatchedWithSubmit(movie.id)}>Submit</button>
+              </>
+            ) : (
+              <button onClick={() => setSelectedWatchedWithMovieId(movie.id)}>
+                Update
+              </button>
+            )}
+          </td>
+          <td>{movie.dateWatched || "No Date"}</td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
     </div>
   );
 };

@@ -46,7 +46,7 @@ const Navbar = ({ handleClick, isLoggedIn, location }) => {
             <ProtectedLink to="/list" className="navbar-link">Friends</ProtectedLink>
             <ProtectedLink to="/recommendations" className="navbar-link">Recommendations</ProtectedLink>
             {/* <ProtectedLink to="/algorithm" className="navbar-link">Algorithm</ProtectedLink> */}
-            <ProtectedLink to="/addmovie" className="navbar-link">Add</ProtectedLink>
+            {/* <ProtectedLink to="/addmovie" className="navbar-link">Add</ProtectedLink> */}
             <ProtectedLink to="/search" className="navbar-link">Search</ProtectedLink>
             <a href="#" onClick={handleClick} className="navbar-link">Logout</a>
           </div>
