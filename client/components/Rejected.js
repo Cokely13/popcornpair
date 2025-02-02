@@ -42,10 +42,15 @@ const Rejected = () => {
   // If no "none" movies, show a message
   if (!noneMovies.length) {
     return (
-      <div className="rate-movie-container">
-        <h1>Second Chance</h1>
+      <div>
+      <div >
+         <section className="hero-section rate-movie-container">
+         <h1>SECOND CHANCE</h1>
+
+         </section>
+         </div>
         <p>No movies to display!</p>
-      </div>
+        </div>
     );
   }
 
@@ -84,7 +89,9 @@ const Rejected = () => {
   if (currentIndex === null) {
     return (
       <div className="rate-movie-container">
-        <h1>Second Chance</h1>
+        <section className="hero-section">
+        <h1>SECOND CHANCE</h1>
+        </section>
         <h2>That's all for now!</h2>
         {/* <p>Come back later to revisit your "none" movies.</p> */}
       </div>
@@ -94,7 +101,7 @@ const Rejected = () => {
   return (
     <div className="rate-movie-container">
       <section className="hero-section">
-      <h1>Second Chance</h1>
+      <h1>SECOND CHANCE</h1>
       </section>
       {/* Movie Poster */}
       {movie.posterUrl ? (

@@ -126,7 +126,7 @@ const RateMovie = () => {
   };
 
   return (
-    <div className="rate-movie-container">
+    <div className="rate-container">
       <section className="hero-section">
       <h1>Rate</h1>
       </section>
@@ -136,6 +136,7 @@ const RateMovie = () => {
         </div>
       ) : movie ? (
         <>
+        <div className ="rate-movie-container">
           {movie.posterUrl ? (
             <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
           ) : (
@@ -181,6 +182,7 @@ const RateMovie = () => {
             >
               <FaThumbsDown />
             </button>
+          </div>
           </div>
         </>
       ) : (

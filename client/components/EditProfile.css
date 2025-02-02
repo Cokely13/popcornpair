@@ -1,0 +1,70 @@
+/* EditProfile.css - Modern Card Styling for Edit Profile */
+
+:root {
+  --primary-color: #007bff;
+  --success-color: #28a745;
+  --background-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --transition: 0.3s;
+}
+
+.edit-profile-container.card {
+  max-width: 600px;
+  margin: 80px auto 30px;
+  padding: 30px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow);
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.edit-profile-form label {
+  font-size: 1rem;
+  color: #333;
+  text-align: left;
+}
+
+.edit-profile-form input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.photo-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 5px;
+  transition: background-color var(--transition);
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: #fff;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}

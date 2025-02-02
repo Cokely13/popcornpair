@@ -20,6 +20,7 @@ import AddMovie from './components/AddMovie';
 import Users from './components/Users';
 import Algorithm from './components/Algorithm';
 import PrivateRoute from './components/PrivateRoute';
+import EditProfile from './components/EditProfile';
 
 class Routes extends Component {
   componentDidMount() {
@@ -41,6 +42,7 @@ class Routes extends Component {
           <PrivateRoute exact path="/users" component={Users} />
           <PrivateRoute exact path="/watchlist" component={Watchlist} />
           <PrivateRoute exact path="/rate" component={RateMovie} />
+          <PrivateRoute exact path="/editprofile" component={EditProfile} />
           <PrivateRoute exact path="/match/:userId" component={Match} />
           <PrivateRoute exact path="/random/:userId" component={Random} />
           <PrivateRoute exact path="/list" component={FriendsList} />

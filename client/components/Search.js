@@ -209,6 +209,7 @@ const Search = () => {
 <section className="hero-section">
       <h1>SEARCH</h1>
       </section>
+      <div className="search-container">
       <div className="search-controls">
         <input
           type="text"
@@ -326,6 +327,7 @@ const Search = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

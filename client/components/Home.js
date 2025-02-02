@@ -9,7 +9,7 @@ const Home = () => {
       <section className="hero-section">
         <h1>Welcome to PopcornPair!</h1>
         <p>Your hub for discovering, sharing, and rating movies with friends.</p>
-        <Link to="/search" className="hero-button">
+        <Link to="/rate" className="hero-button">
           Find Movies
         </Link>
       </section>
