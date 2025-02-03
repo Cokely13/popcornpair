@@ -287,15 +287,15 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
                     className="rating-input"
                   />
                   <button onClick={() => handleRatingSubmit(movie.id)}>
-                    Submit
+                    SUBMIT
                   </button>
                   <button onClick={() => setSelectedActionMovieId(null)}>
-                    Cancel
+                    CANCEL
                   </button>
                 </>
               ) : (
                 <button className="change-btn" onClick={() => setSelectedActionMovieId(movie.id)}>
-                  Change
+                  UPDATE
                 </button>
               )}
             </div>
@@ -347,12 +347,12 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
                 />
                 <button onClick={handleRecommendationSubmit}>Submit</button>
                 <button onClick={() => setSelectedRecommendationMovieId(null)}>
-                  Cancel
+                  CANCEL
                 </button>
               </div>
             ) : (
               <button className="recommend-btn" onClick={() => setSelectedRecommendationMovieId(movie.id)}>
-                Recommend
+                RECOMMEND
               </button>
             )}
           </td>

@@ -14,7 +14,7 @@ const FriendsList = () => {
   const currentUserId = useSelector((state) => state.auth.id);
   const users = useSelector((state) => state.allUsers);
   const friends = useSelector((state) => state.allFriends);
-
+  const [showRequests, setShowRequests] = useState(false);
   // Local UI states
   const [showUserSearch, setShowUserSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -184,10 +184,10 @@ const FriendsList = () => {
                   {user.username}
               </Link>
               <Link to={`/match/${user.id}`} className="friend-link">
-                <button className="friend-button">Matches</button>
+                <button className="friend-button">SHARED WATCHLIST</button>
               </Link>
               <Link to={`/random/${user.id}`} className="friend-link">
-                <button className="random-button">Random Match</button>
+                <button className="random-button">RANDOM MATCH</button>
               </Link>
             </ul>
           ))
@@ -196,11 +196,55 @@ const FriendsList = () => {
         )}
       </ul>
 
+      <div className="friend-requests-box">
+        {!showRequests ?
+        incomingRequestUsers.length > 0 ?<button className="toggle-requests-btn" onClick={() => setShowRequests(!showRequests)}>
+           FRIEND REQUESTS
+        </button> :"" : ""}
+        {showRequests && incomingRequestUsers.length > 0 && (
+          <div className="requests-list">
+            {/* {incomingRequestUsers.map(({ friendRecord, sender }) => (
+              <div key={friendRecord.id} className="request-item">
+                <img src={sender?.image || "/default-profile.png"} alt={sender?.username} className="friend-profile-pic" />
+                <p>{sender ? sender.username : `User #${friendRecord.friendId}`}</p>
+                <div className="request-buttons">
+                  <button className="accept-button" onClick={() => handleAcceptFriend(friendRecord)}>Accept</button>
+                  <button className="deny-button" onClick={() => handleDenyFriend(friendRecord)}>Deny</button>
+                </div>
+              </div>
+            ))} */}
+            {incomingRequestUsers.map(({ friendRecord, sender }) => (
+              <ul className="search-user-item"  key={friendRecord.id}>
+                 <img
+                      src={sender?.image || "/default-profile.png"}
+                      alt={sender?.username}
+                      className="friend-profile-pic"
+                    />
+                {sender ? sender.username : `User #${friendRecord.friendId}`}
+                <button
+                  onClick={() => handleAcceptFriend(friendRecord)}
+                  className="accept-button"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleDenyFriend(friendRecord)}
+                  className="deny-button"
+                >
+                  Deny
+                </button>
+              </ul>
+            ))}
+             </div>
+        )}
+        </div>
+
+
       {/* If there's at least one new request for me */}
-      {incomingRequestUsers.length > 0 && (
+      {/* {incomingRequestUsers.length > 0 && (
         <div className="new-requests-section">
           <section className="hero-section">
-          <h3>New Friend Request</h3>
+          <h3>Friend Requests</h3>
           </section>
           <ul>
             {incomingRequestUsers.map(({ friendRecord, sender }) => (
@@ -227,11 +271,24 @@ const FriendsList = () => {
             ))}
           </ul>
         </div>
-      )}
+      )} */}
 
-      <button onClick={() => setShowUserSearch(!showUserSearch)}>
-        {showUserSearch ? "Hide User Search" : "Search for Users"}
-      </button>
+<button
+  onClick={() => setShowUserSearch(!showUserSearch)}
+  style={{
+    backgroundColor: showUserSearch ? "#606060" : "#b0b0b0", // Dark grey when open, light grey when closed
+    color: "white",
+    padding: "10px 15px",
+    border: "none",
+    borderRadius: "5px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  }}
+>
+  {showUserSearch ? "HIDE" : "USER SEARCH"}
+</button>
+
 
       {showUserSearch && (
         <div className="user-search-panel">
@@ -264,7 +321,7 @@ const FriendsList = () => {
                         onClick={() => handleAddFriend(user.id)}
                         className="add-friend-button"
                       >
-                        Add Friend
+                        ADD FRIEND
                       </button>
                     </li>
                   );

@@ -275,14 +275,14 @@ const Search = () => {
                     className="add-watchlist-button"
                     onClick={() => handleAddToWatchlist(movie.id)}
                   >
-                    Add to Watchlist
+                    ADD TO WATCHLIST
                   </button>
                 )}
                 <button
                   className="mark-watched-button"
                   onClick={() => handleMarkAsWatched(movie.id)}
                 >
-                  Watched
+                  WATCHED
                 </button>
               </div>
             </div>
@@ -328,7 +328,7 @@ const Search = () => {
         </div>
       )}
     </div>
-    <Link to="/addmovie" className="add-movie-button">Add Movie</Link>
+    <Link to="/addmovie" className="add-movie-button">ADD MOVIE</Link>
     </div>
   );
 };

@@ -172,8 +172,11 @@ const FriendRecs = () => {
     );
   };
 
+  const rejectedRecs = recommendations.filter(rec => rec.accept === "no");
+  const otherRecs = recommendations.filter(rec => rec.accept !== "no");
+
   // Filter recommendations based on view type
-  const filteredRecs = recommendations.filter((rec) => {
+  const filteredRecs = otherRecs.filter((rec) => {
     if (viewType === "received") return rec.receiverId === currentUserId && !isMovieWatched(rec.movie.id);
     if (viewType === "sent") return rec.senderId === currentUserId;
     if (viewType === "watched") return rec.receiverId === currentUserId && isMovieWatched(rec.movie.id);

@@ -7,10 +7,11 @@ const Home = () => {
     <div className="home-container">
       {/* Hero / Header Section */}
       <section className="hero-section">
-        <h1>Welcome to PopcornPair!</h1>
+
+      <h1 style={{ color: "#f4b400" }}>🎬 PopcornPair</h1>
         <p>Your hub for discovering, sharing, and rating movies with friends.</p>
         <Link to="/rate" className="hero-button">
-          Find Movies
+          Explore Movies
         </Link>
       </section>
 

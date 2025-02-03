@@ -117,7 +117,15 @@
 }
 
 /* Movie Poster Styling */
-.movie-poster {
+/* .movie-poster {
+  width: 60px;
+  height: 90px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 10px;
+} */
+
+.card-item .movie-poster {
   width: 60px;
   height: 90px;
   object-fit: cover;

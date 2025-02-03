@@ -171,21 +171,23 @@ const Watchlist = () => {
       <div className="watchlist-movies">
         {sortedMovies.map((movie) => (
           <div key={movie.movieId} className="watchlist-movie-item">
+             <Link to={`/movies/${movie.id}`}>
             {movie.posterUrl ? (
               <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
             ) : (
               <div className="no-poster">No Image Available</div>
             )}
             <h3>{movie.title || "Untitled Movie"}</h3>
+            </Link>
             <p>
               <strong>Predicted Rating:</strong> {movie.predictedRating}
             </p>
             <div className="watchlist-actions">
             <button onClick={() => handleMarkAsWatched(movie.movieId)}>
-               Watched
+               WATCHED
               </button>
               <button onClick={() => handleRemoveFromWatchlist(movie.movieId)}>
-                Remove
+                REMOVE
               </button>
             </div>
           </div>
@@ -229,7 +231,7 @@ const Watchlist = () => {
         </div>
       )}
       <Link to={`/rejected`} className="friend-link">
-                <button className="friend-button">Second Chance</button>
+                <button className="reject-button">SECOND CHANCE</button>
               </Link>
 
     </div>

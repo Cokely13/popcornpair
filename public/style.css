@@ -24,7 +24,7 @@ body {
   width: 90%;
   text-align: center;
   margin: 80px auto 30px;
-  border: 5px solid #4CAF50; /* Added colorful border */
+
 }
 
 .rate-container {
@@ -38,10 +38,20 @@ body {
   margin: 80px auto 30px;
 }
 
-.movie-poster {
+/* .movie-poster {
   max-width: 100%;
   border-radius: 10px;
   margin-bottom: 20px;
+} */
+
+.movie-poster {
+  width: 120px; /* Adjust as needed */
+  height: auto;
+  max-width: unset; /* Overrides any parent constraints */
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  flex-shrink: 0; /* Prevents shrinking in flex containers */
 }
 
 .no-image {
@@ -422,12 +432,7 @@ margin-right: 10px;
   padding: 20px;
 }
 
-.movie-poster {
-  width: 300px;
-  height: 450px;
-  object-fit: cover;
-  margin-bottom: 20px;
-}
+
 
 .movie-info {
   text-align: center;
@@ -617,6 +622,9 @@ margin-right: 10px;
   padding: 20px;
 }
 
+
+
+
 .movie-item {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -627,8 +635,9 @@ margin-right: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative; /* Ensures absolute elements stay inside */
-  overflow: hidden; /* Prevents layout shifts */
+  position: relative;
+  overflow: hidden;
+
 }
 
 .movie-item:hover {
@@ -636,13 +645,7 @@ margin-right: 10px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
-.movie-poster {
-  width: 80%;
-  max-width: 150px; /* Restrict poster size */
-  height: auto; /* Maintain aspect ratio */
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
+
 
 .mark-watched-button {
   background-color: #4caf50;
@@ -696,6 +699,11 @@ margin-right: 10px;
   align-items: center;
 }
 
+.watchlist-movie-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 900px) {
   .watchlist-movie-item {
     width: calc(50% - 20px); /* 2 per row on smaller screens */
@@ -708,12 +716,7 @@ margin-right: 10px;
   }
 }
 
-.movie-poster {
-  width: 100%;
-  height: auto;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
+
 
 .watchlist-actions button {
   margin: 5px;
@@ -730,7 +733,7 @@ margin-right: 10px;
 }
 
 .watchlist-actions button:last-child {
-  background-color: #28a745;
+  background-color: red;
 }
 
 .watchlist-actions button:last-child:hover {
@@ -1464,6 +1467,17 @@ button:hover {
   gap: 10px;
 }
 
+.reject-button {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: grey;
+  color: white;
+  transition: background-color 0.3s;
+}
+
 .friend-button,
 .random-button {
   padding: 8px 12px;
@@ -1548,4 +1562,42 @@ button:hover {
   text-decoration: none;
   font-weight: bold;
   z-index: 1100;
+}
+
+.friend-requests-box {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  width: 350px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  text-align: center;
+}
+
+/* Toggle Button */
+.toggle-requests-btn {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toggle-requests-btn:hover {
+  background: #0056b3;
+}
+
+/* Requests List */
+.requests-list {
+  margin-top: 10px;
+  padding: 5px;
+  max-height: 200px;
+  overflow-y: auto;
 }

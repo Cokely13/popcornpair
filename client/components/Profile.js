@@ -811,7 +811,7 @@ const Profile = () => {
 
       {/* Centered Edit Profile Button */}
       <Link to="/editprofile" className="edit-profile-btn">
-        Edit Profile
+        EDIT PROFILE
       </Link>
     </div>
   );

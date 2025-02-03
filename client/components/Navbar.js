@@ -48,7 +48,7 @@ const newRecs = recommendations.filter(
     <div className="navbar-container">
       <nav className="navbar">
       <div className="navbar-notifications">
-  {pendingRequests.length > 0 && (
+  {/* {pendingRequests.length > 0 && (
     <Link to="/list" className="notification friend">
       <img src="/friend.jpg" alt="Friend Icon" />
       {pendingRequests.length} Friend Request{pendingRequests.length > 1 ? "s" : ""}
@@ -59,11 +59,27 @@ const newRecs = recommendations.filter(
       <img src="/movie.jpg" alt="Movie Icon" />
       {newRecs.length} New Recommendation{newRecs.length > 1 ? "s" : ""}
     </Link>
-  )}
+  )} */}
+   {location.pathname === "/home" && (
+          <div className="navbar-notifications">
+            {pendingRequests.length > 0 && (
+              <Link to="/list" className="notification friend">
+                <img src="/friend.jpg" alt="Friend Icon" />
+                {pendingRequests.length} Friend Request{pendingRequests.length > 1 ? "s" : ""}
+              </Link>
+            )}
+            {newRecs.length > 0 && (
+              <Link to="/recommendations" className="notification movie">
+                <img src="/movie.jpg" alt="Movie Icon" />
+                {newRecs.length} New Recommendation{newRecs.length > 1 ? "s" : ""}
+              </Link>
+            )}
+          </div>
+        )}
 </div>
-      <Link to="/" className="navbar-logo">
+      {/* <Link to="/" className="navbar-logo">
         🎬 PopCornPair
-      </Link>
+      </Link> */}
         {/* <Link to="/" className="navbar-brand">PopCornPair</Link> */}
         {isLoggedIn ? (
           <div className="navbar-links">

@@ -128,7 +128,7 @@ const RateMovie = () => {
   return (
     <div className="rate-container">
       <section className="hero-section">
-      <h1>Rate</h1>
+      <h1>ADD TO WATCHLIST</h1>
       </section>
       {shuffledMovies.length === 0 ? (
         <div className="no-movies-message">
@@ -193,3 +193,4 @@ const RateMovie = () => {
 };
 
 export default RateMovie;
+
