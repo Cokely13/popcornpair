@@ -333,6 +333,212 @@
 // export default Profile;
 
 
+// import React, { useEffect, useMemo, useState } from "react";
+// import { Link } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchUserMovies } from "../store/allUserMoviesStore";
+// import { fetchMovies } from "../store/allMoviesStore";
+// import { fetchUsers } from "../store/allUsersStore";
+// import { fetchFriends } from "../store/allFriendsStore";
+// import { updateSingleFriend } from "../store/singleFriendStore";
+// import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
+// import { fetchSingleUser } from "../store/singleUserStore";
+// import "./Profile.css";
+
+// const Profile = () => {
+//   const dispatch = useDispatch();
+//   const currentUserId = useSelector((state) => state.auth.id);
+//   const recommendations = useSelector((state) => state.allUserRecommendations);
+//   const userMovies = useSelector((state) => state.allUserMovies).filter(
+//     (um) => um.userId === currentUserId && um.status === "watched"
+//   );
+//   const movies = useSelector((state) => state.allMovies);
+//   const currentUser = useSelector((state) =>
+//     state.allUsers.find((user) => user.id === currentUserId)
+//   );
+//   const friends = useSelector((state) => state.allFriends);
+//   const users = useSelector((state) => state.allUsers);
+//   const user = useSelector((state) => state.singleUser);
+//   const pendingRequests = useMemo(() => {
+//     return friends.filter(
+//       (friend) => friend.userId === currentUserId && friend.status === "pending"
+//     );
+//   }, [friends, currentUserId]);
+//   const myrecs = recommendations.filter(
+//     (rec) => rec.receiverId === currentUserId && rec.accept === null
+//   );
+
+//     const [selectedFile, setSelectedFile] = useState(null);
+//   const [previewUrl, setPreviewUrl] = useState(null);
+//   const [newPhoto, setNewPhoto] = useState(false);
+
+//     // NEW: State to control the Pending Requests modal
+//   const [showPendingModal, setShowPendingModal] = useState(false);
+//     // Editable fields
+//   const [editing, setEditing] = useState(false);
+//   const [newUsername, setNewUsername] = useState(user.username || "");
+//   const [newEmail, setNewEmail] = useState(user.email || "");
+
+
+//   useEffect(() => {
+//     dispatch(fetchSingleUser(currentUserId));
+//     dispatch(fetchUserRecommendations());
+//     dispatch(fetchUserMovies());
+//     dispatch(fetchMovies());
+//     dispatch(fetchUsers());
+//     dispatch(fetchFriends());
+//   }, [dispatch, currentUserId]);
+
+//   // Calculate stats
+//   const stats = useMemo(() => {
+//     if (!userMovies.length) {
+//       return {
+//         totalMoviesWatched: 0,
+//         lastMovie: null,
+//         averageRating: "N/A",
+//         highestRatedMovie: null,
+//       };
+//     }
+//     const watchedMovies = userMovies.map((um) => ({
+//       ...um,
+//       ...movies.find((movie) => movie.id === um.movieId),
+//     }));
+//     const lastMovie = watchedMovies.reduce((latest, movie) => {
+//       if (!latest || new Date(movie.dateWatched) > new Date(latest.dateWatched)) {
+//         return movie;
+//       }
+//       return latest;
+//     }, null);
+//     const averageRating =
+//       watchedMovies.reduce((sum, movie) => sum + (movie.rating || 0), 0) /
+//       watchedMovies.length;
+//     const highestRatedMovie = watchedMovies.reduce((highest, movie) => {
+//       if (!highest || (movie.rating || 0) > (highest.rating || 0)) {
+//         return movie;
+//       }
+//       return highest;
+//     }, null);
+//     return {
+//       totalMoviesWatched: watchedMovies.length,
+//       lastMovie,
+//       averageRating: averageRating.toFixed(1),
+//       highestRatedMovie,
+//     };
+//   }, [userMovies, movies]);
+
+//   return (
+//     <div className="profile-container card">
+//       <section className="hero-section">
+//         <h1>{currentUser?.username || "User"}</h1>
+//       </section>
+//       <div className="profile-image-container">
+//         {user.image ? (
+//           <img src={user.image} alt={user.username} className="profile-image" />
+//         ) : (
+//           <div className="no-profile-image">No Image</div>
+//         )}
+//       </div>
+
+//       <div className="stats-cards">
+//         <div className="card-item">
+//           <h3>Pending Friend Requests</h3>
+//           <p>{pendingRequests.length}</p>
+//         </div>
+//         <div className="card-item">
+//           <h3>Pending Recommendations</h3>
+//           <p>{myrecs.length}</p>
+//         </div>
+//         <div className="card-item">
+//           <h3>Total Movies Watched</h3>
+//           <p>{stats.totalMoviesWatched}</p>
+//         </div>
+//         <div className="card-item">
+//           <h3>Last Movie Watched</h3>
+//           <p>
+//             {stats.lastMovie ? (
+//               <Link to={`/movies/${stats.lastMovie.id}`}>
+//                    <img
+//                    src={stats.lastMovie.posterUrl}
+//                    alt={stats.lastMovie.title}
+//                    className="movie-poster-profile"
+//                  />
+//                 {stats.lastMovie.title} ({stats.lastMovie.rating})
+//               </Link>
+//             ) : (
+//               "None"
+//             )}
+//           </p>
+//           <p>{stats.lastMovie?.dateWatched || ""}</p>
+//         </div>
+//         <div className="card-item">
+//           <h3>Average Rating</h3>
+//           <p>{stats.averageRating}</p>
+//         </div>
+//         <div className="card-item">
+//           <h3>Highest Rated Movie</h3>
+//           <p>
+//             {stats.highestRatedMovie ? (
+//               <Link to={`/movies/${stats.highestRatedMovie.id}`}>
+//                 <img
+//                    src={stats.highestRatedMovie.posterUrl}
+//                    alt={stats.highestRatedMovie.title}
+//                    className="movie-poster-profile"
+//                  />
+//                 {stats.highestRatedMovie.title} ({stats.highestRatedMovie.rating})
+//               </Link>
+//             ) : (
+//               "N/A"
+//             )}
+//           </p>
+//         </div>
+//       </div>
+
+//       <Link to="/editprofile" className="btn btn-primary edit-btn">
+//         Edit Profile
+//       </Link>
+
+
+
+//       {/* Pending Friend Requests Modal */}
+//       {showPendingModal && (
+//         <div className="modal-overlay">
+//           <div className="modal-content">
+//             <h2>Pending Friend Requests</h2>
+//             {pendingRequests.length ? (
+//               <ul>
+//                 {pendingRequests.map((request) => {
+//                   const friendUser = users.find((u) => u.id === request.friendId);
+//                   return (
+//                     <li key={request.id}>
+//                       <img
+//                         src={friendUser?.image || "/default-profile.png"}
+//                         alt={friendUser?.username || "User"}
+//                         className="friend-profile-pic"
+//                       />
+//                       {friendUser?.username || `User #${request.friendId}`}
+//                       <button onClick={() => handleAcceptFriend(request)} className="accept-button">
+//                         Accept
+//                       </button>
+//                       <button onClick={() => handleDenyFriend(request)} className="deny-button">
+//                         Deny
+//                       </button>
+//                     </li>
+//                   );
+//                 })}
+//               </ul>
+//             ) : (
+//               <p>No pending requests.</p>
+//             )}
+//             <button onClick={() => setShowPendingModal(false)}>Close</button>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default Profile;
+
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -340,7 +546,6 @@ import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUsers } from "../store/allUsersStore";
 import { fetchFriends } from "../store/allFriendsStore";
-import { updateSingleFriend } from "../store/singleFriendStore";
 import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
 import { fetchSingleUser } from "../store/singleUserStore";
 import "./Profile.css";
@@ -349,6 +554,9 @@ const Profile = () => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.auth.id);
   const recommendations = useSelector((state) => state.allUserRecommendations);
+  const userMoviesList = useSelector((state) => state.allUserMovies).filter(
+    (um) => um.userId === currentUserId && um.status === "watchlist"
+  );
   const userMovies = useSelector((state) => state.allUserMovies).filter(
     (um) => um.userId === currentUserId && um.status === "watched"
   );
@@ -357,28 +565,10 @@ const Profile = () => {
     state.allUsers.find((user) => user.id === currentUserId)
   );
   const friends = useSelector((state) => state.allFriends);
-  const users = useSelector((state) => state.allUsers);
   const user = useSelector((state) => state.singleUser);
-  const pendingRequests = useMemo(() => {
-    return friends.filter(
-      (friend) => friend.userId === currentUserId && friend.status === "pending"
-    );
-  }, [friends, currentUserId]);
-  const myrecs = recommendations.filter(
-    (rec) => rec.receiverId === currentUserId && rec.accept === null
-  );
-
-    const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [newPhoto, setNewPhoto] = useState(false);
-
-    // NEW: State to control the Pending Requests modal
-  const [showPendingModal, setShowPendingModal] = useState(false);
-    // Editable fields
-  const [editing, setEditing] = useState(false);
-  const [newUsername, setNewUsername] = useState(user.username || "");
-  const [newEmail, setNewEmail] = useState(user.email || "");
-
+  const firstWatchlistMovie = userMoviesList.length
+  ? movies.find((movie) => movie.id === userMoviesList[0].movieId)
+  : null;
 
   useEffect(() => {
     dispatch(fetchSingleUser(currentUserId));
@@ -388,6 +578,9 @@ const Profile = () => {
     dispatch(fetchUsers());
     dispatch(fetchFriends());
   }, [dispatch, currentUserId]);
+
+
+  console.log("ser", userMoviesList)
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -418,19 +611,24 @@ const Profile = () => {
       }
       return highest;
     }, null);
+    const lowestRatedMovie = watchedMovies.reduce((lowest, movie) => {
+      if (!lowest || (movie.rating || 10) < (lowest.rating || 10)) {
+        return movie;
+      }
+      return lowest;
+    }, null);
     return {
       totalMoviesWatched: watchedMovies.length,
       lastMovie,
       averageRating: averageRating.toFixed(1),
       highestRatedMovie,
+      lowestRatedMovie
     };
   }, [userMovies, movies]);
 
   return (
-    <div className="profile-container card">
-      <section className="hero-section">
-        <h1>{currentUser?.username || "User"}</h1>
-      </section>
+    <div className="profile-container">
+      <h1 className="profile-title">{currentUser?.username || "User"}</h1>
       <div className="profile-image-container">
         {user.image ? (
           <img src={user.image} alt={user.username} className="profile-image" />
@@ -439,92 +637,170 @@ const Profile = () => {
         )}
       </div>
 
-      <div className="stats-cards">
-        <div className="card-item">
-          <h3>Pending Friend Requests</h3>
-          <p>{pendingRequests.length}</p>
+      <div className="stats-container">
+        {/* First Row: Two Cards */}
+        <div className="stats-row">
+          <div className="card-item">
+            <h3>Pending Friend Requests</h3>
+            <p>{friends.filter(friend => friend.userId === currentUserId && friend.status === "pending").length}</p>
+          </div>
+          <div className="card-item">
+            <h3>Pending Recommendations</h3>
+            <p>{recommendations.filter(rec => rec.receiverId === currentUserId && rec.accept === null).length}</p>
+          </div>
         </div>
-        <div className="card-item">
-          <h3>Pending Recommendations</h3>
-          <p>{myrecs.length}</p>
-        </div>
-        <div className="card-item">
-          <h3>Total Movies Watched</h3>
-          <p>{stats.totalMoviesWatched}</p>
-        </div>
-        <div className="card-item">
-          <h3>Last Movie Watched</h3>
-          <p>
+
+        {/* Second Row: Four Cards */}
+        <div className="stats-row">
+          <div className="card-item">
+            <h3>Total Movies Watched</h3>
+            <p>{stats.totalMoviesWatched}</p>
+          </div>
+          <div className="card-item">
+            <h3>Last Movie Watched</h3>
             {stats.lastMovie ? (
               <Link to={`/movies/${stats.lastMovie.id}`}>
-                {stats.lastMovie.title} ({stats.lastMovie.rating})
+                <img
+                  src={stats.lastMovie.posterUrl}
+                  alt={stats.lastMovie.title}
+                  className="movie-poster"
+                />
+                <p>{stats.lastMovie.title} ({stats.lastMovie.rating})</p>
               </Link>
             ) : (
-              "None"
+              <p>None</p>
             )}
-          </p>
-          <p>{stats.lastMovie?.dateWatched || ""}</p>
-        </div>
-        <div className="card-item">
-          <h3>Average Rating</h3>
-          <p>{stats.averageRating}</p>
-        </div>
-        <div className="card-item">
-          <h3>Highest Rated Movie</h3>
-          <p>
+          </div>
+          <div className="card-item">
+            <h3>Average Rating</h3>
+            <p>{stats.averageRating}</p>
+          </div>
+          <div className="card-item">
+            <h3>Highest Rated Movie</h3>
             {stats.highestRatedMovie ? (
               <Link to={`/movies/${stats.highestRatedMovie.id}`}>
-                {stats.highestRatedMovie.title} ({stats.highestRatedMovie.rating})
+                <img
+                  src={stats.highestRatedMovie.posterUrl}
+                  alt={stats.highestRatedMovie.title}
+                  className="movie-poster"
+                />
+                <p>{stats.highestRatedMovie.title} ({stats.highestRatedMovie.rating})</p>
               </Link>
             ) : (
-              "N/A"
+              <p>N/A</p>
             )}
-          </p>
+          </div>
+          <div className="card-item">
+            <h3>Lowest Rated Movie</h3>
+            {stats.lowestRatedMovie ? (
+              <Link to={`/movies/${stats.lowestRatedMovie.id}`}>
+                <img
+                  src={stats.lowestRatedMovie.posterUrl}
+                  alt={stats.lowestRatedMovie.title}
+                  className="movie-poster"
+                />
+                <p>{stats.lowestRatedMovie.title} ({stats.lowestRatedMovie.rating})</p>
+              </Link>
+            ) : (
+              <p>N/A</p>
+            )}
+          </div>
+          <div className="card-item">
+            <h3>WatchList</h3>
+            {firstWatchlistMovie ? (
+              <Link to={`/movies/${firstWatchlistMovie.id}`}>
+                <img
+                  src={firstWatchlistMovie.posterUrl}
+                  alt={firstWatchlistMovie.title}
+                  className="movie-poster"
+                />
+                <p>{firstWatchlistMovie.title} </p>
+              </Link>
+            ) : (
+              <p>N/A</p>
+            )}
+          </div>
         </div>
       </div>
 
-      <Link to="/editprofile" className="btn btn-primary edit-btn">
+      {/* Centered Edit Profile Button */}
+      <Link to="/editprofile" className="edit-profile-btn">
         Edit Profile
       </Link>
-
-
-
-      {/* Pending Friend Requests Modal */}
-      {showPendingModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Pending Friend Requests</h2>
-            {pendingRequests.length ? (
-              <ul>
-                {pendingRequests.map((request) => {
-                  const friendUser = users.find((u) => u.id === request.friendId);
-                  return (
-                    <li key={request.id}>
-                      <img
-                        src={friendUser?.image || "/default-profile.png"}
-                        alt={friendUser?.username || "User"}
-                        className="friend-profile-pic"
-                      />
-                      {friendUser?.username || `User #${request.friendId}`}
-                      <button onClick={() => handleAcceptFriend(request)} className="accept-button">
-                        Accept
-                      </button>
-                      <button onClick={() => handleDenyFriend(request)} className="deny-button">
-                        Deny
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <p>No pending requests.</p>
-            )}
-            <button onClick={() => setShowPendingModal(false)}>Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
+
+  // return (
+  //   <div className="profile-container">
+  //     <h1 className="profile-title">{currentUser?.username || "User"}</h1>
+  //     <div className="profile-image-container">
+  //       {user.image ? (
+  //         <img src={user.image} alt={user.username} className="profile-image" />
+  //       ) : (
+  //         <div className="no-profile-image">No Image</div>
+  //       )}
+  //     </div>
+
+  //     {/* First Row: Two Squares */}
+  //     <div className="stats-row">
+  //       <div className="card-item">
+  //         <h3>Pending Friend Requests</h3>
+  //         <p>{friends.filter(friend => friend.userId === currentUserId && friend.status === "pending").length}</p>
+  //       </div>
+  //       <div className="card-item">
+  //         <h3>Pending Recommendations</h3>
+  //         <p>{recommendations.filter(rec => rec.receiverId === currentUserId && rec.accept === null).length}</p>
+  //       </div>
+  //     </div>
+
+  //     {/* Second Row: Four Squares */}
+  //     <div className="stats-row">
+  //       <div className="card-item">
+  //         <h3>Total Movies Watched</h3>
+  //         <p>{stats.totalMoviesWatched}</p>
+  //       </div>
+  //       <div className="card-item">
+  //         <h3>Last Movie Watched</h3>
+  //         {stats.lastMovie ? (
+  //           <Link to={`/movies/${stats.lastMovie.id}`}>
+  //             <img
+  //               src={stats.lastMovie.posterUrl}
+  //               alt={stats.lastMovie.title}
+  //               className="movie-poster"
+  //             />
+  //             <p>{stats.lastMovie.title} ({stats.lastMovie.rating})</p>
+  //           </Link>
+  //         ) : (
+  //           <p>None</p>
+  //         )}
+  //       </div>
+  //       <div className="card-item">
+  //         <h3>Average Rating</h3>
+  //         <p>{stats.averageRating}</p>
+  //       </div>
+  //       <div className="card-item">
+  //         <h3>Highest Rated Movie</h3>
+  //         {stats.highestRatedMovie ? (
+  //           <Link to={`/movies/${stats.highestRatedMovie.id}`}>
+  //             <img
+  //               src={stats.highestRatedMovie.posterUrl}
+  //               alt={stats.highestRatedMovie.title}
+  //               className="movie-poster"
+  //             />
+  //             <p>{stats.highestRatedMovie.title} ({stats.highestRatedMovie.rating})</p>
+  //           </Link>
+  //         ) : (
+  //           <p>N/A</p>
+  //         )}
+  //       </div>
+  //     </div>
+
+  //     {/* Centered Edit Profile Button */}
+  //     <Link to="/editprofile" className="edit-profile-btn">
+  //       Edit Profile
+  //     </Link>
+  //   </div>
+  // );
 };
 
 export default Profile;
