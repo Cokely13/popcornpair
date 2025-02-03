@@ -126,6 +126,7 @@ const EditProfile = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [editingPassword, setEditingPassword] = useState(false);
 
   useEffect(() => {
     dispatch(fetchSingleUser(currentUserId));
@@ -148,15 +149,18 @@ const EditProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+
+    // If user is editing password, check for match.
+    if (editingPassword && password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
+
     const updateData = {
       id: user.id,
       username,
       email,
-      ...(password && { password }),
+      ...(editingPassword && password ? { password } : {}),
     };
 
     if (selectedFile) {
@@ -206,22 +210,47 @@ const EditProfile = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </label>
-        <label>
-          New Password:
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <label>
-          Confirm Password:
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </label>
+
+        {!editingPassword ? (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setEditingPassword(true)}
+          >
+            Change Password
+          </button>
+        ) : (
+          <>
+            <label>
+              New Password:
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            <label>
+              Confirm Password:
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </label>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => {
+                setEditingPassword(false);
+                setPassword("");
+                setConfirmPassword("");
+              }}
+            >
+              Cancel Password Change
+            </button>
+          </>
+        )}
+
         <label>
           Profile Picture:
           <input type="file" onChange={handleFileChange} />
@@ -230,7 +259,9 @@ const EditProfile = () => {
           <img src={previewUrl} alt="Preview" className="photo-preview" />
         )}
         <div className="button-group">
-          <button type="submit" className="btn btn-success">Save Changes</button>
+          <button type="submit" className="btn btn-success">
+            Save Changes
+          </button>
           <button type="button" className="btn btn-secondary" onClick={handleCancel}>
             Cancel
           </button>
@@ -241,3 +272,4 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
+
