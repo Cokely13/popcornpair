@@ -206,7 +206,8 @@ text-align: center; /* Centers all child elements horizontally */
 }
 
 .watched-movie-item:hover {
-  transform: scale(1.02);
+  transform: translateY(-5px);
+  /* transform: scale(1.02); */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -626,6 +627,13 @@ margin-right: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative; /* Ensures absolute elements stay inside */
+  overflow: hidden; /* Prevents layout shifts */
+}
+
+.movie-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
 .movie-poster {
@@ -775,11 +783,11 @@ margin-right: 10px;
 }
 
 .watchlist-movie {
-  border: 2px solid #007bff; /* Blue border for watchlist movies */
+  border: 10px solid #0a192f; /* Deep navy border */
   padding: 10px;
   border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.5); /* Soft blue glow */
 }
-
 .watchlist-tag {
   color: #007bff;
   font-weight: bold;

@@ -7,6 +7,7 @@
   --secondary-color: #6c757d;
   --card-bg: #ffffff;
   --shadow: rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.3s;
 }
 
 .profile-container {
@@ -90,13 +91,17 @@
   text-align: center;
   min-width: 120px;
   display: flex;
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
   flex-direction: column;
   justify-content: center; /* Centers content vertically */
   align-items: center; /* Centers content horizontally */
   text-align: center; /* Ensures text stays centered */
 }
 
-
+.card-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
 
 
 /* Ensure the number is centered properly */

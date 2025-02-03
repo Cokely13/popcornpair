@@ -268,7 +268,7 @@ const Search = () => {
                   <span>(Avg Rating: {avgRating})</span>
                 )}
               </p>
-              <Link to="/addmovie" className="add-movie-button">Add Movie</Link>
+
               <div className="movie-actions">
                 {!isInWatchlist(movie.id) && (
                   <button
@@ -328,6 +328,7 @@ const Search = () => {
         </div>
       )}
     </div>
+    <Link to="/addmovie" className="add-movie-button">Add Movie</Link>
     </div>
   );
 };
