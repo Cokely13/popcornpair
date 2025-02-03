@@ -27,7 +27,7 @@ const Home = () => {
               Add them to your watchlist or mark them as watched instantly.
             </p>
 
-              Go to Search
+              {/* Go to Search */}
           </div>
           </Link>
 
@@ -40,7 +40,7 @@ const Home = () => {
               so you can decide what to watch next.
             </p>
 
-              Go to Watchlist
+              {/* Go to Watchlist */}
           </div>
           </Link>
 
@@ -51,7 +51,7 @@ const Home = () => {
             <p>
               See all the movies you’ve watched, rate them, or update your reviews.
             </p>
-              Go to Watched
+              {/* Go to Watched */}
           </div>
           </Link>
 
@@ -62,7 +62,7 @@ const Home = () => {
             <p>
             Find common movies in your watchlists with friends and watch together!
             </p>
-              Match with Friends
+              {/* Match with Friends */}
 
           </div>
           </Link>
@@ -73,7 +73,7 @@ const Home = () => {
             Get and share movie suggestions with friends. Discover titles they haven't seen.
             </p>
 
-              Go to Recommendations
+              {/* Go to Recommendations */}
           </div>
           </Link>
 

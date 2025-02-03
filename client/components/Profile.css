@@ -89,6 +89,21 @@
   padding: 20px;
   text-align: center;
   min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
+  align-items: center; /* Centers content horizontally */
+  text-align: center; /* Ensures text stays centered */
+}
+
+
+
+
+/* Ensure the number is centered properly */
+.card-item p {
+  font-size: 1.5rem; /* Adjust size */
+  font-weight: bold;
+  margin: 0; /* Remove default margins */
 }
 
 .card-item h3 {

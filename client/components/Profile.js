@@ -546,6 +546,7 @@ import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUsers } from "../store/allUsersStore";
 import { fetchFriends } from "../store/allFriendsStore";
+import { updateSingleFriend } from "../store/singleFriendStore"
 import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
 import { fetchSingleUser } from "../store/singleUserStore";
 import "./Profile.css";
@@ -553,6 +554,7 @@ import "./Profile.css";
 const Profile = () => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.auth.id);
+  const users = useSelector((state) => state.allUsers);
   const recommendations = useSelector((state) => state.allUserRecommendations);
   const userMoviesList = useSelector((state) => state.allUserMovies).filter(
     (um) => um.userId === currentUserId && um.status === "watchlist"
@@ -566,6 +568,7 @@ const Profile = () => {
   );
   const friends = useSelector((state) => state.allFriends);
   const user = useSelector((state) => state.singleUser);
+  const [showPendingModal, setShowPendingModal] = useState(false);
   const firstWatchlistMovie = userMoviesList.length
   ? movies.find((movie) => movie.id === userMoviesList[0].movieId)
   : null;
@@ -580,7 +583,7 @@ const Profile = () => {
   }, [dispatch, currentUserId]);
 
 
-  console.log("ser", userMoviesList)
+
 
   // Calculate stats
   const stats = useMemo(() => {
@@ -626,6 +629,40 @@ const Profile = () => {
     };
   }, [userMovies, movies]);
 
+  const pendingRequests = useMemo(() => {
+    return friends.filter(
+      (friend) => friend.userId === currentUserId && friend.status === "pending"
+    );
+  }, [friends, currentUserId]);
+
+  const pendingRequestUsers = pendingRequests.map((friend) => {
+    const sender = users.find((user) => user.id === friend.friendId);
+    return { friendRecord: friend, sender };
+  });
+
+  const handleAcceptFriend = async (friendRecord) => {
+    try {
+      await dispatch(updateSingleFriend({ ...friendRecord, status: "accepted" }));
+      alert("Friend request accepted!");
+      dispatch(fetchFriends());
+    } catch (err) {
+      console.error("Error accepting friend request:", err);
+      alert("Could not accept the friend request.");
+    }
+  };
+
+  // **Handle Deny Friend Request**
+  const handleDenyFriend = async (friendRecord) => {
+    try {
+      await dispatch(updateSingleFriend({ ...friendRecord, status: "denied" }));
+      alert("Friend request denied.");
+      dispatch(fetchFriends());
+    } catch (err) {
+      console.error("Error denying friend request:", err);
+      alert("Could not deny friend request.");
+    }
+  };
+
   return (
     <div className="profile-container">
       <h1 className="profile-title">{currentUser?.username || "User"}</h1>
@@ -640,26 +677,35 @@ const Profile = () => {
       <div className="stats-container">
         {/* First Row: Two Cards */}
         <div className="stats-row">
-          <div className="card-item">
+        <div className="card-item">
             <h3>Pending Friend Requests</h3>
-            <p>{friends.filter(friend => friend.userId === currentUserId && friend.status === "pending").length}</p>
+            <p
+              className="clickable-text"
+              onClick={() => setShowPendingModal(true)}
+              style={{ cursor: "pointer", fontWeight: "bold" }}
+            >
+              {pendingRequests.length}
+            </p>
           </div>
           <div className="card-item">
             <h3>Pending Recommendations</h3>
-            <p>{recommendations.filter(rec => rec.receiverId === currentUserId && rec.accept === null).length}</p>
+            <Link to={`/recommendations`} style={{ textDecoration: "none" }}><p>{recommendations.filter(rec => rec.receiverId === currentUserId && rec.accept === null).length}</p></Link>
           </div>
         </div>
 
         {/* Second Row: Four Cards */}
         <div className="stats-row">
           <div className="card-item">
+
             <h3>Total Movies Watched</h3>
+            <Link to={`/recommendations`} style={{ textDecoration: "none" }}>
             <p>{stats.totalMoviesWatched}</p>
+            </Link>
           </div>
           <div className="card-item">
             <h3>Last Movie Watched</h3>
             {stats.lastMovie ? (
-              <Link to={`/movies/${stats.lastMovie.id}`}>
+              <Link to={`/movies/${stats.lastMovie.id}`} style={{ textDecoration: "none"}}>
                 <img
                   src={stats.lastMovie.posterUrl}
                   alt={stats.lastMovie.title}
@@ -678,7 +724,7 @@ const Profile = () => {
           <div className="card-item">
             <h3>Highest Rated Movie</h3>
             {stats.highestRatedMovie ? (
-              <Link to={`/movies/${stats.highestRatedMovie.id}`}>
+              <Link to={`/movies/${stats.highestRatedMovie.id}`} style={{ textDecoration: "none"}}>
                 <img
                   src={stats.highestRatedMovie.posterUrl}
                   alt={stats.highestRatedMovie.title}
@@ -693,7 +739,7 @@ const Profile = () => {
           <div className="card-item">
             <h3>Lowest Rated Movie</h3>
             {stats.lowestRatedMovie ? (
-              <Link to={`/movies/${stats.lowestRatedMovie.id}`}>
+              <Link to={`/movies/${stats.lowestRatedMovie.id}`} style={{ textDecoration: "none"}}>
                 <img
                   src={stats.lowestRatedMovie.posterUrl}
                   alt={stats.lowestRatedMovie.title}
@@ -708,7 +754,7 @@ const Profile = () => {
           <div className="card-item">
             <h3>WatchList</h3>
             {firstWatchlistMovie ? (
-              <Link to={`/movies/${firstWatchlistMovie.id}`}>
+              <Link to={`/movies/${firstWatchlistMovie.id}`} style={{ textDecoration: "none"}}>
                 <img
                   src={firstWatchlistMovie.posterUrl}
                   alt={firstWatchlistMovie.title}
@@ -721,6 +767,46 @@ const Profile = () => {
             )}
           </div>
         </div>
+              {/* Modal for Pending Friend Requests */}
+      {showPendingModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Pending Friend Requests</h2>
+            {pendingRequestUsers.length ? (
+              <ul>
+                {pendingRequestUsers.map(({ friendRecord, sender }) => (
+                  <li key={friendRecord.id} className="friend-request-item">
+                    <img
+                      src={sender?.image || "/default-profile.png"}
+                      alt={sender?.username || "User"}
+                      className="friend-profile-pic"
+                    />
+                    <p>{sender?.username || `User #${friendRecord.friendId}`}</p>
+                    <button
+                      onClick={() => handleAcceptFriend(friendRecord)}
+                      className="accept-button"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => handleDenyFriend(friendRecord)}
+                      className="deny-button"
+                    >
+                      Deny
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No pending requests.</p>
+            )}
+            <button className="close-modal" onClick={() => setShowPendingModal(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       </div>
 
       {/* Centered Edit Profile Button */}
@@ -730,77 +816,6 @@ const Profile = () => {
     </div>
   );
 
-  // return (
-  //   <div className="profile-container">
-  //     <h1 className="profile-title">{currentUser?.username || "User"}</h1>
-  //     <div className="profile-image-container">
-  //       {user.image ? (
-  //         <img src={user.image} alt={user.username} className="profile-image" />
-  //       ) : (
-  //         <div className="no-profile-image">No Image</div>
-  //       )}
-  //     </div>
-
-  //     {/* First Row: Two Squares */}
-  //     <div className="stats-row">
-  //       <div className="card-item">
-  //         <h3>Pending Friend Requests</h3>
-  //         <p>{friends.filter(friend => friend.userId === currentUserId && friend.status === "pending").length}</p>
-  //       </div>
-  //       <div className="card-item">
-  //         <h3>Pending Recommendations</h3>
-  //         <p>{recommendations.filter(rec => rec.receiverId === currentUserId && rec.accept === null).length}</p>
-  //       </div>
-  //     </div>
-
-  //     {/* Second Row: Four Squares */}
-  //     <div className="stats-row">
-  //       <div className="card-item">
-  //         <h3>Total Movies Watched</h3>
-  //         <p>{stats.totalMoviesWatched}</p>
-  //       </div>
-  //       <div className="card-item">
-  //         <h3>Last Movie Watched</h3>
-  //         {stats.lastMovie ? (
-  //           <Link to={`/movies/${stats.lastMovie.id}`}>
-  //             <img
-  //               src={stats.lastMovie.posterUrl}
-  //               alt={stats.lastMovie.title}
-  //               className="movie-poster"
-  //             />
-  //             <p>{stats.lastMovie.title} ({stats.lastMovie.rating})</p>
-  //           </Link>
-  //         ) : (
-  //           <p>None</p>
-  //         )}
-  //       </div>
-  //       <div className="card-item">
-  //         <h3>Average Rating</h3>
-  //         <p>{stats.averageRating}</p>
-  //       </div>
-  //       <div className="card-item">
-  //         <h3>Highest Rated Movie</h3>
-  //         {stats.highestRatedMovie ? (
-  //           <Link to={`/movies/${stats.highestRatedMovie.id}`}>
-  //             <img
-  //               src={stats.highestRatedMovie.posterUrl}
-  //               alt={stats.highestRatedMovie.title}
-  //               className="movie-poster"
-  //             />
-  //             <p>{stats.highestRatedMovie.title} ({stats.highestRatedMovie.rating})</p>
-  //           </Link>
-  //         ) : (
-  //           <p>N/A</p>
-  //         )}
-  //       </div>
-  //     </div>
-
-  //     {/* Centered Edit Profile Button */}
-  //     <Link to="/editprofile" className="edit-profile-btn">
-  //       Edit Profile
-  //     </Link>
-  //   </div>
-  // );
 };
 
 export default Profile;
