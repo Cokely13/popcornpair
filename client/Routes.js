@@ -11,7 +11,7 @@ import Watched from './components/Watched';
 import MovieDetail from './components/MovieDetail';
 import Random from './components/Random';
 import Profile from './components/Profile';
-import UserDetail from './components/UserDetail';
+import Detail from './components/Detail';
 import Rejected from './components/Rejected';
 import Search from './components/Search';
 import Watchlist from './components/Watchlist';
@@ -52,7 +52,7 @@ class Routes extends Component {
           <PrivateRoute exact path="/algorithm" component={Algorithm} />
           <PrivateRoute exact path="/recommendations" component={FriendRecs} />
           <PrivateRoute path="/movies/:movieId" component={MovieDetail} />
-          <PrivateRoute exact path="/users/:userId" component={UserDetail} />
+          <PrivateRoute exact path="/users/:userId" component={Detail} />
           <PrivateRoute path="/addmovie" component={AddMovie} />
 
           {/* Fallback Route */}
