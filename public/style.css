@@ -107,6 +107,24 @@ body {
   background-color: #45a049;
 }
 
+.search-button {
+  background-color: #4caf50; /* Green */
+  color: white;
+}
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+.addto-button {
+  background-color: blue; /* Green */
+  color: white;
+}
+
+.adto-button:hover {
+  background-color: #45a049;
+}
+
 .no-button {
   background-color: #f44336; /* Red */
   color: white;

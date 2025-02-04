@@ -124,7 +124,11 @@ const Watchlist = () => {
         <section className="hero-section">
         <h1>WATCHLIST</h1>
         </section>
-        <p>No movies on the watchlist!</p>
+        <p>No movies on your watchlist! Check out some of your rejected movies.</p>
+        <Link to={`/rejected`} className="friend-link">
+                <button className="reject-button">SECOND CHANCE</button>
+              </Link>
+
       </div>
     );
   }

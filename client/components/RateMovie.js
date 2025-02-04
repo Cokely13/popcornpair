@@ -6,6 +6,7 @@ import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
 import { fetchFriends } from "../store/allFriendsStore";
 import { fetchUsers } from "../store/allUsersStore";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 // Utility: Get accepted friends
 function getAcceptedFriendUserIds(currentUserId, allFriends) {
@@ -132,7 +133,10 @@ const RateMovie = () => {
       </section>
       {shuffledMovies.length === 0 ? (
         <div className="no-movies-message">
-          <h2>No more movies to rate!</h2>
+          <h2>No more movies to rate! Add more!</h2>
+          <Link to={`/addmovie`} className="friend-link">
+                <button className="reject-button">ADD</button>
+              </Link>
         </div>
       ) : movie ? (
         <>

@@ -78,8 +78,8 @@ const AddMovie = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button onClick={handleSearch} disabled={loading}>
-          {loading ? "Searching..." : "Search"}
+        <button className="search-button " onClick={handleSearch} disabled={loading}>
+          {loading ? "Searching..." : "SEARCH"}
         </button>
       </div>
 
@@ -91,8 +91,8 @@ const AddMovie = () => {
                 <div className="movie-info">
                   <h3>{movie.name}</h3>
                   <p>Release Year: {movie.year || "Unknown"}</p>
-                  <button onClick={() => handleAddMovie(movie)}>
-                    Add to Database
+                  <button className="addto-button" onClick={() => handleAddMovie(movie)}>
+                    ADD TO DATABASE
                   </button>
                 </div>
               </div>
