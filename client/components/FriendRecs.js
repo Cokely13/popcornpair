@@ -243,7 +243,8 @@ const FriendRecs = () => {
               </p> : <div></div>}
               <p>
                 <strong>Response:</strong>{" "}
-                {editingResponseId === rec.id ? (
+                {rec.response || "No response yet"}
+                {viewType == "received" ? editingResponseId === rec.id ? (
                   <>
                     <input
                       type="text"
@@ -255,7 +256,7 @@ const FriendRecs = () => {
                       onClick={() => handleResponseSubmit(rec.id)}
                       className="submit-response-button"
                     >
-                      Submit
+                      SUBMIT
                     </button>
                     <button
                       onClick={() => {
@@ -264,22 +265,22 @@ const FriendRecs = () => {
                       }}
                       className="cancel-response-button"
                     >
-                      Cancel
+                      CANCEL
                     </button>
                   </>
                 ) : (
                   <>
-                    {rec.response || "No response yet"}{" "}
-                    {viewType === "received" || viewType === "watched" && (
+
+
                       <button
                         onClick={() => setEditingResponseId(rec.id)}
                         className="respond-button"
                       >
-                        Respond
+                        RESPOND
                       </button>
-                    )}
+
                   </>
-                )}
+                ) : <div></div>}
               </p>
               {rec.accept === "yes"  ? (
                viewType === "received" && !isMovieWatched(rec.movie.id) && (
