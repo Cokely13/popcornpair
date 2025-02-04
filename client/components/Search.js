@@ -149,6 +149,11 @@ const Search = () => {
           ? data.predictedRating
           : 0.0;
 
+          const approachUsed = response.ok && data.approachUsed
+      ? data.approachUsed
+      : "unknown";
+
+
       const userMovie = userMovies.find(
         (um) => um.movieId === movieId && um.userId === currentUserId
       );
@@ -172,8 +177,9 @@ const Search = () => {
           })
         );
       }
-
-      alert(`Movie added to watchlist! Predicted Rating: ${predictedRating}`);
+      alert(
+       `Movie added to watchlist! Predicted Rating: ${predictedRating} (Using: ${approachUsed})`
+      )
     } catch (err) {
       console.error(
         "Error adding movie to watchlist or fetching predicted rating:",

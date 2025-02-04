@@ -9,15 +9,6 @@ const UserMovie = require('./models/UserMovie');
 const Friend = require('./models/Friend');
 const UserRecommendation = require('./models/UserRecommendation'); // Import the new model
 
-// Associations
-// Rating associations
-// User.hasMany(Rating);
-// Rating.belongsTo(User);
-
-// Movie.hasMany(Rating);
-// Rating.belongsTo(Movie);
-
-// UserMovie associations
 User.belongsToMany(Movie, { through: UserMovie });
 Movie.belongsToMany(User, { through: UserMovie });
 

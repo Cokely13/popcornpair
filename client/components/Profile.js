@@ -582,7 +582,7 @@ const Profile = () => {
     dispatch(fetchFriends());
   }, [dispatch, currentUserId]);
 
-
+console.log("users", user)
 
 
   // Calculate stats

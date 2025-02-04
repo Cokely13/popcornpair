@@ -1,132 +1,357 @@
+# ########################################
+# # ml_model.py
+# ########################################
 # import pandas as pd
 # import numpy as np
 
 # def load_data():
-#     """Load the training data CSV into a Pandas DataFrame."""
+#     """
+#     Load the training_data.csv (created by data_retrieval.js).
+#     """
 #     try:
-#         data = pd.read_csv("training_data.csv")  # Ensure correct file path
+#         data = pd.read_csv("training_data.csv")
 #         return data
 #     except Exception as e:
 #         print(f"❌ Error loading dataset: {e}")
-#         return None  # Return None if file loading fails
+#         return None
 
-# def predict_rating(user_id, movie_id, data):
-#     # Extract movie data
-#     movie_row = data[data['movieId'] == movie_id]
+# def predict_rule_based(user_id, movie_id, data):
+#     """
+#     Predicts a rating for any (userId, movieId) even if no userMovie row exists.
+#     """
 
-#     if movie_row.empty:
-#         print(f"⚠️ No data found for movie {movie_id}. Defaulting to critic score + user rating blend.")
-#         return round((data['criticScore'].mean() / 10 + data['userRating'].mean()) / 2, 2)
+#     # 1) Filter rows for this movie
+#     movieRows = data[data['movieId'] == movie_id]
+#     if movieRows.empty:
+#         # fallback: average of global criticScore, userRating
+#         globalCritic = data['criticScore'].dropna().mean() / 10
+#         globalUserRat = data['userRating'].dropna().mean()
+#         baseFallback = ( (globalCritic or 5) + (globalUserRat or 5 ) ) / 2
+#         print(f"⚠️ No data found for movie {movie_id} - returning fallback {baseFallback:.2f}")
+#         return round(baseFallback, 2)
 
-#     # Extract critic score (scaled) and user rating
-#     critic_score = movie_row['criticScore'].values[0] / 10
-#     user_rating = movie_row['userRating'].values[0]
+#     # 2) Critic + userRating for the movie
+#     # We'll just take the *first* row for the movie's criticScore, userRating
+#     # (they should be the same across all userRows for that movie)
+#     critic = movieRows.iloc[0]['criticScore'] or 0
+#     userRat = movieRows.iloc[0]['userRating'] or 0
 
-#     # Base Prediction (if no friends have watched)
-#     base_prediction = round((critic_score + user_rating) / 2, 2)
+#     # scale critic from 0-100 to 0-10 if needed
+#     criticScaled = critic / 10
 
-#     # Get Friend Ratings
-#     friend_ratings = data[(data['movieId'] == movie_id) & (data['userId'] != user_id)]['rating'].dropna()
+#     # Base prediction
+#     basePrediction = (criticScaled + userRat) / 2
 
-#     if friend_ratings.empty:
-#         print(f"🔹 No friend ratings for movie {movie_id}. Using base prediction.")
-#         return base_prediction
+#     # 3) Friend Ratings
+#     # among data for this movie, which rows are friends?
+#     # We look for friend rows with a valid rating
+#     # We do not rely on userMovie row for THIS userId, just the friend
+#     # If userFriends are known, we might need friend relationships from data too
+#     # For simplicity, assume if userId != currentUserId, they might be a friend
+#     # (or you'd need a separate dataset to find actual friend userIds).
+#     # We'll do a simpler approach: average all other user ratings for this movie
+#     otherUserRows = movieRows[movieRows['userId'] != str(user_id)]  # might be strings, watch out
+#     friendRatings = pd.to_numeric(otherUserRows['rating'], errors='coerce').dropna()
+#     if not friendRatings.empty:
+#         avgFriend = friendRatings.mean()
+#         # Weighted approach:
+#         # 0.5 * friend + 0.25 * basePrediction + 0.25 * (criticScaled + userRat)
+#         basePrediction = 0.5 * avgFriend + 0.25 * basePrediction + 0.25*(criticScaled + userRat)
 
-#     # Adjust with Friend Ratings
-#     avg_friend_rating = friend_ratings.mean()
-#     adjusted_prediction = round((0.5 * avg_friend_rating) + (0.25 * base_prediction) + (0.25 * (critic_score + user_rating)), 2)
+#     # 4) User Tendency
+#     # We look for all data where userId == current user, rating != null
+#     userRows = data[(data['userId'] == str(user_id)) & (data['rating'].notna())]
+#     if len(userRows) > 3:  # only if they've rated >3 movies
+#         # Simple approach: userAvg - globalAvg
+#         userAvg = userRows['rating'].mean()
+#         globalAvg = data['rating'].dropna().mean()
+#         userBias = userAvg - globalAvg
+#         basePrediction += userBias
 
-#     # Get User's Past Ratings
-#     user_ratings = data[data['userId'] == user_id][['rating', 'movieId']].dropna()
-
-#     if user_ratings.empty:
-#         print(f"🔹 User {user_id} has no past ratings. Skipping bias correction.")
-#         return max(1, min(10, adjusted_prediction))  # ✅ Clamp to [1, 10]
-
-#     # Calculate User Bias
-#     past_predictions = data[(data['userId'] == user_id) & (data['rating'].notna())]['rating']
-#     avg_user_rating = user_ratings['rating'].mean()
-#     avg_past_predictions = past_predictions.mean()
-
-#     user_bias = avg_user_rating - avg_past_predictions
-#     final_prediction = round(adjusted_prediction + user_bias, 2)
-
-#     # ✅ Ensure final prediction is between 1 and 10
-#     final_prediction = max(1, min(10, final_prediction))
-
-#     print(f"✅ Final Prediction for User {user_id}, Movie {movie_id}: {final_prediction}")
-#     return final_prediction
+#     # clamp to [1..10]
+#     final = max(1, min(10, basePrediction))
+#     return round(final, 2)
 
 ########################################
 # ml_model.py
 ########################################
+
+# import os
+# import psycopg2
+# import pandas as pd
+# import numpy as np
+
+# def load_enriched_data():
+#     """
+#     Loads all the info needed to do a rule-based prediction:
+#       - user_movies joined with movies => df_main
+#          (contains userId, movieId, rating, criticScore, userRating, etc.)
+#       - friend relationships => df_friends
+#          (contains userId, friendId for accepted friendships)
+
+#     Returns: (df_main, df_friends)
+#     """
+
+#     print("[DEBUG] Entering load_enriched_data()...")
+
+#     # 1) Connect to your Postgres DB
+#     db_url = os.environ.get("DATABASE_URL") or "postgres://localhost:5432/popcornpair"
+#     print(f"[DEBUG] Using DB URL: {db_url}")
+#     conn = psycopg2.connect(db_url)
+
+
+
+#     # 2) Query user_movies joined with movies
+#     #    You might adapt columns as needed.
+#     query_main = """
+#     SELECT um."userId",
+#            um."movieId",
+#            um."rating",
+#            um."status",
+#            um."dateWatched",
+#            um."predictedRating",
+#            m."criticScore",
+#            m."userRating"
+#     FROM "user_movies" AS um
+#     JOIN "movies" AS m
+#          ON um."movieId" = m.id
+#     """
+#     df_main = pd.read_sql(query_main, conn)
+#     print("[DEBUG] df_main columns:", df_main.columns.tolist())
+#     print("[DEBUG] df_main sample:\n", df_main.head(5))
+
+#     # 3) Load friend relationships (only accepted)
+#     query_friends = """
+#     SELECT "userId", "friendId"
+#     FROM "friends"
+#     WHERE "status" = 'accepted'
+#     """
+#     df_friends = pd.read_sql(query_friends, conn)
+#     print("[DEBUG] df_friends columns:", df_friends.columns.tolist())
+#     print("[DEBUG] df_friends sample:\n", df_friends.head(5))
+
+#     conn.close()
+
+#     # Ensure userId, movieId are strings
+#     df_main['userId'] = df_main['userId'].astype(str)
+#     df_main['movieId'] = df_main['movieId'].astype(str)
+#     df_friends['userId'] = df_friends['userId'].astype(str)
+#     df_friends['friendId'] = df_friends['friendId'].astype(str)
+
+
+#     print("[DEBUG] Exiting load_enriched_data()...")
+#     return df_main, df_friends
+
+
+# def predict_rule_based(user_id, movie_id, data, df_friends=None):
+#     """
+#     Predict a rating for (userId, movieId) using:
+#       - criticScore (0-100 scaled to 0-10)
+#       - userRating (0-10)
+#       - friend ratings (only from accepted friends if df_friends is provided)
+#       - user bias (if user has >3 ratings)
+#     Exactly like your old CSV-based logic, but using real DB data.
+
+#     :param user_id: The user for whom we predict.
+#     :param movie_id: The movie in question.
+#     :param data: A DataFrame (df_main) with columns:
+#                  [userId, movieId, rating, criticScore, userRating, ...].
+#     :param df_friends: A DataFrame of friend relationships, or None.
+#     :return: A float rating (1..10).
+#     """
+
+#     user_str = str(user_id)
+#     movie_str = str(movie_id)
+
+#     print(f"[DEBUG] predict_rule_based() called with user_id={user_id}, movie_id={movie_id}")
+
+#     # 1) Filter to rows for this movie
+#     movie_rows = data[data['movieId'] == movie_str]
+#     print("[DEBUG] movie_rows shape:", movie_rows.shape)
+
+#     if movie_rows.empty:
+#         # fallback to a global average of criticScore & userRating
+#         global_critic = data['criticScore'].dropna().mean() / 10  # scale 0..100 to 0..10
+#         global_userRat = data['userRating'].dropna().mean()
+#         baseFallback = ((global_critic or 5) + (global_userRat or 5)) / 2
+#         print(f"⚠️ No data found for movie {movie_id} - returning fallback {baseFallback:.2f}")
+#         return round(baseFallback, 2)
+
+#     # 2) criticScore + userRating for the movie
+#     #    We'll just take the first row (assuming same across all userRows for that movie)
+#     critic = movie_rows.iloc[0]['criticScore'] or 0
+#     userRat = movie_rows.iloc[0]['userRating'] or 0
+#     criticScaled = critic / 10  # scale from 0..100 → 0..10
+
+#     basePrediction = (criticScaled + userRat) / 2
+
+#     print(f"[DEBUG] criticScaled={criticScaled}, userRat={userRat}, basePrediction={basePrediction}")
+
+#     # 3) Friend Ratings
+#     #    We'll look for which *accepted friends* (if df_friends provided) have rated this movie.
+#     if df_friends is not None:
+#         # find all friendIDs for user
+#         # user can appear as userId or friendId in df_friends
+#         friend_ids = set()
+
+#         # direct matches
+#         user_friends = df_friends[df_friends['userId'] == user_str]['friendId'].tolist()
+#         friend_ids.update(user_friends)
+
+#         # reverse matches
+#         reverse_friends = df_friends[df_friends['friendId'] == user_str]['userId'].tolist()
+#         friend_ids.update(reverse_friends)
+
+#         print(f"[DEBUG] friend_ids for user={user_id} => {friend_ids}")
+
+#         # Now find which of those friends actually rated this movie
+#         friend_rows = movie_rows[movie_rows['userId'].isin(friend_ids)]
+#         friend_ratings = pd.to_numeric(friend_rows['rating'], errors='coerce').dropna()
+
+#         if not friend_ratings.empty:
+#             avgFriend = friend_ratings.mean()
+
+#             print("[DEBUG] avgFriend rating:", avgFriend)
+#             # Weighted approach
+#             basePrediction = 0.5 * avgFriend + 0.25 * basePrediction + 0.25 * (criticScaled + userRat)
+#     else:
+#         # fallback: consider all other users as "friends"
+#         other_users = movie_rows[movie_rows['userId'] != user_str]
+#         friend_ratings = pd.to_numeric(other_users['rating'], errors='coerce').dropna()
+#         if not friend_ratings.empty:
+#             avgFriend = friend_ratings.mean()
+#             basePrediction = 0.5 * avgFriend + 0.25 * basePrediction + 0.25 * (criticScaled + userRat)
+
+#     # 4) User Tendency / Bias
+#     #    If user has >3 ratings in data, we shift the base by userAvg - globalAvg
+#     user_rows = data[(data['userId'] == user_str) & (data['rating'].notna())]
+#     if len(user_rows) > 3:
+#         userAvg = user_rows['rating'].mean()
+#         globalAvg = data['rating'].dropna().mean()
+#         userBias = userAvg - globalAvg
+#         basePrediction += userBias
+
+#     # clamp to [1..10]
+#     final = max(1, min(10, basePrediction))
+#     return round(final, 2)
+
+
+# def predict_rule_based_fresh(user_id, movie_id):
+#     """
+#     Convenience function if you want a single call that:
+#     1) Loads fresh data from DB
+#     2) Calls predict_rule_based
+
+#     Then you don't need to pass a DataFrame around.
+#     """
+#     df_main, df_friends = load_enriched_data()
+#     return predict_rule_based(user_id, movie_id, df_main, df_friends)
+
+########################################
+# ml_model.py
+########################################
+########################################
+# ml_model.py
+########################################
+
+import os
+import psycopg2
 import pandas as pd
 import numpy as np
 
-def load_data():
+def load_enriched_data():
     """
-    Load the training_data.csv (created by data_retrieval.js).
+    Loads all the info needed to do a rule-based prediction:
+      - user_movies joined with movies (df_main)
+         (contains userId, movieId, rating, status, dateWatched, predictedRating, criticScore, userRating)
+      - Friend relationships (df_friends)
+         (contains userId, friendId for accepted friendships)
+    Returns: (df_main, df_friends)
     """
-    try:
-        data = pd.read_csv("training_data.csv")
-        return data
-    except Exception as e:
-        print(f"❌ Error loading dataset: {e}")
-        return None
+    # Here we delegate to our updated db_loader
+    from db_loader import load_data_from_db
+    return load_data_from_db()
 
-def predict_rating(user_id, movie_id, data):
+def predict_rule_based(user_id, movie_id, data, df_friends=None):
     """
-    Predicts a rating for any (userId, movieId) even if no userMovie row exists.
+    Predicts a rating for (userId, movieId) using:
+      - criticScore (scaled 0-100 → 0-10)
+      - userRating (0-10)
+      - Friend ratings (if df_friends is provided)
+      - User bias (if the user has >3 ratings)
     """
+    user_str = str(user_id)
+    movie_str = str(movie_id)
 
-    # 1) Filter rows for this movie
-    movieRows = data[data['movieId'] == movie_id]
-    if movieRows.empty:
-        # fallback: average of global criticScore, userRating
-        globalCritic = data['criticScore'].dropna().mean() / 10
-        globalUserRat = data['userRating'].dropna().mean()
-        baseFallback = ( (globalCritic or 5) + (globalUserRat or 5 ) ) / 2
+    print(f"[DEBUG] predict_rule_based() called with user_id={user_id}, movie_id={movie_id}")
+
+    # 1) Filter to rows for this movie
+    movie_rows = data[data['movieId'] == movie_str]
+    print("[DEBUG] movie_rows shape:", movie_rows.shape)
+
+    if movie_rows.empty:
+        # Fallback: use global averages
+        global_critic = data['criticScore'].dropna().mean() / 10  # scale to 0-10
+        global_userRat = data['userRating'].dropna().mean()
+        baseFallback = ((global_critic or 5) + (global_userRat or 5)) / 2
         print(f"⚠️ No data found for movie {movie_id} - returning fallback {baseFallback:.2f}")
         return round(baseFallback, 2)
 
-    # 2) Critic + userRating for the movie
-    # We'll just take the *first* row for the movie's criticScore, userRating
-    # (they should be the same across all userRows for that movie)
-    critic = movieRows.iloc[0]['criticScore'] or 0
-    userRat = movieRows.iloc[0]['userRating'] or 0
+    # 2) Get the first matching row (ensure it's a Series)
+    row = movie_rows.iloc[0]
+    if not isinstance(row, pd.Series):
+        row = pd.Series(row, index=movie_rows.columns)
 
-    # scale critic from 0-100 to 0-10 if needed
-    criticScaled = critic / 10
-
-    # Base prediction
+    critic = row['criticScore'] or 0
+    userRat = row['userRating'] or 0
+    criticScaled = critic / 10  # convert to scale 0-10
     basePrediction = (criticScaled + userRat) / 2
+    print(f"[DEBUG] criticScaled={criticScaled}, userRat={userRat}, basePrediction={basePrediction}")
 
-    # 3) Friend Ratings
-    # among data for this movie, which rows are friends?
-    # We look for friend rows with a valid rating
-    # We do not rely on userMovie row for THIS userId, just the friend
-    # If userFriends are known, we might need friend relationships from data too
-    # For simplicity, assume if userId != currentUserId, they might be a friend
-    # (or you'd need a separate dataset to find actual friend userIds).
-    # We'll do a simpler approach: average all other user ratings for this movie
-    otherUserRows = movieRows[movieRows['userId'] != str(user_id)]  # might be strings, watch out
-    friendRatings = pd.to_numeric(otherUserRows['rating'], errors='coerce').dropna()
-    if not friendRatings.empty:
-        avgFriend = friendRatings.mean()
-        # Weighted approach:
-        # 0.5 * friend + 0.25 * basePrediction + 0.25 * (criticScaled + userRat)
-        basePrediction = 0.5 * avgFriend + 0.25 * basePrediction + 0.25*(criticScaled + userRat)
+    # 3) Incorporate friend ratings if provided
+    if df_friends is not None:
+        friend_ids = set()
+        # Direct friend relationships
+        user_friends = df_friends[df_friends['userId'] == user_str]['friendId'].tolist()
+        friend_ids.update(user_friends)
+        # Reverse relationships
+        reverse_friends = df_friends[df_friends['friendId'] == user_str]['userId'].tolist()
+        friend_ids.update(reverse_friends)
+        print(f"[DEBUG] friend_ids for user {user_id}: {friend_ids}")
 
-    # 4) User Tendency
-    # We look for all data where userId == current user, rating != null
-    userRows = data[(data['userId'] == str(user_id)) & (data['rating'].notna())]
-    if len(userRows) > 3:  # only if they've rated >3 movies
-        # Simple approach: userAvg - globalAvg
-        userAvg = userRows['rating'].mean()
+        friend_rows = movie_rows[movie_rows['userId'].isin(friend_ids)]
+        friend_ratings = pd.to_numeric(friend_rows['rating'], errors='coerce').dropna()
+        if not friend_ratings.empty:
+            avgFriend = friend_ratings.mean()
+            print("[DEBUG] avgFriend rating:", avgFriend)
+            basePrediction = 0.5 * avgFriend + 0.25 * basePrediction + 0.25 * (criticScaled + userRat)
+    else:
+        # Fallback: treat all other users as friends
+        other_users = movie_rows[movie_rows['userId'] != user_str]
+        friend_ratings = pd.to_numeric(other_users['rating'], errors='coerce').dropna()
+        if not friend_ratings.empty:
+            avgFriend = friend_ratings.mean()
+            basePrediction = 0.5 * avgFriend + 0.25 * basePrediction + 0.25 * (criticScaled + userRat)
+
+    # 4) Add user tendency if user has more than 3 ratings
+    user_rows = data[(data['userId'] == user_str) & (data['rating'].notna())]
+    print("[DEBUG] user_rows count for user", user_id, "=", len(user_rows))
+    if len(user_rows) > 3:
+        userAvg = user_rows['rating'].mean()
         globalAvg = data['rating'].dropna().mean()
         userBias = userAvg - globalAvg
         basePrediction += userBias
+        print(f"[DEBUG] userAvg={userAvg}, globalAvg={globalAvg}, userBias={userBias}")
 
-    # clamp to [1..10]
     final = max(1, min(10, basePrediction))
+    print(f"[DEBUG] final rule-based rating = {final}")
     return round(final, 2)
+
+def predict_rule_based_fresh(user_id, movie_id):
+    """
+    Convenience function:
+      1) Loads fresh enriched data from the DB.
+      2) Calls predict_rule_based.
+    """
+    df_main, df_friends = load_enriched_data()
+    return predict_rule_based(user_id, movie_id, df_main, df_friends)

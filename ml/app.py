@@ -1,172 +1,117 @@
 # import pandas as pd
-
-# from flask import Flask, request, jsonify
-# from ml_model import predict_rating_for_movie  # Import the updated function
-# from flask_cors import CORS
-
-# app = Flask(__name__)
-
-# # Enable CORS
-# CORS(app)  # This allows all origins by default
-
-
-# # Endpoint: Predict Rating for a Specific Movie
-# @app.route('/api/predict-rating', methods=['POST'])
-# def predict_rating():
-#     try:
-#         # Validate request payload
-#         data = request.json
-#         if not data or 'userId' not in data or 'movieId' not in data:
-#             return jsonify({'error': 'Invalid request. Expected "userId" and "movieId".'}), 400
-
-#         user_id = data['userId']
-#         movie_id = data['movieId']
-
-#         # Call the prediction function
-#         predicted_rating = predict_rating_for_movie(user_id, movie_id)
-
-#         # Return the predicted rating, rounded to two decimals
-#         return jsonify({"predictedRating": round(predicted_rating, 2)})
-#     except Exception as e:
-#         print(f"Error in /api/predict-rating endpoint: {str(e)}")
-#         return jsonify({'error': str(e)}), 500
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-# import pandas as pd
 # from flask import Flask, request, jsonify
 # from flask_cors import CORS
-# from ml_model import predict_rating  # Import ML logic
+# from ml_model import load_data, predict_rating  # from the code above
 
-# # Initialize Flask app
 # app = Flask(__name__)
-
-# # Enable CORS
 # CORS(app, resources={r"/*": {"origins": "*"}})
 
+# # Load dataset once at startup
 # dataset = load_data()
 # if dataset is None:
-#     print("❌ Dataset failed to load. Check training_data.csv.")
+#     print("❌ Could not load training_data.csv. Predictions may fail.")
 
-# # Health check route
 # @app.route('/api/health', methods=['GET'])
 # def health_check():
 #     return jsonify({"status": "OK"}), 200
 
-
-# # Endpoint: Predict Rating for a Specific Movie
 # @app.route('/api/predict-rating', methods=['POST'])
-# def predict_rating():
+# def predict_rating_endpoint():
 #     try:
-#         # Validate request payload
+#         if dataset is None:
+#             return jsonify({"error": "Dataset not loaded"}), 500
+
 #         data = request.json
 #         if not data or 'userId' not in data or 'movieId' not in data:
-#             return jsonify({'error': 'Invalid request. Expected "userId" and "movieId".'}), 400
+#             return jsonify({'error': 'Expected "userId" and "movieId"'}), 400
 
 #         user_id = data['userId']
 #         movie_id = data['movieId']
 
-#         # Call the prediction function
-#         predicted_rating = predict_rating(user_id, movie_id, dataset)
+#         # Call rule-based function
+#         rating = predict_rating(user_id, movie_id, dataset)
+#         return jsonify({"predictedRating": rating})
 
-#         # Return the predicted rating
-#         return jsonify({"predictedRating": round(predicted_rating, 2)})
 #     except Exception as e:
-#         print(f"Error in /api/predict-rating endpoint: {str(e)}")
+#         print(f"Error in /api/predict-rating: {str(e)}")
 #         return jsonify({'error': str(e)}), 500
 
-
 # if __name__ == '__main__':
-#     # Run Flask app
 #     app.run(debug=True)
 
-# import pandas as pd
+
+# app.py
 # from flask import Flask, request, jsonify
 # from flask_cors import CORS
-# from ml_model import predict_rating, load_data  # ✅ Import load_data()
+# import pandas as pd
+# from db_loader import load_data_from_db
 
-# # Initialize Flask app
+# from hybrid_predict import hybrid_predict
+# # or from pure_cf import load_data if you're loading data from there
+# # from pure_cf import load_data
+
 # app = Flask(__name__)
-
-# # Enable CORS
 # CORS(app, resources={r"/*": {"origins": "*"}})
 
-# # ✅ Load dataset on startup
-# dataset = load_data()
-# if dataset is None:
-#     print("❌ Dataset failed to load. Check training_data.csv.")
+# # Load dataset at startup
+# # df_ratings = load_data("training_data.csv")
 
-# # Health check route
-# @app.route('/api/health', methods=['GET'])
-# def health_check():
-#     return jsonify({"status": "OK"}), 200
-
-
-# # Endpoint: Predict Rating for a Specific Movie
-# @app.route('/api/predict-rating', methods=['POST'])
-# def predict_rating_endpoint():  # ❌ Rename to avoid conflict with imported function
+# @app.route("/api/predict-rating", methods=["POST"])
+# def predict_rating_endpoint():
 #     try:
-#         # Validate request payload
 #         data = request.json
-#         if not data or 'userId' not in data or 'movieId' not in data:
-#             return jsonify({'error': 'Invalid request. Expected "userId" and "movieId".'}), 400
+#         user_id = data.get("userId")
+#         movie_id = data.get("movieId")
 
-#         user_id = data['userId']
-#         movie_id = data['movieId']
+#         df = load_data_from_db()
 
-#         # Call the prediction function
-#         predicted_rating = predict_rating(user_id, movie_id, dataset)
+#         if not user_id or not movie_id:
+#             return jsonify({"error": "Missing userId or movieId"}), 400
 
-#         # Return the predicted rating
-#         return jsonify({"predictedRating": round(predicted_rating, 2)})
+#         # Use the hybrid predict function
+#         predicted_rating, approach = hybrid_predict(user_id, movie_id, df)
+
+#         # Return both the rating and the approach
+#         return jsonify({
+#             "predictedRating": round(predicted_rating, 2),
+#             "approachUsed": approach
+#         }), 200
+
 #     except Exception as e:
-#         print(f"Error in /api/predict-rating endpoint: {str(e)}")
-#         return jsonify({'error': str(e)}), 500
+#         print(f"Error in /api/predict-rating: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
 
-
-# if __name__ == '__main__':
-#     # Run Flask app
+# if __name__ == "__main__":
 #     app.run(debug=True)
 
-import pandas as pd
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from ml_model import load_data, predict_rating  # from the code above
+from hybrid_predict import hybrid_predict
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
-# Load dataset once at startup
-dataset = load_data()
-if dataset is None:
-    print("❌ Could not load training_data.csv. Predictions may fail.")
-
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    return jsonify({"status": "OK"}), 200
-
-@app.route('/api/predict-rating', methods=['POST'])
+@app.route("/api/predict-rating", methods=["POST"])
 def predict_rating_endpoint():
     try:
-        if dataset is None:
-            return jsonify({"error": "Dataset not loaded"}), 500
-
         data = request.json
-        if not data or 'userId' not in data or 'movieId' not in data:
-            return jsonify({'error': 'Expected "userId" and "movieId"'}), 400
+        user_id = data.get("userId")
+        movie_id = data.get("movieId")
+        if not user_id or not movie_id:
+            return jsonify({"error": "Missing userId or movieId"}), 400
 
-        user_id = data['userId']
-        movie_id = data['movieId']
+        predicted_rating, approach = hybrid_predict(user_id, movie_id)
+        print(f"[DEBUG] final predicted_rating={predicted_rating}, approach={approach}")
 
-        # Call rule-based function
-        rating = predict_rating(user_id, movie_id, dataset)
-        return jsonify({"predictedRating": rating})
+        return jsonify({
+            "predictedRating": round(predicted_rating, 2),
+            "approachUsed": approach
+        }), 200
 
     except Exception as e:
         print(f"Error in /api/predict-rating: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
