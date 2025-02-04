@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUserRecommendations } from "../store/allUserRecommendationsStore";
 import { updateSingleUserRecommendation } from "../store/singleUserRecommendationStore";
 import { fetchUserMovies, createUserMovie } from "../store/allUserMoviesStore";
+import { fetchMovies } from "../store/allMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { fetchUsers } from "../store/allUsersStore";
 import { Link } from "react-router-dom";
@@ -29,6 +30,7 @@ const FriendRecs = () => {
     dispatch(fetchUserRecommendations());
     dispatch(fetchUserMovies());
     dispatch(fetchUsers());
+    dispatch(fetchMovies());
   }, [dispatch]);
 
   const refreshRecommendations = () => {
@@ -175,6 +177,8 @@ const FriendRecs = () => {
   const rejectedRecs = recommendations.filter(rec => rec.accept === "no");
   const otherRecs = recommendations.filter(rec => rec.accept !== "no");
 
+  console.log("other", otherRecs)
+
   // Filter recommendations based on view type
   const filteredRecs = otherRecs.filter((rec) => {
     if (viewType === "received") return rec.receiverId === currentUserId && !isMovieWatched(rec.movie.id);
@@ -205,9 +209,16 @@ const FriendRecs = () => {
       <div className="recs-list">
         {filteredRecs.length ? (
           filteredRecs.map((rec) => (
-            <div key={rec.id} className="rec-item">
-              <p>
-                <strong>Movie:</strong>{" "}
+            <div key={rec.id} className="watchlist-movie-item">
+
+              {rec.movie.posterUrl && (
+                      <img
+                        src={rec.movie.posterUrl}
+                        alt={rec.movie.title}
+                        className="movie-poster"
+                      />
+                    )}
+                    <p>
                 {rec.movie ? (
                   <Link to={`/movies/${rec.movie.id}`}>{rec.movie.title}</Link>
                 ) : (
@@ -215,7 +226,9 @@ const FriendRecs = () => {
                 )}
               </p>
               {viewType === "sent" ? null : (
+
                 <p>
+
                   {/* {users.find((user) => user.username === rec.sender)?.id || ""} */}
                   <strong>From:</strong> {rec.sender?.username || "N/A"}
                 </p>
@@ -225,9 +238,9 @@ const FriendRecs = () => {
                   <strong>To:</strong> {rec.receiver?.username || "N/A"}
                 </p>
               )}
-              <p>
+              {rec.message ? <p>
                 <strong>Message:</strong> {rec.message || "No message"}
-              </p>
+              </p> : <div></div>}
               <p>
                 <strong>Response:</strong>{" "}
                 {editingResponseId === rec.id ? (
@@ -282,19 +295,19 @@ const FriendRecs = () => {
               )
               ) : rec.accept === null && viewType === "received" ? (
                 <p>
-                  <strong>Accepted:</strong>{" "}
+                  {/* <strong>Accepted:</strong>{" "} */}
                   <>
                     <button
                       onClick={() => handleAcceptRecommendation(rec, "yes")}
                       className="accept-button"
                     >
-                      I'll Watch It!
+                      WATCHLIST
                     </button>
                     <button
                       onClick={() => handleAcceptRecommendation(rec, "no")}
                       className="reject-button"
                     >
-                      Pass
+                      PASS
                     </button>
                   </>
                 </p>
