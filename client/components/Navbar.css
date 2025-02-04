@@ -173,3 +173,138 @@
   width: 16px;
   height: 16px;
 }
+
+
+/* Desktop menu is visible by default */
+.desktop-menu {
+  display: flex;
+}
+
+/* Hide mobile menu by default */
+.mobile-menu {
+  display: none;
+}
+
+/* Hamburger icon styling */
+.navbar-hamburger {
+  cursor: pointer;
+  width: 30px;
+  height: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Hamburger bars */
+.navbar-hamburger .bar {
+  height: 3px;
+  width: 100%;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+/* Change bar appearance when open (optional) */
+.navbar-hamburger .bar.open {
+  background-color: #f4b400;
+}
+
+/* Mobile dropdown styling */
+.dropdown-menu {
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+/* Mobile dropdown link styling */
+.dropdown-link {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid #444;
+  transition: background-color 0.3s;
+}
+
+.dropdown-link:hover {
+  background-color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .desktop-menu {
+    display: none;
+  }
+  .mobile-menu {
+    display: block;
+  }
+}
+
+.navbar-links.desktop-menu {
+  display: flex;  /* Show desktop links */
+}
+
+.navbar-hamburger.mobile-menu,
+.dropdown-menu.mobile-menu {
+  display: none;  /* Hide mobile elements by default */
+}
+
+/* Mobile Styles: screens with max-width 768px */
+@media (max-width: 768px) {
+  /* Hide desktop links */
+  .navbar-links.desktop-menu {
+    display: none;
+  }
+  /* Show mobile hamburger icon */
+  .navbar-hamburger.mobile-menu {
+    display: flex;
+  }
+  /* Optionally, when the dropdown is open, show it */
+  .dropdown-menu.mobile-menu {
+    display: flex;
+  }
+}
+
+/* Hamburger icon styling */
+.navbar-hamburger {
+  cursor: pointer;
+  width: 30px;
+  height: 25px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.navbar-hamburger .bar {
+  height: 3px;
+  width: 100%;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.navbar-hamburger .bar.open {
+  background-color: #f4b400;
+}
+
+/* Mobile dropdown styling */
+.dropdown-menu.mobile-menu {
+  background-color: #333;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.dropdown-link {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid #444;
+  transition: background-color 0.3s;
+}
+
+.dropdown-link:hover {
+  background-color: #555;
+}
