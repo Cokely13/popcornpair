@@ -100,7 +100,6 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
     // Return array of { username, rating }
     return friendWatchers.map((fw) => {
       const friendUser = users.find((u) => u.id === fw.userId);
-      console.log("fr", friendUser)
       return {
         id: friendUser?.id|| "Unknown",
         username: friendUser?.username || "Unknown",

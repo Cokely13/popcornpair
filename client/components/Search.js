@@ -33,6 +33,8 @@ const Search = () => {
   const allFriends = useSelector((state) => state.allFriends);
   const users = useSelector((state) => state.allUsers);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+  const [friendWatchersList, setFriendWatchersList] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("title");
@@ -210,6 +212,39 @@ const Search = () => {
     return { numFriendsWatched, avgRating };
   };
 
+  const getFriendWatchersForMovie= (movieId) => {
+    const friendWatchers = userMovies.filter(
+      (um) =>
+        um.movieId === movieId &&
+        um.status === "watched" &&
+        acceptedFriendIds.has(um.userId)
+    );
+    console.log("friend", friendWatchers)
+
+    return friendWatchers.map((fw) => {
+      const friendUser = users.find((u) => u.id === fw.userId);
+      console.log("fr", friendUser)
+      return {
+        id: friendUser?.id|| "Unknown",
+        username: friendUser?.username || "Unknown",
+        rating: fw.rating || "Not Rated",
+        image: friendUser?.image || "Unknown"
+      };
+    });
+  };
+
+
+  const handleFriendsWatchedClick = (movieId) => {
+    // 1) get watchers
+    const watchers = getFriendWatchersForMovie(movieId);
+    console.log("watcherrs", watchers)
+    // 2) store them in state
+    setFriendWatchersList(watchers);
+
+    // 3) open the modal
+    setShowModal(true);
+  };
+
   return (
     <div className="search-container">
 <section className="hero-section">
@@ -269,12 +304,35 @@ const Search = () => {
                 <strong>User Rating:</strong> {movie.userRating}{" "}
               </p>
               <p>
-                <strong># Friends Watched:</strong> {numFriendsWatched}{" "}
+                <strong># Friends Watched:</strong>  <button onClick={() => handleFriendsWatchedClick(movie.id)}>{numFriendsWatched}{" "}</button>
                 {numFriendsWatched > 0 && avgRating !== null && (
                   <span>(Avg Rating: {avgRating})</span>
                 )}
               </p>
-
+{showModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>FRIENDS RATINGS</h2>
+      {friendWatchersList.length ? (
+        <ul>
+          {friendWatchersList.map((fw, idx) => (
+            <ul className="search-user-item"  key={idx}>
+                <img
+                      src={fw?.image || "/default-profile.png"}
+                      alt={fw.username}
+                      className="friend-profile-pic"
+                    />
+              <Link to={`/users/${fw.id}`}>{fw.username} </Link>  Rating: {fw.rating}
+            </ul>
+          ))}
+        </ul>
+      ) : (
+        <p>No friends found.</p>
+      )}
+      <button onClick={() => setShowModal(false)}>CLOSE</button>
+    </div>
+  </div>
+)}
               <div className="movie-actions">
                 {!isInWatchlist(movie.id) && (
                   <button
