@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
+import { Link } from "react-router-dom";
 
 const Rejected = () => {
   const dispatch = useDispatch();
@@ -43,13 +44,18 @@ const Rejected = () => {
   if (!noneMovies.length) {
     return (
       <div>
-      <div >
+      <div  >
          <section className="hero-section rate-movie-container">
          <h1>SECOND CHANCE</h1>
 
          </section>
          </div>
-        <p>No movies to display!</p>
+         <div className="rate-movie-container">
+          <h2>No more movies to rate! Add more!</h2>
+          <Link to={`/addmovie`} className="friend-link">
+                <button className="reject-button">ADD</button>
+              </Link>
+        </div>
         </div>
     );
   }

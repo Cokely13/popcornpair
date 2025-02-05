@@ -169,6 +169,8 @@ body {
   padding: 20px;
   border-radius: 5px;
   text-align: center;
+  display: flex;
+  justify-content: center; /
 }
 
 .modal-content h3 {

@@ -225,13 +225,13 @@ const FriendsList = () => {
                   onClick={() => handleAcceptFriend(friendRecord)}
                   className="accept-button"
                 >
-                  Accept
+                  ACCEPT
                 </button>
                 <button
                   onClick={() => handleDenyFriend(friendRecord)}
                   className="deny-button"
                 >
-                  Deny
+                  DENY
                 </button>
               </ul>
             ))}

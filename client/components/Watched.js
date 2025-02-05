@@ -100,9 +100,12 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
     // Return array of { username, rating }
     return friendWatchers.map((fw) => {
       const friendUser = users.find((u) => u.id === fw.userId);
+      console.log("fr", friendUser)
       return {
+        id: friendUser?.id|| "Unknown",
         username: friendUser?.username || "Unknown",
         rating: fw.rating || "Not Rated",
+        image: friendUser?.image || "Unknown"
       };
     });
   };
@@ -216,19 +219,24 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
       {showModal && (
   <div className="modal-overlay">
     <div className="modal-content">
-      <h2>Friends Who Watched</h2>
+      <h2>FRIENDS RATINGS</h2>
       {friendWatchersList.length ? (
         <ul>
           {friendWatchersList.map((fw, idx) => (
-            <li key={idx}>
-              {fw.username} (Rating: {fw.rating})
-            </li>
+            <ul className="search-user-item"  key={idx}>
+                <img
+                      src={fw?.image || "/default-profile.png"}
+                      alt={fw.username}
+                      className="friend-profile-pic"
+                    />
+              <Link to={`/users/${fw.id}`}>{fw.username} </Link>  Rating: {fw.rating}
+            </ul>
           ))}
         </ul>
       ) : (
         <p>No friends found.</p>
       )}
-      <button onClick={() => setShowModal(false)}>Close</button>
+      <button onClick={() => setShowModal(false)}>CLOSE</button>
     </div>
   </div>
 )}
