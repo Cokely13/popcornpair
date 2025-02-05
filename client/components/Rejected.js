@@ -4,6 +4,7 @@ import { fetchMovies } from "../store/allMoviesStore";
 import { fetchUserMovies } from "../store/allUserMoviesStore";
 import { updateSingleUserMovie } from "../store/singleUserMovieStore";
 import { Link } from "react-router-dom";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const Rejected = () => {
   const dispatch = useDispatch();
@@ -134,10 +135,10 @@ const Rejected = () => {
       {/* Buttons */}
       <div className="button-container">
         <button className="yes-button" onClick={handleYes}>
-          YES (move to watchlist)
+          <FaThumbsUp />
         </button>
         <button className="no-button" onClick={handleNextMovie}>
-          Keep Rejected
+         <FaThumbsDown />
         </button>
       </div>
     </div>
