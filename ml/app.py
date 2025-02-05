@@ -85,14 +85,61 @@
 #     app.run(debug=True)
 
 
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# from hybrid_predict import hybrid_predict
+
+# from flask_cors import CORS
+
+# app = Flask(__name__)
+
+# CORS(app, resources={r"/*": {"origins": "*"}})
+
+# @app.route("/api/predict-rating", methods=["POST"])
+# def predict_rating_endpoint():
+#     try:
+#         data = request.json
+#         user_id = data.get("userId")
+#         movie_id = data.get("movieId")
+#         if not user_id or not movie_id:
+#             return jsonify({"error": "Missing userId or movieId"}), 400
+
+#         predicted_rating, approach = hybrid_predict(user_id, movie_id)
+#         print(f"[DEBUG] final predicted_rating={predicted_rating}, approach={approach}")
+
+#         return jsonify({
+#             "predictedRating": round(predicted_rating, 2),
+#             "approachUsed": approach
+#         }), 200
+
+#     except Exception as e:
+#         print(f"Error in /api/predict-rating: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from hybrid_predict import hybrid_predict
 
 app = Flask(__name__)
-CORS(app)
+
+# Enable CORS for all routes with credentials if needed
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+# Explicitly handle OPTIONS for the endpoint.
+@app.route("/api/predict-rating", methods=["OPTIONS"])
+@cross_origin(origin='*')
+def predict_rating_options():
+    response = jsonify({})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+    return response
 
 @app.route("/api/predict-rating", methods=["POST"])
+@cross_origin(origin='*')
 def predict_rating_endpoint():
     try:
         data = request.json
@@ -115,3 +162,4 @@ def predict_rating_endpoint():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
