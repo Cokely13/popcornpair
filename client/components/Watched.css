@@ -76,7 +76,7 @@
 
 /* Recommend Button */
 .recommend-btn {
-  background-color: #ff6363;
+  background-color: greenyellow;
   color: #fff;
   border: none;
   padding: 5px 10px;
@@ -87,4 +87,14 @@
 
 .recommend-btn:hover {
   background-color: #e54e4e;
+}
+
+
+.cancel-button {
+  background-color: grey; /* Red */
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #e53935;
 }

@@ -254,7 +254,7 @@ const FriendRecs = () => {
                     />
                     <button
                       onClick={() => handleResponseSubmit(rec.id)}
-                      className="submit-response-button"
+                      className="change-btn"
                     >
                       SUBMIT
                     </button>
@@ -263,7 +263,7 @@ const FriendRecs = () => {
                         setEditingResponseId(null);
                         setResponseText("");
                       }}
-                      className="cancel-response-button"
+                      className="cancel-button"
                     >
                       CANCEL
                     </button>

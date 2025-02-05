@@ -293,10 +293,10 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
                     onChange={(e) => setRating(e.target.value)}
                     className="rating-input"
                   />
-                  <button onClick={() => handleRatingSubmit(movie.id)}>
+                  <button  className="change-btn" Click={() => handleRatingSubmit(movie.id)}>
                     SUBMIT
                   </button>
-                  <button onClick={() => setSelectedActionMovieId(null)}>
+                  <button  className="cancel-button" onClick={() => setSelectedActionMovieId(null)}>
                     CANCEL
                   </button>
                 </>
@@ -352,8 +352,8 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <button onClick={handleRecommendationSubmit}>Submit</button>
-                <button onClick={() => setSelectedRecommendationMovieId(null)}>
+                <button className="change-btn" onClick={handleRecommendationSubmit}>SUBMIT</button>
+                <button className="cancel-button" onClick={() => setSelectedRecommendationMovieId(null)}>
                   CANCEL
                 </button>
               </div>
