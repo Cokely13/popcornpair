@@ -272,6 +272,9 @@ console.log("users", user)
       <Link to="/editprofile" className="edit-profile-btn">
         EDIT PROFILE
       </Link>
+      {user.isAdmin ? <Link to="/edituserpass" className="edit-profile-btn">
+        CHANGE OTHER PASSWORD
+      </Link> : <div></div>}
     </div>
   );
 

@@ -14,8 +14,8 @@ async function seed() {
 
   // Creating Users
   const users = await Promise.all([
-    User.create({ username: 'Ryan', password: '123', email: "ryan.cokely@gmail.com" }),
-    User.create({ username: 'Scott', password: '123', email: "scottlcokely@gmail.com" }),
+    User.create({ username: 'Ryan', password: '123', email: "ryan.cokely@gmail.com", isAdmin: true }),
+    User.create({ username: 'Scott', password: '123', email: "scottlcokely@gmail.com", isAdmin: true }),
     User.create({ username: 'Matt', password: '123', email: "mclaise@gmail.com" }),
     User.create({ username: 'Beth', password: '123', email: "beth@gmail.com" }),
   ]);
@@ -29,7 +29,7 @@ async function seed() {
         apiKey: WATCHMODE_API_KEY,
         types: 'movie', // Filter for movies
         sort_by: 'popularity_desc', // Sort by popularity descending
-        limit: 10, // Limit to 50 movies
+        limit: 3, // Limit to 50 movies
       },
     });
 

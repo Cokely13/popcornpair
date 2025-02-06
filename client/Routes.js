@@ -21,6 +21,9 @@ import Users from './components/Users';
 import Algorithm from './components/Algorithm';
 import PrivateRoute from './components/PrivateRoute';
 import EditProfile from './components/EditProfile';
+import ResetPassword from './components/ResetPassword';
+import SetNewPassword from './components/SetNewPassword';
+import EditUserPass from './components/EditUserPass';
 
 class Routes extends Component {
   componentDidMount() {
@@ -34,11 +37,14 @@ class Routes extends Component {
           {/* Public Routes */}
           <Route exact path="/" component={Home} />
           <Route exact path="/login" component={Home} />
+          <Route exact path="/reset-password" component={ResetPassword} />
           <Route exact path="/signup" component={Home} />
+          <Route exact path="/reset-password" component={SetNewPassword} />
 
           {/* Protected Routes */}
           <PrivateRoute exact path="/home" component={Home} />
           <PrivateRoute exact path="/profile" component={Profile} />
+          <PrivateRoute exact path="/edituserpass" component={EditUserPass} />
           <PrivateRoute exact path="/users" component={Users} />
           <PrivateRoute exact path="/watchlist" component={Watchlist} />
           <PrivateRoute exact path="/rate" component={RateMovie} />
