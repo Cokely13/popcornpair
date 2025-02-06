@@ -17,7 +17,9 @@ async function seed() {
     User.create({ username: 'Ryan', password: '123', email: "ryan.cokely@gmail.com", isAdmin: true }),
     User.create({ username: 'Scott', password: '123', email: "scottlcokely@gmail.com", isAdmin: true }),
     User.create({ username: 'Matt', password: '123', email: "mclaise@gmail.com" }),
-    User.create({ username: 'Beth', password: '123', email: "beth@gmail.com" }),
+    User.create({ username: 'Beth', password: '123', email: "bethcokely@gmail.com" }),
+    User.create({ username: 'Jamal', password: '123', email: "Costonj514@gmail.com" }),
+    User.create({ username: 'Tebo', password: '123', email: "Jacob.Thibeault@gmail.com"}),
   ]);
 
   console.log(`seeded ${users.length} users`);
@@ -29,7 +31,7 @@ async function seed() {
         apiKey: WATCHMODE_API_KEY,
         types: 'movie', // Filter for movies
         sort_by: 'popularity_desc', // Sort by popularity descending
-        limit: 3, // Limit to 50 movies
+        limit: 100, // Limit to 50 movies
       },
     });
 
