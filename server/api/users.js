@@ -209,7 +209,7 @@ const upload = multer({
 router.get('/', async (req, res, next) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'username', 'email', 'isAdmin', 'image'],
+      attributes: ['id', 'username', 'email', 'isAdmin', 'image', 'passwordResetRequested'],
       include: [Movie],
     });
     res.json(users);
@@ -245,7 +245,7 @@ router.get('/:id', async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id, {
       include: [Movie],
-      attributes: ['id', 'username', 'email', 'image', 'isAdmin'],
+      attributes: ['id', 'username', 'email', 'image', 'isAdmin', 'passwordResetRequested'],
     });
     res.json(user);
   } catch (err) {

@@ -162,3 +162,22 @@
     width: 90%;
   }
 }
+
+
+.change-button {
+  background-color: grey; /* Green */
+  color: white;
+}
+
+.change-button:hover {
+  background-color: #45a049;
+}
+
+
+.change-button {
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}

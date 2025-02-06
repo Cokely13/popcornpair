@@ -41,9 +41,9 @@ const Profile = () => {
     dispatch(fetchFriends());
   }, [dispatch, currentUserId]);
 
-console.log("users", user)
+  const resetRequests = users.filter(user => user.passwordResetRequested);
 
-
+console.log('rest', resetRequests)
   // Calculate stats
   const stats = useMemo(() => {
     if (!userMovies.length) {
@@ -272,8 +272,8 @@ console.log("users", user)
       <Link to="/editprofile" className="edit-profile-btn">
         EDIT PROFILE
       </Link>
-      {user.isAdmin ? <Link to="/edituserpass" className="edit-profile-btn">
-        CHANGE OTHER PASSWORD
+      {user.isAdmin && resetRequests.length ? <Link to="/edituserpass" className="change-button">
+        CHANGE USER PASSWORD
       </Link> : <div></div>}
     </div>
   );
