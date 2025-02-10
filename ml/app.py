@@ -118,29 +118,21 @@
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
-
 from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from hybrid_predict import hybrid_predict
 
 app = Flask(__name__)
 
-# Enable CORS for all routes with credentials if needed
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+# This applies CORS to all routes with default settings (allowing any origin)
+CORS(app, supports_credentials=True)
 
-# Explicitly handle OPTIONS for the endpoint.
-@app.route("/api/predict-rating", methods=["OPTIONS"])
-@cross_origin(origin='*')
-def predict_rating_options():
-    response = jsonify({})
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
-    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
-    return response
-
-@app.route("/api/predict-rating", methods=["POST"])
-@cross_origin(origin='*')
+@app.route("/api/predict-rating", methods=["POST", "OPTIONS"])
 def predict_rating_endpoint():
+    # Flask-CORS should automatically handle OPTIONS requests
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
+
     try:
         data = request.json
         user_id = data.get("userId")
@@ -162,4 +154,3 @@ def predict_rating_endpoint():
 
 if __name__ == "__main__":
     app.run(debug=True)
-

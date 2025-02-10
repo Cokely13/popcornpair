@@ -64,11 +64,51 @@ const Search = () => {
     movie.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // const sortedMovies = [...filteredMovies].sort((a, b) => {
+  //   if (sortOption === "title") return a.title.localeCompare(b.title);
+  //   if (sortOption === "releaseDate")
+  //     return new Date(a.releaseDate) - new Date(b.releaseDate);
+  //   if (sortOption === "rating") return b.avgRating - a.avgRating;
+  //   return 0;
+  // });
+
+  const getFriendWatchStats = (movieId) => {
+    const friendWatchers = userMovies.filter(
+      (um) =>
+        um.movieId === movieId &&
+        um.status === "watched" &&
+        acceptedFriendIds.has(um.userId)
+    );
+
+    const numFriendsWatched = friendWatchers.length;
+    const avgRating =
+      numFriendsWatched > 0
+        ? (
+            friendWatchers.reduce((sum, fw) => sum + (fw.rating || 0), 0) /
+            numFriendsWatched
+          ).toFixed(1)
+        : null;
+
+    return { numFriendsWatched, avgRating };
+  };
+
   const sortedMovies = [...filteredMovies].sort((a, b) => {
     if (sortOption === "title") return a.title.localeCompare(b.title);
     if (sortOption === "releaseDate")
       return new Date(a.releaseDate) - new Date(b.releaseDate);
     if (sortOption === "rating") return b.avgRating - a.avgRating;
+    if (sortOption === "friends") {
+      // Get friend watch stats for each movie.
+      const statsA = getFriendWatchStats(a.id);
+      const statsB = getFriendWatchStats(b.id);
+      // Sort descending by number of friends who watched
+      if (statsB.numFriendsWatched !== statsA.numFriendsWatched) {
+        return statsB.numFriendsWatched - statsA.numFriendsWatched;
+      } else {
+        // Optionally sort by average friend rating as a tiebreaker
+        return (parseFloat(statsB.avgRating) || 0) - (parseFloat(statsA.avgRating) || 0);
+      }
+    }
     return 0;
   });
 
@@ -191,26 +231,7 @@ const Search = () => {
     }
   };
 
-  // Get # Friends Watched and their Avg Rating
-  const getFriendWatchStats = (movieId) => {
-    const friendWatchers = userMovies.filter(
-      (um) =>
-        um.movieId === movieId &&
-        um.status === "watched" &&
-        acceptedFriendIds.has(um.userId)
-    );
 
-    const numFriendsWatched = friendWatchers.length;
-    const avgRating =
-      numFriendsWatched > 0
-        ? (
-            friendWatchers.reduce((sum, fw) => sum + (fw.rating || 0), 0) /
-            numFriendsWatched
-          ).toFixed(1)
-        : null;
-
-    return { numFriendsWatched, avgRating };
-  };
 
   const getFriendWatchersForMovie= (movieId) => {
     const friendWatchers = userMovies.filter(
@@ -219,11 +240,9 @@ const Search = () => {
         um.status === "watched" &&
         acceptedFriendIds.has(um.userId)
     );
-    console.log("friend", friendWatchers)
 
     return friendWatchers.map((fw) => {
       const friendUser = users.find((u) => u.id === fw.userId);
-      console.log("fr", friendUser)
       return {
         id: friendUser?.id|| "Unknown",
         username: friendUser?.username || "Unknown",
@@ -267,6 +286,7 @@ const Search = () => {
           <option value="title">Sort by Title</option>
           <option value="releaseDate">Sort by Release Date</option>
           <option value="rating">Sort by Rating</option>
+          <option value="friends">Sort by Friends Watched</option>
         </select>
       </div>
 
