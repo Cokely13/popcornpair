@@ -3,7 +3,7 @@
 ####################################################
 import pandas as pd
 import numpy as np
-from db_loader import load_data_from_db
+from .db_loader import load_data_from_db
 
 # def load_data(csv_path="training_data.csv"):
 #     """

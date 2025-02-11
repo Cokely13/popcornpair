@@ -61,9 +61,9 @@
 #         print(f"[DEBUG] Returning CF rating = {rating}")
 #         return rating, "cf"
 
-from db_loader import load_data_from_db  # Using our enriched loader if you prefer, or load_enriched_data from ml_model.py.
-from ml_model import predict_rule_based
-from pure_cf import user_based_cf_predict
+from .db_loader import load_data_from_db  # Using our enriched loader if you prefer, or load_enriched_data from ml_model.py.
+from .ml_model import predict_rule_based
+from .pure_cf import user_based_cf_predict
 
 THRESHOLD = 10
 
