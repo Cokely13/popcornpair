@@ -118,25 +118,83 @@
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# from hybrid_predict import hybrid_predict
+
+# app = Flask(__name__)
+
+# # This applies CORS to all routes with default settings (allowing any origin)
+# # CORS(app, supports_credentials=True)
+# CORS(app, resources={r"/*": {"origins": [
+#     "https://popcornpair-6403c0694200.herokuapp.com",
+#     "http://localhost:8080"
+# ]}})
+
+# @app.route("/api/predict-rating", methods=["POST", "OPTIONS"])
+# def predict_rating_endpoint():
+#     # Flask-CORS should automatically handle OPTIONS requests
+#     # if request.method == "OPTIONS":
+#     #     return jsonify({}), 200
+
+#     # try:
+#     #     data = request.json
+#     #     user_id = data.get("userId")
+#     #     movie_id = data.get("movieId")
+#     #     if not user_id or not movie_id:
+#     #         return jsonify({"error": "Missing userId or movieId"}), 400
+
+#     #     predicted_rating, approach = hybrid_predict(user_id, movie_id)
+#     #     print(f"[DEBUG] final predicted_rating={predicted_rating}, approach={approach}")
+
+#     #     return jsonify({
+#     #         "predictedRating": round(predicted_rating, 2),
+#     #         "approachUsed": approach
+#     #     }), 200
+
+#     # except Exception as e:
+#     #     print(f"Error in /api/predict-rating: {str(e)}")
+#     #     return jsonify({"error": str(e)}), 500
+
+
+#     try:
+#         data = request.json
+#         user_id = data.get("userId")
+#         movie_id = data.get("movieId")
+#         if not user_id or not movie_id:
+#             return jsonify({"error": "Missing userId or movieId"}), 400
+
+#         predicted_rating, approach = hybrid_predict(user_id, movie_id)
+#         print(f"[DEBUG] final predicted_rating={predicted_rating}, approach={approach}")
+
+#         return jsonify({
+#             "predictedRating": round(predicted_rating, 2),
+#             "approachUsed": approach
+#         }), 200
+
+#     except Exception as e:
+#         print(f"Error in /api/predict-rating: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
+
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from hybrid_predict import hybrid_predict
 
 app = Flask(__name__)
 
-# This applies CORS to all routes with default settings (allowing any origin)
-# CORS(app, supports_credentials=True)
+# Enable CORS for specified origins
 CORS(app, resources={r"/*": {"origins": [
     "https://popcornpair-6403c0694200.herokuapp.com",
     "http://localhost:8080"
 ]}})
 
-@app.route("/api/predict-rating", methods=["POST", "OPTIONS"])
+# Only allow POST; Flask-CORS will automatically handle OPTIONS requests
+@app.route("/api/predict-rating", methods=["POST"])
 def predict_rating_endpoint():
-    # Flask-CORS should automatically handle OPTIONS requests
-    if request.method == "OPTIONS":
-        return jsonify({}), 200
-
     try:
         data = request.json
         user_id = data.get("userId")
