@@ -50,6 +50,8 @@ const Search = () => {
 
   const acceptedFriendIds = getAcceptedFriendUserIds(currentUserId, allFriends);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const unwatchedMovies = movies.filter(
     (movie) =>
       !userMovies.some(
@@ -177,9 +179,23 @@ const Search = () => {
     }
   };
 
+  //  const response = await fetch("http://127.0.0.1:5000/api/predict-rating", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ userId: currentUserId, movieId }),
+  //     });
+
   const handleAddToWatchlist = async (movieId) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/predict-rating", {
+
+      // const response = await fetch("/api/predict-rating", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ userId: currentUserId, movieId }),
+      // });
+
+
+      const response =  await fetch(`${apiUrl}/api/predict-rating`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUserId, movieId }),
