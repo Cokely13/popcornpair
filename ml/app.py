@@ -263,7 +263,7 @@
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from hybrid_predict import hybrid_predict
+from .hybrid_predict import hybrid_predict
 
 app = Flask(__name__)
 
