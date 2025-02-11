@@ -125,7 +125,11 @@ from hybrid_predict import hybrid_predict
 app = Flask(__name__)
 
 # This applies CORS to all routes with default settings (allowing any origin)
-CORS(app, supports_credentials=True)
+# CORS(app, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": [
+    "https://popcornpair-6403c0694200.herokuapp.com",
+    "http://localhost:8080"
+]}})
 
 @app.route("/api/predict-rating", methods=["POST", "OPTIONS"])
 def predict_rating_endpoint():
