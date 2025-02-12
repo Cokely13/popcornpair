@@ -65,7 +65,6 @@
 // });
 
 require('dotenv').config();
-console.log('API_PROXY_TARGET:', process.env.API_PROXY_TARGET);
 const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
@@ -73,7 +72,6 @@ const proxy = require('express-http-proxy'); // using express-http-proxy instead
 const app = express();
 module.exports = app;
 
-console.log(">>> THIS EXACT app.js LOADED");
 
 // Logging middleware
 app.use(morgan('dev'));
