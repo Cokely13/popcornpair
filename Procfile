@@ -1,1 +1,1 @@
-web: gunicorn ml.app:app
+web: node server/index.js
