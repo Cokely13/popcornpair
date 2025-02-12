@@ -76,10 +76,19 @@ const RateMovie = () => {
       });
       const data = await response.json();
 
-      const predictedRating =
-        response.ok && data.predictedRating !== undefined
-          ? data.predictedRating
-          : 0.0;
+      // const predictedRating =
+      //   response.ok && data.predictedRating !== undefined
+      //     ? data.predictedRating
+      //     : 0.0;
+
+          const predictedRating =
+          response.ok && data.predictedRating !== undefined
+            ? data.predictedRating
+            : 0.0;
+
+            const approachUsed = response.ok && data.approachUsed
+        ? data.approachUsed
+        : "unknown";
 
       await dispatch(
         createUserMovie({
@@ -90,7 +99,7 @@ const RateMovie = () => {
         })
       );
 
-      alert(`Movie added to watchlist! Predicted Rating: ${predictedRating}`);
+      alert(`Movie added to watchlist! Predicted Rating: ${predictedRating} (Using: ${approachUsed})`);
     } catch (err) {
       console.error("Error adding movie to watchlist:", err);
       alert("Something went wrong. Please try again.");

@@ -66,6 +66,10 @@ const FriendRecs = () => {
           ? data.predictedRating
           : 0.0;
 
+          const approachUsed = response.ok && data.approachUsed
+      ? data.approachUsed
+      : "unknown";
+
       // Add or create the userMovie record with "watchlist" status
       const userMovie = userMovies.find(
         (um) => um.movieId === movieId && um.userId === currentUserId
@@ -91,7 +95,7 @@ const FriendRecs = () => {
         })
       );}
 
-      alert(`Movie added to watchlist! Predicted Rating: ${predictedRating}`);
+      `Movie added to watchlist! Predicted Rating: ${predictedRating} (Using: ${approachUsed})`
     } catch (err) {
       console.error(
         "Error adding movie to watchlist or fetching predicted rating:",
@@ -187,9 +191,20 @@ const FriendRecs = () => {
 
   // Filter recommendations based on view type
   const filteredRecs = otherRecs.filter((rec) => {
-    if (viewType === "received") return rec.receiverId === currentUserId && !isMovieWatched(rec.movie.id);
-    if (viewType === "sent") return rec.senderId === currentUserId;
-    if (viewType === "watched") return rec.receiverId === currentUserId && isMovieWatched(rec.movie.id);
+    if (viewType === "received")
+      return (
+        rec.receiverId === currentUserId &&
+        rec.movie && // Ensure rec.movie is defined
+        !isMovieWatched(rec.movie.id)
+      );
+    if (viewType === "sent")
+      return rec.senderId === currentUserId;
+    if (viewType === "watched")
+      return (
+        rec.receiverId === currentUserId &&
+        rec.movie && // Ensure rec.movie is defined
+        isMovieWatched(rec.movie.id)
+      );
     return false;
   });
   return (

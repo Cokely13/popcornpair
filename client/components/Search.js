@@ -66,13 +66,6 @@ const Search = () => {
     movie.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // const sortedMovies = [...filteredMovies].sort((a, b) => {
-  //   if (sortOption === "title") return a.title.localeCompare(b.title);
-  //   if (sortOption === "releaseDate")
-  //     return new Date(a.releaseDate) - new Date(b.releaseDate);
-  //   if (sortOption === "rating") return b.avgRating - a.avgRating;
-  //   return 0;
-  // });
 
   const getFriendWatchStats = (movieId) => {
     const friendWatchers = userMovies.filter(
@@ -178,12 +171,6 @@ const Search = () => {
       console.error("Error submitting rating:", err);
     }
   };
-
-  //  const response = await fetch("http://127.0.0.1:5000/api/predict-rating", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ userId: currentUserId, movieId }),
-  //     });
 
   const handleAddToWatchlist = async (movieId) => {
     try {
@@ -340,30 +327,7 @@ const Search = () => {
                   <span>(Avg Rating: {avgRating})</span>
                 )}
               </p>
-{showModal && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <h2>FRIENDS RATINGS</h2>
-      {friendWatchersList.length ? (
-        <ul>
-          {friendWatchersList.map((fw, idx) => (
-            <ul className="search-user-item"  key={idx}>
-                <img
-                      src={fw?.image || "/default-profile.png"}
-                      alt={fw.username}
-                      className="friend-profile-pic"
-                    />
-              <Link to={`/users/${fw.id}`}>{fw.username} </Link>  Rating: {fw.rating}
-            </ul>
-          ))}
-        </ul>
-      ) : (
-        <p>No friends found.</p>
-      )}
-      <button onClick={() => setShowModal(false)}>CLOSE</button>
-    </div>
-  </div>
-)}
+
               <div className="movie-actions">
                 {!isInWatchlist(movie.id) && (
                   <button
@@ -422,6 +386,30 @@ const Search = () => {
           </div>
         </div>
       )}
+      {showModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>FRIENDS RATINGS</h2>
+      {friendWatchersList.length ? (
+        <ul>
+          {friendWatchersList.map((fw, idx) => (
+            <ul className="search-user-item"  key={idx}>
+                <img
+                      src={fw?.image || "/default-profile.png"}
+                      alt={fw.username}
+                      className="friend-profile-pic"
+                    />
+              <Link to={`/users/${fw.id}`}>{fw.username} </Link>  Rating: {fw.rating}
+            </ul>
+          ))}
+        </ul>
+      ) : (
+        <p>No friends found.</p>
+      )}
+      <button onClick={() => setShowModal(false)}>CLOSE</button>
+    </div>
+  </div>
+)}
     </div>
     <Link to="/addmovie" className="add-movie-button">ADD MOVIE</Link>
     </div>
