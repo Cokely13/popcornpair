@@ -1,43 +1,138 @@
-const path = require('path')
-const express = require('express')
-const morgan = require('morgan')
-const app = express()
-module.exports = app
+// require('dotenv').config();
+// console.log('API_PROXY_TARGET:', process.env.API_PROXY_TARGET);
+// const path = require('path');
+// const express = require('express');
+// const morgan = require('morgan');
+// const { createProxyMiddleware } = require('http-proxy-middleware');
+// const app = express();
+// module.exports = app;
 
-// logging middleware
-app.use(morgan('dev'))
+// console.log(">>> THIS EXACT app.js LOADED")
 
-// body parsing middleware
-app.use(express.json())
+// // Logging middleware
+// app.use(morgan('dev'));
 
-// auth and api routes
-app.use('/auth', require('./auth'))
-app.use('/api', require('./api'))
+// // Body parsing middleware
+// app.use(express.json());
 
-app.get('/', (req, res)=> res.sendFile(path.join(__dirname, '..', 'public/index.html')));
 
-// static file-serving middleware
-app.use(express.static(path.join(__dirname, '..', 'public')))
 
-// any remaining requests with an extension (.js, .css, etc.) send 404
+// const proxyTarget = process.env.API_PROXY_TARGET || 'http://127.0.0.1:5000';
+// app.use(
+//   '/flask-predict-rating',
+//   createProxyMiddleware({
+//     target: proxyTarget,
+//     changeOrigin: true,
+//     logLevel: 'debug',
+//     onProxyReq(proxyReq, req, res) {
+//       console.log('[PROXY] Forwarding request for:', req.url);
+//     }
+//   })
+// );
+
+
+// // Auth and API routes (these handle other endpoints)
+// app.use('/auth', require('./auth'));
+// app.use('/api', require('./api'));
+
+// // Route for serving the index.html
+// app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'public/index.html')));
+
+// // Static file-serving middleware
+// app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// // Any remaining requests with an extension (.js, .css, etc.) send 404
+// app.use((req, res, next) => {
+//   if (path.extname(req.path).length) {
+//     const err = new Error('Not found');
+//     err.status = 404;
+//     next(err);
+//   } else {
+//     next();
+//   }
+// });
+
+// // Sends index.html for any other request
+// app.use('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '..', 'public/index.html'));
+// });
+
+// // Error handling middleware
+// app.use((err, req, res, next) => {
+//   console.error(err);
+//   console.error(err.stack);
+//   res.status(err.status || 500).send(err.message || 'Internal server error.');
+// });
+
+require('dotenv').config();
+console.log('API_PROXY_TARGET:', process.env.API_PROXY_TARGET);
+const path = require('path');
+const express = require('express');
+const morgan = require('morgan');
+const proxy = require('express-http-proxy'); // using express-http-proxy instead of createProxyMiddleware
+const app = express();
+module.exports = app;
+
+console.log(">>> THIS EXACT app.js LOADED");
+
+// Logging middleware
+app.use(morgan('dev'));
+
+// Body parsing middleware
+app.use(express.json());
+
+const proxyTarget = process.env.API_PROXY_TARGET || 'http://127.0.0.1:5000';
+
+// Use express-http-proxy to forward requests from /flask-predict-rating
+// to the Flask endpoint at /api/predict-rating.
+app.use('/flask-predict-rating', proxy(proxyTarget, {
+  proxyReqPathResolver: function (req) {
+    console.log('[PROXY] Forwarding request for:', req.url);
+    // Always rewrite the incoming URL to /api/predict-rating.
+    // To include any query string, you can append it like so:
+    const url = require('url');
+    const queryString = url.parse(req.url).search || '';
+    return '/api/predict-rating' + queryString;
+  },
+  // Optional: If you need to adjust response headers, you can do so here.
+  userResHeaderDecorator: function (headers, userReq, userRes, proxyReq, proxyRes) {
+    return headers;
+  },
+  proxyErrorHandler: function (err, res, next) {
+    console.error('[PROXY ERROR]', err);
+    next(err);
+  }
+}));
+
+// Auth and API routes (these handle other endpoints)
+app.use('/auth', require('./auth'));
+app.use('/api', require('./api'));
+
+// Route for serving the index.html
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '..', 'public/index.html')));
+
+// Static file-serving middleware
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Any remaining requests with an extension (.js, .css, etc.) send 404
 app.use((req, res, next) => {
   if (path.extname(req.path).length) {
-    const err = new Error('Not found')
-    err.status = 404
-    next(err)
+    const err = new Error('Not found');
+    err.status = 404;
+    next(err);
   } else {
-    next()
+    next();
   }
-})
+});
 
-// sends index.html
+// Sends index.html for any other request
 app.use('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public/index.html'));
-})
+});
 
-// error handling endware
+// Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err)
-  console.error(err.stack)
-  res.status(err.status || 500).send(err.message || 'Internal server error.')
-})
+  console.error(err);
+  console.error(err.stack);
+  res.status(err.status || 500).send(err.message || 'Internal server error.');
+});

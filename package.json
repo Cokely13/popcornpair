@@ -26,7 +26,9 @@
     "compression": "^1.7.3",
     "dotenv": "^16.4.7",
     "express": "^4.16.4",
+    "express-http-proxy": "^2.1.1",
     "history": "^4.9.0",
+    "http-proxy-middleware": "^3.0.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "morgan": "^1.9.1",
@@ -71,6 +73,5 @@
   "engines": {
     "node": "22.x",
     "npm": "10.x"
-  },
-  "proxy": "http://127.0.0.1:5000"
+  }
 }

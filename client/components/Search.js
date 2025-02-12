@@ -190,11 +190,17 @@ const Search = () => {
 
 
 
-      const response =  await fetch(`${apiUrl}/api/predict-rating`, {
+      // const response =  await fetch(`${apiUrl}/api/predict-rating`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ userId: currentUserId, movieId }),
+      // });
+      const response = await fetch("/flask-predict-rating", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUserId, movieId }),
       });
+
       const data = await response.json();
 
       const predictedRating =
