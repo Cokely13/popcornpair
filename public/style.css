@@ -323,6 +323,7 @@ text-align: center; /* Centers all child elements horizontally */
 .sort-dropdown {
 margin: 20px 0;
 text-align: center;
+position: relative;
 }
 
 .rating-input {
@@ -744,15 +745,73 @@ margin-right: 10px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 900px) {
-  .watchlist-movie-item {
-    width: calc(50% - 20px); /* 2 per row on smaller screens */
+@media (max-width: 600px) {
+  .search-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .search-input,
+  .sort-dropdown,
+  .genre-dropdown {
+    width: 100%;
+    max-width: 100%;
+    font-size: 1rem;
   }
 }
 
+/* Mobile adjustments for the movie grid */
 @media (max-width: 600px) {
-  .watchlist-movie-item {
-    width: 100%; /* Full width on mobile */
+  .watchlist-movies,
+  .movies-list {
+    grid-template-columns: 1fr;  /* Single column for clarity */
+    gap: 15px;
+  }
+
+  .movie-item {
+    padding: 15px;
+    font-size: 0.9rem; /* Slightly reduce font size if needed */
+  }
+
+  /* Adjust image size if needed */
+  .movie-poster {
+    width: 100px; /* smaller poster size */
+  }
+}
+
+/* Modal responsiveness */
+@media (max-width: 600px) {
+  .modal-content {
+    width: 90%; /* Ensure the modal doesn't overflow */
+    padding: 15px;
+  }
+  .modal-content h2 {
+    font-size: 1.3rem;
+  }
+  .modal-content select,
+  .modal-content button {
+    font-size: 1rem; /* Adjust controls for easier tapping */
+    padding: 8px 10px;
+  }
+}
+
+/* Increase button touch area on mobile */
+@media (max-width: 600px) {
+  button {
+    padding: 10px 15px;
+    font-size: 1rem;
+  }
+}
+
+/* Adjust overall spacing and layout */
+@media (max-width: 600px) {
+  .search-container {
+    padding: 10px;
+    margin-top: 60px; /* Adjust if your navbar takes less vertical space on mobile */
+  }
+  .movie-actions {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
@@ -1634,4 +1693,41 @@ button:hover {
   padding: 5px;
   max-height: 200px;
   overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90vh;
+    margin: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .search-container,
+  .search-controls {
+    display: block;
+    justify-content: initial;
+    align-items: initial;
+    position: static;
+    transform: none;
+    overflow: visible;
+    text-align: left; /* Avoid centering that might affect native UI */
+  }
+
+  .select-wrapper {
+    position: static;
+    transform: none;
+  }
+
+  select.sort-dropdown {
+    position: static !important;
+    transform: none !important;
+    z-index: auto !important;
+    text-align: left;
+  }
 }

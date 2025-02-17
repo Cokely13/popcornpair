@@ -98,3 +98,32 @@
 .cancel-button:hover {
   background-color: #e53935;
 }
+
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Enables momentum scrolling on iOS */
+}
+
+@media (max-width: 600px) {
+  body {
+    justify-content: flex-start;
+  }
+  .watched-movies-container {
+    max-width: 100%;
+    margin: 80px 0 30px; /* remove auto centering */
+    padding: 10px;
+    text-align: left; /* Align content to the left to avoid clipping */
+  }
+  .watched-movies-table {
+    width: 100%;
+    min-width: 1000px;
+    margin: 0; /* Ensure table starts at the left edge */
+  }
+  .watched-movies-table th,
+  .watched-movies-table td {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+}

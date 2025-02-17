@@ -222,14 +222,14 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
       {friendWatchersList.length ? (
         <ul>
           {friendWatchersList.map((fw, idx) => (
-            <ul className="search-user-item"  key={idx}>
+            <li className="search-user-item"  key={idx}>
                 <img
                       src={fw?.image || "/default-profile.png"}
                       alt={fw.username}
                       className="friend-profile-pic"
                     />
               <Link to={`/users/${fw.id}`}>{fw.username} </Link>  Rating: {fw.rating}
-            </ul>
+            </li>
           ))}
         </ul>
       ) : (
@@ -241,6 +241,7 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
 )}
 
       {/* Movies Table */}
+      <div className="table-responsive">
       <table className="watched-movies-table">
   <thead>
     <tr>
@@ -368,7 +369,7 @@ const [friendWatchersList, setFriendWatchersList] = useState([]);
     })}
   </tbody>
 </table>
-
+</div>
     </div>
   );
 };

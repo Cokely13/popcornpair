@@ -309,6 +309,7 @@ filteredMovies = filteredMovies.filter((movie) =>
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
         />
+        <div className="select-wrapper">
         <select
   value={filterOption}
   onChange={(e) => setFilterOption(e.target.value)}
@@ -318,6 +319,8 @@ filteredMovies = filteredMovies.filter((movie) =>
   <option value="notOnMyList">Not on My Watchlist</option>
   <option value="onFriendsList">On Friends' Watchlist</option>
 </select>
+</div>
+<div className="select-wrapper">
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
@@ -328,6 +331,7 @@ filteredMovies = filteredMovies.filter((movie) =>
           <option value="rating">Sort by Rating</option>
           <option value="friends">Sort by Friends Watched</option>
         </select>
+        </div>
       </div>
 
       <div
@@ -435,14 +439,14 @@ filteredMovies = filteredMovies.filter((movie) =>
       {friendWatchersList.length ? (
         <ul>
           {friendWatchersList.map((fw, idx) => (
-            <ul className="search-user-item"  key={idx}>
+            <li className="search-user-item"  key={idx}>
                 <img
                       src={fw?.image || "/default-profile.png"}
                       alt={fw.username}
                       className="friend-profile-pic"
                     />
               <Link to={`/users/${fw.id}`}>{fw.username} </Link>  Rating: {fw.rating}
-            </ul>
+            </li>
           ))}
         </ul>
       ) : (
