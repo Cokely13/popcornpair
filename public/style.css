@@ -134,7 +134,19 @@ body {
   background-color: #e53935;
 }
 
+.modal-content ul {
+  list-style: none; /* Remove bullet points */
+  padding: 0;
+  margin: 0 auto; /* Center the UL itself */
+  text-align: center;
+}
 
+.modal-content ul li {
+  display: flex;
+  align-items: center;  /* Align items vertically */
+  justify-content: center; /* Align items horizontally */
+  gap: 10px; /* Add spacing between image, name, and rating */
+}
 
 
 
