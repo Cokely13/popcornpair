@@ -35,7 +35,7 @@ const Search = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
     const [showModal, setShowModal] = useState(false);
   const [friendWatchersList, setFriendWatchersList] = useState([]);
-
+  const [filterOption, setFilterOption] = useState("allMovies");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("title");
     const [showRatingModal, setShowRatingModal] = useState(false);
@@ -62,10 +62,43 @@ const Search = () => {
       )
   );
 
-  const filteredMovies = unwatchedMovies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+  // const filteredMovies = unwatchedMovies.filter((movie) =>
+  //   movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
+
+  const notOnMyListMovies = movies.filter(
+    (movie) =>
+      !userMovies.some(
+        (userMovie) =>
+          userMovie.movieId === movie.id &&
+          userMovie.status === "watchlist" &&
+          userMovie.userId === currentUserId
+      )
   );
 
+  // Get movies that are on any of the user's friends' watchlists
+  const onFriendsListMovies = movies.filter((movie) =>
+    userMovies.some(
+      (userMovie) =>
+        userMovie.movieId === movie.id &&
+        userMovie.status === "watchlist" &&
+        acceptedFriendIds.has(userMovie.userId) // Ensures it's on a FRIEND'S watchlist
+    )
+  );
+
+  let filteredMovies;
+if (filterOption === "notOnMyList") {
+  filteredMovies = notOnMyListMovies;
+} else if (filterOption === "onFriendsList") {
+  filteredMovies = onFriendsListMovies;
+} else {
+  filteredMovies = movies; // Default: Show all movies
+}
+
+// Apply search query filter
+filteredMovies = filteredMovies.filter((movie) =>
+  movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   const getFriendWatchStats = (movieId) => {
     const friendWatchers = userMovies.filter(
@@ -276,6 +309,15 @@ const Search = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="search-input"
         />
+        <select
+  value={filterOption}
+  onChange={(e) => setFilterOption(e.target.value)}
+  className="sort-dropdown"
+>
+  <option value="allMovies">All Movies</option>
+  <option value="notOnMyList">Not on My Watchlist</option>
+  <option value="onFriendsList">On Friends' Watchlist</option>
+</select>
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
