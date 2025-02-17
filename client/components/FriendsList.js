@@ -197,6 +197,7 @@ const FriendsList = () => {
       </ul>
 
       <div className="friend-requests-box">
+        NEW FRIENDS
         {!showRequests ?
         incomingRequestUsers.length > 0 ?<button className="toggle-requests-btn" onClick={() => setShowRequests(!showRequests)}>
            FRIEND REQUESTS
