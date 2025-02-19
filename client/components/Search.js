@@ -62,11 +62,11 @@ const Search = () => {
       )
   );
 
-  // const filteredMovies = unwatchedMovies.filter((movie) =>
-  //   movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
+   unwatchedMovies.filter((movie) =>
+    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const notOnMyListMovies = movies.filter(
+  const notOnMyListMovies = unwatchedMovies.filter(
     (movie) =>
       !userMovies.some(
         (userMovie) =>
@@ -77,7 +77,7 @@ const Search = () => {
   );
 
   // Get movies that are on any of the user's friends' watchlists
-  const onFriendsListMovies = movies.filter((movie) =>
+  const onFriendsListMovies = unwatchedMovies.filter((movie) =>
     userMovies.some(
       (userMovie) =>
         userMovie.movieId === movie.id &&
@@ -92,7 +92,7 @@ if (filterOption === "notOnMyList") {
 } else if (filterOption === "onFriendsList") {
   filteredMovies = onFriendsListMovies;
 } else {
-  filteredMovies = movies; // Default: Show all movies
+  filteredMovies = unwatchedMovies; // Default: Show all movies
 }
 
 // Apply search query filter
